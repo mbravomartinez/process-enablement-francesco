@@ -1,0 +1,1732 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Process Enablement — Order Management</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAHhlWElmTU0AKgAAAAgABAEaAAUAAAABAAAAPgEbAAUAAAABAAAARgEoAAMAAAABAAIAAIdpAAQAAAABAAAATgAAAAAAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAECgAwAEAAAAAQAAAEAAAAAAdd52hwAAAAlwSFlzAAALEwAACxMBAJqcGAAABaBJREFUeAHtmdmPFUUUh1FE4gLKIsKIAjILouAybugYHowb+mQ0Go1mNDy7Peh/QDQ++geY+KAPxBcxUWPURDCIyrDJIopMYBBx3BeM4PZ9etvcdO6d2zW3qm+r80u+9O2a6qpzTledqq6ZNGlCExH4X0fghA5430WffdALs2r9f8l1L3wEh2tlpVxSB2AKXiyCi2EFXAE6fxY00iiFe+AD2AjbYD8chySKHYDpWNkDl8PV0A8G4HQYj37koU9hCAzIZnCk/ABR1G4A5mLFUrgKdHg5zIeTIIV+pdER2A7vwibYCUdgXAoJwMn0cB44nHX2SrgAmg1n/lSKnDa74T0wKE6bA3AMomkVLTn0bPSPiqON2noLtNTkljX+rnAaly6w/qkwFaqo7zFK59+H16Hl1AiZArT3VwDO5epcz+a902AedEJf0ekMMDeshvVwEH6DQgoNQKNG51C4BMwJWSJcyG+XwJhyKRwGE6ArgnPesjdBhxeB+4kgxQhAvkOXvG5YBteCS6KbnmkQIpc6h7N7gndAx/eBS2MmnXYV+B364BAEKcVypYFb4TC8AA5Pl8tLYQAcJUthJriyqGPwNewCM/kG2AKfgza6Y2w0n4vmMB5vrBQByHpayw8Tp47okMN2DfwEJtL54PxV38AIHAUT7oVwNziCDJxvdiVEV8oATMXaxTXuqFnuqPAtbwLX7i9A9cAgmEd03hFTr+C5Xf/wWL9TBuBnOnbPUJ9nXC3keigq27CtJEoZAN+6S6YOu1t0uE8Hk+Qp4PzP5rBZ3Dygo+YQ13OnxSg4ag5CI/lcpvrfWVnLa6oAnEjP3fAtOPfN6CbDEGmbAZsDtmWSNNvXy3ID6SjpBZNmkOqHZ9CDLSo/zt+fgl/gKJj4vgPfrm/ZcgOSvTVHgg6bNxwdjpIzwIRowtTJJ+BpyGTZW3BNrcD9wE0QGuja4/EuK2hKJ30rMTGQLqGZVvMj3/692R87dZ1Cx76VvGGx7t+gbaeXq8Qw5NvdS9ls6JhupGfnad6wWPe2PQA31/pwamVTyellPzdAx/QcPcdytlk7z9KHeeERuBV2wBCsgofB/NERmbGHoZnhscr300e9k2dz7zLbcblldS2P5WizduzjkljemlBi6RwaMgmmln10xeokZgBCP3fb8cHpFkUxA1DmBuR4FO9pJGYAPJ4qS26LoyhmAMzOrsWp5XeFfUVRzAD4xbYnilVjN7KbP4+MXaX4X2MGwBywrnjX4675Ek+WmW+CDD2f2n4CN1vD2y33jMCD0ErrSaxr19Fmz6+ptOc1487kui1BELbSpmcE/wpdhpVHoNmbDC33pCfa9resCK6ko88iBOEQbVxXltGx+1lOg+sh9I1n9d/m2YtiG1V2e367Pwb7IHOs1dW6j4LPJlWqQ9FGRs+i0EOL28D57De8h57Kk51R2AIvwytQyta6zADg0z/y5NcAZAcbbqENgIep/zm528zedIhzPpP8BaXqoBfjPcIegGUwA+6BISiifio9D06DD2EDbISPobKahmX3w2vgF1s+0e2krA9aaQkVdkH+edt8Fe6DbOrws/NyiGuUbypvdP7+AHUGodGJjmUPgF+V+efy9zuoY59tj+B2G/Bs7hm4HUL0CZU3gwFRC6AfFnsToBep+xC44SpdDmffRP7tlH2/HRvMOaXKE+BG87Rs57P+zC/aVIr8L66blazzqlzXYZO2JdeD9FAVp/N2DKb23qXOc798x1W597xQG5PpLlquirPN7LgzxHvX8BAFNR7ScMS6yWx0O+txdLPIV6XcjZTHcoUUMgJ6aHFuoVY7W2ke3XcXNSEkAG42JhdtuIP1tLHwxigkAAs66FRo1wuLPhASgNlFG61AvcK2hgRgZgUcK2pCYVtDto5r6b3SBxJ10fGfKBOaiMBEBFpH4E8M7TNuLj8UXgAAAABJRU5ErkJggg==">
+<style>
+/* ============ Celonis-style design tokens ============ */
+:root{
+  --bg:#f4f4f6; --panel:#fff; --ink:#1a1a1f; --ink2:#3f3f46; --muted:#71717a;
+  --line:#e4e4e7; --line2:#f0f0f2;
+  --accent:#1a40ff;            /* Celonis blue — every interactive element */
+  --accent-ink:#1330cc;        /* hover / pressed */
+  --accent-soft:#eaeeff;       /* selection, focus ring */
+  --magenta:#bb0dc7;           /* process-explorer edges, current node */
+  --deep:#85068d;              /* process-explorer node rings */
+  --ai:#7e0ae4;                /* AI / agentic accent */
+  --obj1:#85068d; --obj1-bg:#f7eaf8;
+  --obj2:#bb0dc7; --obj2-bg:#fdeafd;
+  --obj3:#7e0ae4; --obj3-bg:#f4eaff;
+  --ok:#1f8a4c; --warn:#b45309; --bad:#e90014;
+  --r:6px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:14px/1.55 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  /* the app fills the viewport — the window never scrolls, components do */
+  display:flex;flex-direction:column;overflow:hidden}
+/* ============ top bar ============ */
+header{background:var(--panel);border-bottom:1px solid var(--line);padding:0 20px;height:56px;flex:none;
+  display:flex;gap:18px;align-items:center}
+.brand{width:26px;height:26px;flex:none;display:block;object-fit:contain}
+h1{font-size:15px;font-weight:600;margin:0;letter-spacing:-.01em}
+.field{display:flex;align-items:center;gap:6px}
+.field label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+select{font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink2)}
+select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.spacer{margin-left:auto}
+.hdr-actions{display:flex;gap:8px;align-items:center}
+.iconbtn{font:inherit;width:32px;height:30px;border:1px solid var(--line);background:#fff;border-radius:4px;
+  cursor:pointer;display:grid;place-items:center;position:relative}
+.iconbtn:hover{border-color:var(--accent);background:var(--accent-soft)}
+.iconbtn svg{width:16px;height:16px;stroke:var(--ink2);fill:none;stroke-width:1.6}
+.langwrap{position:relative}
+.langmenu{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--line);border-radius:6px;
+  box-shadow:0 8px 28px rgba(24,24,27,.14);padding:4px;min-width:196px;z-index:40}
+.langmenu[hidden]{display:none}
+.langmenu b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:7px 9px 4px}
+.langmenu button{display:flex;gap:8px;align-items:center;width:100%;text-align:left;font:inherit;font-size:13.5px;
+  background:none;border:none;border-radius:4px;padding:7px 9px;cursor:pointer;color:var(--ink2)}
+.langmenu button:hover{background:var(--line2)}
+.langmenu button[aria-current=true]{color:var(--accent);font-weight:600}
+.langmenu button.na{color:var(--muted)}
+.langmenu button.na .cached{color:var(--accent)}
+.langmenu button.off{color:var(--muted);cursor:default;opacity:.55}
+.langmenu button.off:hover{background:none}
+.langmenu button.busy .cached{color:var(--accent);font-variant-numeric:tabular-nums}
+.langmenu .stopx{display:none;margin-left:auto;color:var(--bad);font-weight:700;font-size:12px;
+  padding:1px 6px;border-radius:3px;line-height:1.4}
+.langmenu button.busy:hover .cached{display:none}
+.langmenu button.busy:hover .stopx{display:inline-block;background:#fdeaeb}
+.langmenu .topup{display:none;margin-left:auto;color:var(--accent);font-weight:600;font-size:11px;
+  padding:1px 6px;border-radius:3px;line-height:1.4;background:var(--line2)}
+.langmenu button.short:hover .cached,.langmenu button.short:hover .tickmark{display:none}
+.langmenu button.short:hover .topup{display:inline-block}
+.langmenu .tickmark{margin-left:auto;color:var(--accent)}
+.langmenu .cached{margin-left:auto;font-size:10.5px;color:var(--muted)}
+.langmenu .sep{height:1px;background:var(--line);margin:5px 0}
+.langmenu .hint{padding:6px 10px 8px;font-size:11px;color:var(--muted)}
+select:disabled{background:#fafafb;color:var(--ink2);cursor:default}
+.langmenu .fmt{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:1px}
+.langmenu button.col{display:block}
+.cofield{border-left:1px solid var(--line);padding-left:16px;margin-left:2px}
+.cofield label{color:var(--muted)}
+.coname{font-size:13.5px;font-weight:600;color:var(--ink);padding:4px 0;display:block;letter-spacing:-.01em}
+.btn{font:inherit;font-size:13px;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:4px;
+  padding:7px 14px;cursor:pointer;font-weight:500}
+.btn:hover{background:var(--accent-ink);border-color:var(--accent-ink)}
+.btn.ghost{background:#fff;color:var(--accent)}
+.btn.ghost:hover{background:var(--accent-soft)}
+.btn.sm{padding:6px 12px}
+/* ============ underline tabs ============ */
+nav.tabs{display:flex;gap:2px;padding:0 20px;background:var(--panel);border-bottom:1px solid var(--line);
+  flex-wrap:wrap;flex:none}
+nav.tabs button{font:inherit;font-size:13.5px;border:none;background:none;color:var(--muted);padding:12px 14px;
+  cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button[aria-selected=true]{color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
+/* ============ layout ============ */
+main{display:grid;grid-template-columns:1fr 320px;gap:12px;padding:12px 20px;align-items:stretch;
+  flex:1;min-height:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.panelhead{padding:12px 18px;border-bottom:1px solid var(--line);font-size:13px;font-weight:600;flex:none}
+.panelbody{flex:1;min-height:0;overflow:hidden;display:flex}
+/* the active pane is the scroll container — the window itself never scrolls */
+.tabpane{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:20px 22px;scrollbar-gutter:stable}
+.tabpane[hidden]{display:none}
+.intro{font-size:12.5px;color:var(--muted);margin:0 0 20px}
+.lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:20px 0 5px;font-weight:600}
+/* list + detail */
+.split{display:grid;grid-template-columns:238px 1fr;gap:22px}
+.list{border-right:1px solid var(--line);padding-right:16px}
+.list h4{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 5px;font-weight:600}
+.list h4:first-child{margin-top:0}
+.list button{display:block;width:100%;text-align:left;font:inherit;font-size:13.5px;background:none;border:none;
+  border-left:2px solid transparent;border-radius:0 4px 4px 0;padding:7px 9px;cursor:pointer;color:var(--ink2);line-height:1.35}
+.list button:hover{background:var(--line2)}
+.list button[aria-current=true]{background:var(--accent-soft);border-left-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.list .n{display:inline-block;width:18px;color:var(--muted);font-weight:400}
+.detail h2{margin:0 0 3px;font-size:20px;font-weight:600;letter-spacing:-.02em}
+.detail h3{margin:0 0 6px;font-size:17px;font-weight:600;letter-spacing:-.015em}
+.detail p{margin:0}
+.chainpos{font-size:12px;color:var(--muted);margin:0}
+/* overview */
+.purpose{font-size:21px;line-height:1.4;font-weight:600;letter-spacing:-.02em;margin:0 0 22px;max-width:34em}
+ol.goals{margin:0;padding-left:20px;max-width:34em}
+ol.goals li{margin-bottom:5px}
+.io{border-left:2px solid var(--accent);background:#fafbff;padding:11px 14px;margin-bottom:10px;max-width:38em;border-radius:0 4px 4px 0}
+.io b{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:2px}
+/* landscape / handovers */
+.e2e{border:1px solid var(--line);border-bottom:none;border-radius:var(--r) var(--r) 0 0;background:#fafafb;
+  padding:8px 14px;font-size:11.5px;color:var(--muted);max-width:900px}
+.e2e b{color:var(--ink);font-weight:600}
+.chain{display:flex;align-items:stretch;overflow-x:auto;max-width:900px;border:1px solid var(--line);border-top:none;
+  border-radius:0 0 var(--r) var(--r);padding:16px 14px;background:#fafafb}
+.chain .stage{flex:1 1 0;min-width:172px;border:1px solid var(--line);border-radius:4px;padding:11px 13px;
+  font-size:12.5px;color:var(--muted);background:#fff}
+.chain .stage.here{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);color:var(--ink2)}
+.chain .stage .role{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);
+  margin-bottom:4px;font-weight:600}
+.chain .stage.here .role{color:var(--accent)}
+.chain .stage b{display:block;margin-bottom:3px;color:var(--ink);font-size:13px;font-weight:600}
+.handover{flex:0 0 134px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0 7px;text-align:center}
+.handover .what{font-size:11px;color:var(--ink2);line-height:1.35;margin-bottom:6px}
+.handover .arrow{width:100%;height:1.5px;background:var(--magenta);position:relative}
+.handover .arrow::after{content:"";position:absolute;right:0;top:-3.5px;border:4.5px solid transparent;border-left-color:var(--magenta)}
+.handover .who2{font-size:10px;color:var(--muted);margin-top:6px}
+.bounds{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:900px;margin-top:14px}
+.bounds div{border-left:2px solid var(--line);padding-left:12px;font-size:13px}
+.bounds b{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:2px;font-weight:600}
+.notmine{max-width:900px;margin-top:14px;font-size:13px;color:var(--muted);border-left:2px solid var(--line);padding-left:12px}
+/* ============ process explorer style flow ============ */
+.overall{overflow-x:auto;padding:16px 14px;margin-bottom:16px;border:1px solid var(--line);border-radius:var(--r);
+  background:#fafafb;position:sticky;top:-20px;z-index:3;box-shadow:0 6px 12px -10px rgba(26,26,31,.25)}
+.flowline{display:flex;align-items:center;min-width:max-content}
+.node{font:inherit;border:1px solid var(--line);background:#fff;border-radius:4px;padding:8px 11px 8px 9px;cursor:pointer;
+  text-align:left;min-width:126px;line-height:1.25;font-size:12px;color:var(--ink2);display:flex;gap:8px;align-items:center}
+.node .dot{width:9px;height:9px;border-radius:50%;background:#fff;border:2.5px solid var(--deep);flex:none}
+.node b{font-weight:600;color:var(--ink);display:block;font-size:12px}
+.node small{display:block;color:var(--muted);font-size:10.5px}
+.node[aria-current=true]{border-color:var(--magenta);box-shadow:0 0 0 1px var(--magenta)}
+.node[aria-current=true] .dot{background:var(--magenta);border-color:var(--magenta)}
+.link{width:26px;height:1.5px;background:var(--magenta);position:relative;flex:none}
+.link::after{content:"";position:absolute;right:0;top:-3.5px;border:4.5px solid transparent;border-left-color:var(--magenta)}
+.node.rel{border-color:var(--magenta)}
+.node.rel .dot{background:var(--magenta);border-color:var(--magenta)}
+/* persona */
+.who{display:flex;gap:11px;align-items:flex-start}
+.av{width:34px;height:34px;border-radius:4px;background:var(--accent-soft);color:var(--accent-ink);display:grid;place-items:center;
+  font-weight:700;font-size:12px;flex:none}
+.who b{display:block;line-height:1.25;font-weight:600}
+.who span{font-size:12.5px;color:var(--muted)}
+.who q{display:block;font-style:italic;font-size:12.5px;margin-top:2px;color:var(--ink2)}
+.who p{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
+/* object cards */
+.docs{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;margin-top:4px}
+.doc{border-radius:4px;padding:10px 12px;min-width:174px;font-size:11.5px;border:1px solid;color:var(--ink2)}
+.doc h4{margin:0 0 5px;font-size:12.5px;font-weight:600}
+.doc.d1{background:var(--obj1-bg);border-color:var(--obj1)} .doc.d1 h4{color:var(--obj1)}
+.doc.d2{background:var(--obj2-bg);border-color:var(--obj2)} .doc.d2 h4{color:var(--obj2)}
+.doc.d3{background:var(--obj3-bg);border-color:var(--obj3)} .doc.d3 h4{color:var(--obj3)}
+.doc table{width:100%;border-collapse:collapse;margin-top:6px;font-size:10.5px}
+.doc th{text-align:left;padding:2px 4px;border-bottom:1px solid rgba(0,0,0,.12);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-size:9.5px}
+.doc td{text-align:left;padding:2px 4px;border-bottom:1px solid rgba(0,0,0,.06)}
+.tick{color:var(--ok);font-weight:700}
+.bubble{background:#fff;border:1px solid var(--line);border-radius:4px 4px 4px 0;padding:9px 12px;font-size:11.5px;max-width:215px;color:var(--ink2)}
+.detail p.legend,.legend{font-size:11px;color:var(--muted);margin:26px 0 0;padding-top:14px;
+  border-top:1px solid var(--line2);line-height:1.8}
+.legend i{font-style:normal;font-weight:600}
+/* provenance: what came from the customer's own material vs what is generic */
+.src{display:inline-block;font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;font-weight:600;
+  border-radius:3px;padding:2px 6px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.src.ctx{background:var(--accent-soft);color:var(--accent-ink)}
+.src.typ{background:#f4f4f6;color:var(--muted)}
+.provnote{font-size:11.5px;color:var(--muted);margin:0 0 18px;padding:8px 11px;background:#fafafb;
+  border:1px solid var(--line);border-radius:4px;max-width:46em}
+#printdoc .src{font-size:8pt;border:1px solid #ccc;padding:1pt 3pt}
+.legend .l1{color:var(--obj1)}.legend .l2{color:var(--obj2)}.legend .l3{color:var(--obj3)}
+/* stages */
+.stage h5{margin:0 0 5px;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600}
+.detail .stage{margin-top:20px}
+.detail .stage p{margin:0 0 9px;max-width:44em}
+.facts{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;max-width:44em}
+.facts div{margin-bottom:10px}
+.facts b{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:block;font-weight:600}
+/* tables */
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+table.t th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-size:10px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted);font-weight:600}
+table.t td{text-align:left;padding:10px;border-bottom:1px solid var(--line2);vertical-align:top;color:var(--ink2)}
+td.impact{color:var(--warn)}
+dl.terms{margin:0;max-width:46em}
+dl.terms dt{font-weight:600;margin-top:15px}
+dl.terms dd{margin:2px 0 0;color:var(--muted)}
+ul.sys{margin:0;padding-left:19px;max-width:46em;color:var(--ink2)}
+ul.sys li{margin-bottom:7px}
+.cast{display:grid;gap:16px;max-width:46em}
+/* notes */
+.noteEmpty{border:1px dashed var(--line);border-radius:var(--r);padding:22px;color:var(--muted);max-width:46em;background:#fafafb}
+.note{border:1px solid var(--line);border-left:2px solid var(--accent);border-radius:0 4px 4px 0;padding:13px 15px;margin-bottom:10px;max-width:46em}
+.note .meta{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;gap:10px;align-items:center;font-weight:600}
+.note .meta .sp{margin-left:auto;font-weight:400}
+.note h4{margin:6px 0 5px;font-size:14.5px;font-weight:600}
+.note p{margin:0;font-size:13.5px;color:var(--ink2)}
+.note .asked{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:9px}
+.note .nf{margin-bottom:9px}
+.note .nf:last-child{margin-bottom:0}
+.note .nf b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.note button.del{border:none;background:none;color:var(--muted);cursor:pointer;padding:2px;line-height:0;
+  border-radius:3px;display:grid;place-items:center}
+.note button.del svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.note button.del:hover{color:var(--bad);background:#fdeaeb}
+/* ============ quiz overlay ============ */
+#quizScreen{position:fixed;inset:0;z-index:60;background:rgba(26,26,31,.5);backdrop-filter:blur(2px);
+  display:flex;align-items:flex-start;justify-content:center;padding:34px 20px;overflow:auto}
+#quizScreen[hidden]{display:none}
+body.quizopen{overflow:hidden}
+.qcard{background:var(--panel);border-radius:8px;width:100%;max-width:720px;box-shadow:0 24px 70px rgba(26,26,31,.35);overflow:hidden}
+.qhead{padding:16px 22px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px}
+.qhead h2{margin:0;font-size:15px;font-weight:600}
+.qhead .sub{font-size:11.5px;color:var(--muted);margin:2px 0 0}
+.qhead .count{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.qclose{border:none;background:none;font-size:20px;line-height:1;color:var(--muted);cursor:pointer;padding:0 2px}
+.qclose:hover{color:var(--ink)}
+.qsteps{display:flex;gap:3px;padding:12px 22px 0}
+.qsteps i{flex:1;height:3px;border-radius:2px;background:var(--line)}
+.qsteps i.done{background:var(--accent)}
+.qsteps i.now{background:var(--magenta)}
+.qbody{padding:20px 22px 6px}
+.qq{font-size:17.5px;line-height:1.45;margin:0 0 18px;font-weight:600;letter-spacing:-.015em}
+.qopts button{display:flex;gap:11px;align-items:flex-start;width:100%;text-align:left;font:inherit;font-size:13.5px;
+  background:#fff;border:1px solid var(--line);border-radius:4px;padding:12px 14px;margin-bottom:8px;cursor:pointer;
+  color:var(--ink2);transition:.12s}
+.qopts button:hover:not(:disabled){border-color:var(--accent);background:#fafbff}
+.qopts button:disabled{cursor:default}
+.qopts .badge{width:21px;height:21px;border-radius:3px;border:1px solid var(--line);display:grid;place-items:center;
+  font-size:11px;font-weight:600;color:var(--muted);flex:none;margin-top:1px}
+.qopts button.right{border-color:var(--ok);background:#f2fbf5}
+.qopts button.right .badge{background:var(--ok);border-color:var(--ok);color:#fff}
+.qopts button.wrong{border-color:var(--bad);background:#fef4f4}
+.qopts button.wrong .badge{background:var(--bad);border-color:var(--bad);color:#fff}
+.qfb{border-radius:4px;padding:12px 14px;margin:4px 0 0;font-size:13px;color:var(--ink2)}
+.qfb.good{background:#f2fbf5;border:1px solid #c2e9d1}
+.qfb.bad{background:#fef4f4;border:1px solid #f3cbcd}
+.qfb b{display:block;margin-bottom:3px;color:var(--ink)}
+.qfoot{padding:14px 22px 20px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);margin-top:16px}
+.qfoot .kbd{font-size:11.5px;color:var(--muted)}
+.qfoot .push{margin-left:auto}
+.qres{padding:26px 22px 6px;text-align:center}
+.qring{position:relative;width:132px;height:132px;margin:0 auto 4px}
+.qring svg{transform:rotate(-90deg)}
+.qring .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.qring .pair{display:flex;align-items:baseline;gap:1px}
+.qring .pair b{font-size:38px;font-weight:600;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums}
+.qring .pair em{font-style:normal;font-size:15px;font-weight:500;color:var(--muted);line-height:1;letter-spacing:-.01em}
+.qring .cap{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600}
+.qres h3{margin:8px 0 4px;font-size:17px;font-weight:600}
+.qres p{margin:0;color:var(--muted);font-size:13.5px}
+.qreview{padding:6px 22px 0;text-align:left}
+.qreview h4{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:20px 0 8px;font-weight:600}
+.qrow{border:1px solid var(--line);border-radius:4px;padding:11px 13px;margin-bottom:8px}
+.qrow .top{display:flex;gap:9px;align-items:baseline}
+.qrow .chip{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;border-radius:3px;padding:2px 7px;flex:none;font-weight:600}
+.qrow .chip.ok{background:#e6f6ec;color:var(--ok)}
+.qrow .chip.no{background:#fdeaeb;color:var(--bad)}
+.qrow .qt{font-size:13.5px;font-weight:600}
+.qrow p{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+.qrow p.ans{color:var(--ink2)}
+/* diagrams */
+figure.fig{margin:16px 0 0;padding:18px 20px 14px;background:#fafafb;border:1px solid var(--line);border-radius:var(--r);max-width:660px}
+figure.fig svg{display:block;width:100%;height:auto;overflow:visible}
+figure.fig figcaption{font-size:11.5px;color:var(--muted);margin-top:10px}
+/* chat */
+.chat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;
+  height:100%;min-height:0;overflow:hidden}
+.chat h3{margin:0;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;font-weight:600;color:var(--ink);
+  flex:none;display:flex;align-items:center;gap:7px}
+.dot2{width:7px;height:7px;border-radius:50%;background:#c4c4cc;flex:none}
+.dot2.on{background:var(--ok)}.dot2.off{background:var(--muted)}.dot2.busy{background:var(--accent)}
+.stat{margin-left:auto;font-size:10.5px;font-weight:400;color:var(--muted)}
+.msg.sys{align-self:stretch;background:#fff;border:1px dashed var(--line);color:var(--muted);font-size:12px;max-width:100%}
+.msg.sys code{background:var(--line2);padding:1px 5px;border-radius:3px;font-size:11.5px}
+.msg.err{background:#fef4f4;border:1px solid #f3cbcd;color:#8f1d1d;font-size:12.5px}
+.msg.think{color:var(--muted);font-size:12.5px;background:var(--line2)}
+.msg b.t{display:block;margin-bottom:5px}
+.msg .f{display:block;margin-top:8px}
+.msg .f i{font-style:normal;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);display:block}
+.log{flex:1;min-height:0;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:9px 12px;border-radius:6px;max-width:90%;font-size:13.5px}
+.msg.me{align-self:flex-end;background:var(--accent);color:#fff}
+.msg.ai{background:#f4f4f6;color:var(--ink2)}
+.msg.filed{align-self:flex-start;background:var(--accent-soft);color:var(--accent-ink);font-size:12px;
+  border-radius:4px;padding:6px 10px;display:flex;gap:6px;align-items:center;max-width:100%}
+.msg.filed svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;flex:none}
+.composer{display:flex;gap:8px;padding:11px;border-top:1px solid var(--line);flex:none}
+.composer input{flex:1;min-width:0;font:inherit;font-size:13.5px;padding:7px 10px;border:1px solid var(--line);border-radius:4px}
+.composer input:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.composer button{font:inherit;font-size:13px;border:none;background:var(--accent);color:#fff;border-radius:4px;padding:0 14px;cursor:pointer}
+/* ============ print / PDF ============ */
+#printdoc{display:none}
+@media print{
+  @page{margin:16mm}
+  html,body{height:auto;overflow:visible;display:block}
+  header,nav.tabs,main,#quizScreen,.chat{display:none !important}
+  #printdoc{display:block !important}
+  body{background:#fff;font-size:11pt}
+  #printdoc h1{font-size:24pt;margin:0 0 4pt;letter-spacing:-.5pt}
+  #printdoc .cover{border-bottom:2px solid #1a40ff;padding-bottom:14pt;margin-bottom:22pt}
+  #printdoc .cover p{margin:2pt 0;color:#444}
+  #printdoc section{break-before:page;page-break-before:always}
+  #printdoc section:first-of-type{break-before:auto;page-break-before:auto}
+  #printdoc h2{font-size:16pt;border-bottom:1px solid #ccc;padding-bottom:4pt;margin:0 0 12pt}
+  #printdoc h3{font-size:12.5pt;margin:16pt 0 3pt;break-after:avoid;page-break-after:avoid}
+  #printdoc h4{font-size:10pt;text-transform:uppercase;letter-spacing:.5pt;color:#666;margin:9pt 0 2pt}
+  #printdoc p,#printdoc li{margin:0 0 6pt;line-height:1.45;max-width:none}
+  #printdoc .art{break-inside:avoid;page-break-inside:avoid}
+  #printdoc figure.fig{background:none;border:1px solid #ddd;max-width:150mm}
+  #printdoc .toc li{margin-bottom:3pt}
+  #printdoc .stepnav{color:#666;font-size:9.5pt;margin:0 0 5pt}
+  #printdoc .yournote{border-left:2.5pt solid #1a40ff;background:#eff2ff;padding:6pt 9pt;margin:7pt 0 0;
+    break-inside:avoid;page-break-inside:avoid}
+  #printdoc .yournote b{display:block;font-size:8.5pt;text-transform:uppercase;letter-spacing:.5pt;color:#1a40ff;margin-bottom:2pt}
+  #printdoc .yournote p{margin:0 0 3pt}
+  #printdoc .yournote .qn{font-weight:600}
+  #printdoc table{width:100%;border-collapse:collapse;font-size:10pt;margin-top:6pt}
+  #printdoc th,#printdoc td{border:1px solid #ddd;padding:4pt 6pt;text-align:left;vertical-align:top}
+}
+@media(max-width:940px){
+  html,body{height:auto;overflow:visible;display:block}
+  main{grid-template-columns:1fr;min-height:0}
+  .panel,.chat{height:auto;overflow:visible}
+  .panelbody{overflow:visible;display:block}
+  .tabpane{overflow:visible;padding:18px}
+  .overall{position:static;top:auto}
+  .chat{height:520px;overflow:hidden}
+  .split{grid-template-columns:1fr}
+  .list{border-right:none;border-bottom:1px solid var(--line);padding:0 0 14px}
+  .chain{flex-direction:column}.handover{flex:none;padding:8px 0}
+  .handover .arrow{width:1.5px;height:22px}
+  .handover .arrow::after{right:-3.5px;top:auto;bottom:0;border:4.5px solid transparent;border-top-color:var(--magenta)}
+  .bounds{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="brand" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAQKADAAQAAAABAAAAQAAAAABGUUKwAAAGaElEQVR4Ae2aCWwVVRSGi7bsIghU2aQFpaK4NiiIiKIoJMYtQDSKuBRDNCEiidGARuMuohI1EdE0IWiNiCaiEhHlgcViEDUqCASkxSUuBK1IrQjF7699yTid92a5d16n2JN8dO7MOeeee9+995yZkJfXJm0z8L+egXYJGn17YjkDToUesBeq4Wv4BhrAuiRlAq5jZNPhAGiwu6Er9IFCqIfV8DJoQg4Z0Q8wHz6GsXA4uOUIboyCJ+AzKIchcEjIDEaxDroHHE0v9O6GjTALkrKCCSW8nIDJdhga3jSvBJsVsBR0XrQ6KSDiVTDTIPJ8bJ+EKuhn4KdFTB+g17fAa8+HDeguDNbDMWENW0r/UjreAjZ/tXvwl4IukGgZRnRKc+fFEOVCfCpDJFb0i38F02KKsBN+K6EsJv9GbntirVx/r5EXf2OtsM0wyF81dxrK3Wvh8Rx1eSf9LMlRX77dDEBDJ/RcX017Ch1xpdU23p7LaJ5KMdsEc6KZG1ldiXUK8o28GBhfg61O+6kGPkxMVV+k4DITJ1Fs9Qb3NHwBI6M4sGgzCV/vQs7eF0bTmfbeYtDB19Kis0Dnz/C4A9HLyDzQfp8Sd2ch/atC1IqMTa7C8+egCqxvbL1Ed6y3xg2grWlVTsPbMlB+H2fVs11n2v8rwVpK7IazR0DL/XboAEkXvS1m3AZh8uQFOHoMNPgJUAMmcjTG+rSldwQdWHtgJ2yFWrAlWgFPgca6P6rT2Riqxp4Y1YHD7hyuK+BHOOjiAO0doF9Mk2NDOuNE2eC4KM5UUCyAD6EITKQAY22fv8A9cK/2L+jdADbkDZyoLggt+hKrJaQvsyaiiXwevAb6G/d/hnqP51oRN4Op3I+DB8M60XL/Eo4Ka+ihP5177sGnuHcFDIRCOBFuhW3g1P2D9ulgIldj/GoYB8qbyu8XhjHKoNub+9+Bc1ALaWfKIAN49qlLP1Tw2LplBDdSoLQYSFTRLQ+k6a9Uhopz8JrYzj5mo3je4LDTuWHykaMYex2EzQqifG56iZamTmobcrHLyQu061z33M0qbpSDBq3JOwyUNvWGGUWUYuVDE6AtlVV04Kl8NJnxdAc6+fVmmF4B+7kuTT/M4V+N6RMY6O5Ts+KW/txQoN+7H0Rod8Gmh8NuL9dKb7mW9HZqdgZ4TYCWmgLVvjMV+Xf2obSmyc21KA1r8JqI/4gzuPSDTlwoJ9sQ+fnT4Ui+TWsKh7vAl+pXY202Lq9DUDOlPWtDNHilwMFNzlTzq8Td0tTO9uciHiqFKhbFVAk1EEW6Y7QPfncbe02Aln6mHO2292sr+HUwxqE4metljrbXpQqjV8B5fpxNO+oEHIttLTRbAV5bQKWploz2jQ15HSfOfT+J9ngfx3fw3Dl4ZRL954ioMgzD6qDGej1VynAGENTWS0/LdwloNaTZxfW10B6c0ovGQ6DDMq2rvzeBibyE8bSgDhSUlu0pQQ0C6BWjo+XrHJSuVfI+B/OgAqrBrfMm99wTxa3AotWsH/SkwBYo6hebGsYggO6Z6KiScw8wW3sF+loVJnIuxmvB67zL6Pc2npRnfBr9QRGmi6AOsg38J57fB37vDKj4yjNoyJentPO8+++rqfbNaPCtnTP4yHb7ZB7qIBwOfUFLXMVXNXwEy0Hp01R0jq0BHbybwzhTdlgFl4cxMtDN9EMYuGw0ncG/S6M6KcPw7ajGCbBTxan0qVfrSCIH+iKkAqQ1yhyCNv2QkncLTt4Dr4IpyZNSQnDbYIhpkB1woEPJtBAxjSOMfQHKH8CsMEbZdJW/d4BmtTXIowSpdw1bpXzjmGfy73o4srGV3H+0UnVu6ZuGdVmAx3dApWUSRbl+O6jGiEW0typAqVEZIkkyhWBUZo+IOyhNwougg3FQ3J0F9D8bPVV5pQH1raip060w0Yq3aE76YPYarIYiyLmMo0d9pFgMg3PYu8pmLfmNMBc6QouJssLDkA4m7m2hSdcr8hoYA4mR44nkWVDtvQgmgK2Dsje+roeVUAU3gs4iK2L7Law/UU2GS6AbbIJK2ADV8Cs0QDaRXTGcBWOhBGpAW00Fjj7aWhPbE+AMbCiN82EkaEDaq3WwG2phD+wDxaAPH3p37wmagL9BaS0F74Mq0VgkzglwBpxPoxD6NaFKrStoKR+EetgF38JO+AE0OW3SNgNtMxDvDPwDjT1O1U3CVzEAAAAASUVORK5CYII=" alt="Celonis" width="26" height="26">
+  <h1>Process Enablement</h1>
+  <div class="field"><label for="proc">Process</label><select id="proc" title="Switch exploration — one per Process + Industry pair"></select></div>
+  <div class="field"><label for="ind">Industry</label><select id="ind" title="Industries explored for this process"></select></div>
+  <div class="field cofield"><label>Content for specific company</label><span class="coname" id="co">Example Co.</span></div>
+  <div class="spacer"></div>
+  <div class="hdr-actions">
+    <div class="langwrap">
+      <button class="iconbtn" id="langBtn" aria-haspopup="true" aria-expanded="false" title="Language — the whole page reloads in the language you pick" aria-label="Change language">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.4 4 5.6 4 9s-1.4 6.6-4 9c-2.6-2.4-4-5.6-4-9s1.4-6.6 4-9z"/></svg>
+      </button>
+      <div class="langmenu" id="langMenu" hidden role="menu"></div>
+    </div>
+    <button class="btn sm" id="startQuiz" title="10 questions on this process">Quiz</button>
+    <div class="langwrap">
+      <button class="btn sm" id="exportBtn" aria-haspopup="true" aria-expanded="false">Export</button>
+      <div class="langmenu" id="exportMenu" hidden role="menu">
+        <b>Export — your notes are woven in</b>
+        <button class="col" role="menuitem" data-fmt="pdf">PDF<span class="fmt">Print dialog → Save as PDF, for a person</span></button>
+        <button class="col" role="menuitem" data-fmt="md">Markdown (.md)<span class="fmt">One structured file, for an agent</span></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true"  data-tab="overview">Overview</button>
+  <button role="tab" aria-selected="false" data-tab="process">Process Step-by-Step</button>
+  <button role="tab" aria-selected="false" data-tab="problems">Process Challenges</button>
+  <button role="tab" aria-selected="false" data-tab="kpis">KPIs</button>
+  <button role="tab" aria-selected="false" data-tab="glossary">Terminology</button>
+  <button role="tab" aria-selected="false" data-tab="notes">Personal Notes</button>
+</nav>
+
+<main>
+<div class="panel">
+  <div class="panelhead" id="panelTitle">Overview</div>
+  <div class="panelbody">
+
+  <!-- 1 OVERVIEW -->
+  <div class="tabpane" id="overview">
+    <p class="intro">Start here — what this process is for, and where it sits.</p>
+    <p class="purpose">Process customer orders and ensure goods are delivered and billed on time.</p>
+    <div class="lbl">The three goals</div>
+    <ol class="goals">
+      <li>Deliver on the date the customer was promised.</li>
+      <li>Minimise the manual effort each order costs to process.</li>
+      <li>Protect revenue that has already been earned but not yet billed.</li>
+    </ol>
+    <div class="lbl">What goes in, what comes out</div>
+    <div class="io"><b>Input</b><p>A customer's purchase order, arriving by EDI, customer portal or email, stating which materials they want, in what quantity, to which ship-to location, and by which date.</p></div>
+    <div class="io"><b>Output</b><p>Goods physically delivered to the customer's dock, and an accurate invoice they can pay — which closes as cash in the bank against that order.</p></div>
+    <div class="lbl">Why the organisation depends on it</div>
+    <p id="whyP" style="max-width:38em">It is the only path by which demand becomes revenue. Every day an order sits blocked is a day of working capital tied up and a day of service reputation spent.</p>
+    <div class="lbl">Where it sits — and what it receives and hands on</div>
+    <p style="max-width:900px;margin:0 0 12px">Order Management is the middle stage of the <b>Lead to Cash</b> chain. It does not
+      find the customer and it does not chase the money: it takes a won order from the stage before it, and hands a valid
+      receivable to the stage after it. The two arrows below are the handovers — those are where this process is judged.</p>
+    <div class="e2e">End-to-end chain: <b>Lead to Cash</b></div>
+    <div class="chain">
+      <div class="stage"><span class="role">Upstream — before us</span><b>Quote to Order</b>Prices the deal, negotiates terms and wins the customer's agreement to buy.</div>
+      <div class="handover">
+        <span class="what">hands over<br><b>a won order</b> with agreed price and terms</span>
+        <span class="arrow"></span>
+        <span class="who2">if it arrives incomplete, we start blocked</span>
+      </div>
+      <div class="stage here"><span class="role">This process</span><b>Order Management</b>Turns that agreement into goods on the customer's dock and an accurate invoice they can pay.</div>
+      <div class="handover">
+        <span class="what">hands over<br><b>an issued invoice</b> against delivered goods</span>
+        <span class="arrow"></span>
+        <span class="who2">if we invoice late, they collect late</span>
+      </div>
+      <div class="stage"><span class="role">Downstream — after us</span><b>Accounts Receivable</b>Collects the cash for what was delivered and billed, and chases what is overdue.</div>
+    </div>
+    <div class="bounds">
+      <div><b>This process starts when</b>a customer's purchase order arrives and is accepted as a sales order — not when the opportunity was first created.</div>
+      <div><b>This process ends when</b>the invoice has been sent and the receivable is collectable — not when the cash actually lands.</div>
+    </div>
+    <p class="notmine"><b style="color:var(--ink)">Deliberately not ours:</b> winning the deal, setting the price list, deciding the credit limit, and collecting overdue cash. Each belongs to a neighbouring process — but each one can block us, which is why a problem here often starts there.</p>
+  </div>
+
+  <!-- 2 PROCESS -->
+  <div class="tabpane" id="process" hidden>
+    <p class="intro">The whole chain first — then pick any step to see what happens inside it.</p>
+    <div class="overall">
+      <div class="flowline" id="flowline"></div>
+    </div>
+    <div class="split">
+      <div class="list" id="rail"></div>
+      <div class="detail">
+        <h2 id="sName"></h2>
+        <p class="chainpos" id="sChain"></p>
+        <div id="devBody" hidden></div>
+        <div class="lbl sb">Who does it</div><div id="sActor" class="sb"></div>
+        <div class="lbl sb">What happens</div><p id="sDesc" class="sb"></p>
+        <div class="lbl sb">This order, at this step</div><p id="sEx" class="sb"></p>
+        <div class="lbl sb">Documents that now exist</div>
+        <div class="docs sb" id="docs"></div>
+        <p class="legend sb"><i class="l1">Sales Order</i> — the customer's request · <i class="l2">Delivery</i> — the goods being shipped · <i class="l3">Invoice</i> — the bill they owe</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 PROBLEMS -->
+  <div class="tabpane" id="problems" hidden>
+    <p class="intro">Grouped by the business objective they put at risk. One at a time.</p>
+    <div class="split">
+      <div class="list" id="probList"></div>
+      <div class="detail" id="probDetail"></div>
+    </div>
+  </div>
+
+  <!-- 4 KPIs -->
+  <div class="tabpane" id="kpis" hidden>
+    <p class="intro">How this process is measured — and where each measure misleads.</p>
+    <div class="split">
+      <div class="list" id="kpiList"></div>
+      <div class="detail" id="kpiDetail"></div>
+    </div>
+  </div>
+
+  <!-- 5 GLOSSARY -->
+  <div class="tabpane" id="glossary" hidden>
+    <p class="intro">The reference shelf — come back to it, don't read it through.</p>
+    <p class="provnote"><b>Every entry on this tab is tagged.</b>
+      <span class="src ctx">from your context</span> marks wording taken from the customer's own material — their
+      handbook, glossary or KPI definitions. <span class="src typ">typical</span> marks what is still the
+      industry-generic view, pending their confirmation. Nothing here is untagged, so you always know whose
+      words you are about to use in front of them.</p>
+    <div class="lbl" style="margin-top:0">Terms you'll hear in a workshop</div>
+    <dl class="terms">
+      <dt>Order block <span class="src ctx">from your context</span></dt><dd>A system-set hold that stops an order progressing — credit, delivery or billing. It comes up constantly, because most "slow" orders are not slow, they are blocked and unattended.</dd>
+      <dt>Goods issue <span class="src ctx">from your context</span></dt><dd>The posting that records stock physically leaving the warehouse. It matters because it is the moment revenue is earned and the billing clock starts.</dd>
+      <dt>Incoterms <span class="src typ">typical</span></dt><dd>The contractual split of cost and risk between seller and buyer during transport, such as FOB or DAP. Ask about it whenever freight cost or delivery-date disputes come up.</dd>
+      <dt>Touchless order <span class="src typ">typical</span></dt><dd>An order that travels from entry to delivery with no manual change. It is the cleanest single proxy for how much effort this process really costs.</dd>
+      <dt>DSO <span class="src ctx">from your context</span></dt><dd>Days Sales Outstanding — the average number of days between invoicing and collecting cash. Finance will frame most of this process in terms of its effect on this number.</dd>
+      <dt>OTIF <span class="src typ">typical</span></dt><dd>On Time In Full — delivered on the promised date and complete. Worth clarifying early, because teams often measure "on time" and "in full" separately and quote the better one.</dd>
+    </dl>
+    <div class="lbl">Systems that hold the data</div>
+    <ul class="sys">
+      <li><b>SAP ECC</b> — the system of record for the sales order, the delivery document and the invoice; every block and date change is written here. <span class="src ctx">from your context</span></li>
+      <li><b>Warehouse management</b> — holds the pick, pack and goods-issue confirmations that prove when stock actually left. <span class="src typ">typical</span></li>
+      <li><b>Transport management</b> — holds carrier bookings and shipment tracking, and is where a split into two loads becomes visible. <span class="src typ">typical</span></li>
+    </ul>
+    <div class="lbl">The people involved</div>
+    <div class="cast" id="cast"></div>
+  </div>
+
+  <!-- 6 PERSONAL NOTES -->
+  <div class="tabpane" id="notes" hidden>
+    <p class="intro">Everything you asked the chat, kept as process notes — in the order you learned it.</p>
+    <div id="noteList"></div>
+  </div>
+
+  </div>
+</div>
+
+<aside class="chat">
+  <h3>Chat — ask infos<span class="dot2" id="chatDot"></span><span class="stat" id="chatStat">checking…</span></h3>
+  <div class="log" id="log"><div class="msg ai">Ask me anything about this process — how the steps link, the process challenges, the KPIs, or the systems behind it.
+      <b>Anything useful in my answer is written into your Personal Notes</b>, structured like the rest of this page and tagged with the screen and step you were on when you asked.</div></div>
+  <form class="composer" id="composer"><input id="q" placeholder="e.g. why do billing blocks age?" autocomplete="off"><button>Send</button></form>
+</aside>
+</main>
+
+<!-- the quiz opens as a full-screen frame over the page -->
+<section id="quizScreen" hidden role="dialog" aria-modal="true" aria-label="Quiz">
+  <div class="qcard" id="qwrap" tabindex="-1"></div>
+</section>
+
+<div id="printdoc"></div>
+
+<script>
+/* ---------- identity of this exploration ----------
+   Every browser-persisted key derives from this id. All explorations open from
+   file://, which means they share one localStorage origin — so a hardcoded key
+   would show one exploration's notes inside another. Never hardcode it.      */
+const CURRENT_ID='order-management__consumer-goods-confectionery';
+
+/* ---------- ONE running example, defined once ---------- */
+const EX={so:{no:"432431",shipTo:"Kroger HQ",amount:"$3,200",date:"15 Feb 2024"},
+          dl:{no:"645321",terms:"FOB"},inv:{no:"12412123",due:"$3,200"},
+          items:[{n:"Snickers",c:"1234",q:"100",p:"$2"},{n:"Skittles",c:"9981",q:"1000",p:"$3"}]};
+const rows=(price,tick)=>EX.items.map(i=>`<tr><td>${tick?'<span class="tick">✓</span> ':''}${i.n}</td><td>${i.c}</td><td>${i.q}</td>${price?`<td>${i.p}</td>`:''}</tr>`).join('');
+const soCard=t=>`<div class="doc d1"><h4>Sales Order</h4>No: ${EX.so.no}<br>Ship to: ${EX.so.shipTo}<br>Amount: ${EX.so.amount}<br>Deliver by: ${EX.so.date}<table><tr><th>Name</th><th>Code</th><th>Qty</th><th>Price</th></tr>${rows(1,t)}</table></div>`;
+const dlCard=t=>`<div class="doc d2"><h4>Delivery</h4>No: ${EX.dl.no}<br>Ship to: ${EX.so.shipTo}<br>Terms: ${EX.dl.terms}<br>Deliver by: ${EX.so.date}<table><tr><th>Name</th><th>Code</th><th>Qty</th></tr>${rows(0,t)}</table></div>`;
+const invCard=()=>`<div class="doc d3"><h4>Customer Invoice</h4>No: ${EX.inv.no}<br>For order: ${EX.so.no}<br>Amount due: ${EX.inv.due}<table><tr><th>Name</th><th>Code</th><th>Qty</th><th>Price</th></tr>${rows(1,0)}</table></div>`;
+const ship=n=>`<div class="doc d2" style="min-width:92px">Shipment #${n}</div>`;
+const bubble=t=>`<div class="bubble">${t}</div>`;
+
+const PEOPLE={
+  jm:["JM","James","Customer Service Representative","I ensure timely order processing.","Accountable for getting a clean, confirmable order into the system and promising a date the business can actually hit."],
+  rb:["RB","Rob","Warehouse Clerk","I pick, pack, and ship the goods.","Accountable for turning a delivery document into goods that leave the dock complete and on the promised day."],
+  pt:["PT","Patricia","Billing Specialist","I make sure what we shipped is what we bill.","Accountable for converting a completed delivery into an accurate invoice before the receivable ages."]
+};
+const whoHTML=k=>{const p=PEOPLE[k];return`<div class="who"><div class="av">${p[0]}</div><div><b>${p[1]}</b><span>${p[2]}</span><q>${p[3]}</q><p>${p[4]}</p></div></div>`};
+
+/* ---------- steps ---------- */
+const STEPS=[
+ {name:"Create Sales Order",who:"jm",follows:"the customer sending their purchase order",leads:"Send Order Confirmation",
+  desc:"The customer's purchase order becomes a sales order in the ERP, and each line is checked against the customer master and the price list. From here the commitment exists in the system, and everything downstream references it.",
+  ex:"Kroger's PO arrives by EDI and becomes sales order 432431: ship-to Kroger HQ, two lines — 100 cases of Snickers at $2 and 1,000 of Skittles at $3 — $3,200 in total, requested for 15 February 2024.",
+  docs:()=>soCard(0)},
+ {name:"Send Order Confirmation",who:"jm",follows:"Create Sales Order",leads:"Create Delivery Document — unless the credit limit is exceeded, which diverts the case to Credit review",
+  desc:"Availability is checked and a delivery date the business can actually hit is confirmed back to the customer. This is the promise every later on-time measure is scored against.",
+  ex:"James confirms 15 February and the confirmation goes out the same afternoon: “We've received your order. We will deliver on 15 February.”",
+  docs:()=>bubble("We've received your order. We will deliver on 15 February.")+soCard(0)},
+ {name:"Create Delivery Document",who:"rb",follows:"Send Order Confirmation",leads:"Record Goods Issue",
+  desc:"The warehouse creates the document that will carry the goods, copying quantities from the order and adding the incoterm and route. The order lines are now committed to a physical movement.",
+  ex:"Delivery 645321 is created against order 432431 on 14 February, terms FOB, covering both lines in full.",
+  docs:()=>soCard(1)+dlCard(0)},
+ {name:"Record Goods Issue",who:"rb",follows:"Create Delivery Document",leads:"Create Customer Invoice",
+  desc:"Stock is picked, packed and posted out of the warehouse, and the carrier takes it. This is the moment revenue is earned and the billing clock starts running.",
+  ex:"The order leaves the DC in two loads on 15 February — Snickers on shipment #1, Skittles on shipment #2 — complete, but on two trucks.",
+  docs:()=>dlCard(1)+ship(1)+ship(2)},
+ {name:"Create Customer Invoice",who:"pt",follows:"Record Goods Issue",leads:"Send Customer Invoice",
+  desc:"The billing document is created from what was actually delivered and priced from the order. A mismatch between those two is exactly what a billing block exists to catch.",
+  ex:"Invoice 12412123 is created for $3,200 against order 432431, matching both delivered lines exactly, so no block is set.",
+  docs:()=>dlCard(1)+invCard()},
+ {name:"Send Customer Invoice",who:"pt",follows:"Create Customer Invoice",leads:"Accounts Receivable — or back to Create Customer Invoice if the customer disputes it",
+  desc:"The invoice is transmitted and the receivable becomes collectable. The process hands over to collections, and the cash conversion clock is the only thing still running.",
+  ex:"The invoice is sent on 16 February on 30-day terms, so payment is due by 17 March 2024.",
+  docs:()=>invCard()}
+];
+/* Common deviations — explained in their own frame, not drawn on the happy path */
+const DEVIATIONS=[
+ {name:'Order held at credit review', kind:'branch', from:1, to:2,
+  label:'credit limit exceeded — the case waits at Credit review until released or prepaid, then rejoins at Create Delivery Document',
+  what:'The order is confirmed to the customer, but before a delivery can be created the system checks the customer\'s open exposure against their credit limit. If the limit is exceeded the order stops: no delivery document can be created, so nothing can be picked and nothing can ship.',
+  trigger:'Open receivables plus this order exceed the credit limit on the customer master — often because the limit has not been reviewed since the account grew, or because overdue invoices are inflating the exposure.',
+  back:'Credit control releases the block manually, the customer prepays, or the overdue balance is cleared. The case then rejoins the happy path at Create Delivery Document, having lost the days it waited.',
+  cost:'The confirmed delivery date is usually already at risk by the time anyone notices, so the order ships late and the invoice — and the cash — slips with it.'},
+ {name:'Invoice disputed and reissued', kind:'loop', from:5, to:4,
+  label:'invoice disputed — back to Create Customer Invoice for a corrected billing document',
+  what:'The invoice has been sent, but the customer rejects it — usually a price or quantity that does not match their purchase order. The receivable is not collectable while the dispute stands, and the original invoice has to be cancelled and reissued.',
+  trigger:'A mismatch between the customer PO and the sales order that no one caught before billing: a stale price, a partial delivery billed in full, or the wrong payment terms.',
+  back:'The billing document is cancelled, the underlying order data is corrected, and a new invoice is created — the case returns to Create Customer Invoice and repeats the last two steps.',
+  cost:'Two people spend time on an invoice that was already "done", the payment clock restarts from the reissue date, and the goods stay delivered-but-unpaid throughout.'}
+];
+
+let cur=0, dev=null;
+/* the step frame's blocks, hidden while a deviation is shown */
+const stepBlocks=[];
+function drawDeviation(){
+  const d=DEVIATIONS[dev];
+  stepBlocks.forEach(el=>el.hidden=true);
+  devBody.hidden=false;
+  sName.textContent=d.name;
+  sChain.innerHTML=`A common deviation · leaves after <b>${STEPS[d.from].name}</b> · rejoins at <b>${STEPS[d.to].name}</b>`;
+  devBody.innerHTML=[['What happens',d.what],['What triggers it',d.trigger],
+                     ['How the case comes back',d.back],['What it costs',d.cost]]
+    .map(([l,v])=>`<div class="lbl">${l}</div><p>${v}</p>`).join('');
+  [...flowline.querySelectorAll('.node')].forEach((n,i)=>
+    n.classList.toggle('rel', i===d.from||i===d.to));
+}
+function drawStep(){
+  flowline.innerHTML=STEPS.map((s,i)=>`<button class="node" data-i="${i}" aria-current="${i===cur}">
+      <span class="dot"></span><span><b>${s.name}</b><small>step ${i+1} of ${STEPS.length}</small></span></button>`).join('<span class="link"></span>');
+  rail.innerHTML='<h4>Steps</h4>'
+    +STEPS.map((s,i)=>`<button data-i="${i}" aria-current="${i===cur&&dev===null}"><span class="n">${i+1}</span>${s.name}</button>`).join('')
+    +'<h4>Common deviations</h4>'
+    +DEVIATIONS.map((d,i)=>`<button data-dev="${i}" aria-current="${dev===i}"><span class="n">!</span>${d.name}</button>`).join('');
+  if(dev!==null){ drawDeviation(); return; }
+  const s=STEPS[cur];
+  stepBlocks.forEach(el=>el.hidden=false);
+  sName.textContent=s.name;
+  sChain.innerHTML=`Follows <b>${s.follows}</b> · leads to <b>${s.leads}</b>`;
+  sActor.innerHTML=whoHTML(s.who); sDesc.textContent=s.desc; sEx.textContent=s.ex; docs.innerHTML=s.docs();
+  devBody.hidden=true;
+}
+stepBlocks.push(...document.querySelectorAll('.sb'));
+const pickStep=e=>{
+  const s=e.target.closest('[data-i]'); if(s){ cur=+s.dataset.i; dev=null;
+    [...flowline.querySelectorAll('.node')].forEach(n=>n.classList.remove('rel')); drawStep(); return; }
+  const d=e.target.closest('[data-dev]'); if(d){ dev=+d.dataset.dev; drawStep(); }
+};
+flowline.addEventListener('click',pickStep); rail.addEventListener('click',pickStep);
+drawStep();
+
+/* ---------- problems, grouped by objective ---------- */
+const AXIS_BLOCK=`<figure class="fig"><svg viewBox="0 0 660 168" role="img" aria-label="The gap between goods delivered and invoice sent, during which billing is blocked">
+  <!-- event markers, well above the axis -->
+  <text x="96" y="26" font-size="12.5" fill="#3f3f46">goods delivered</text>
+  <line x1="100" y1="38" x2="100" y2="86" stroke="#3f3f46" stroke-width="1.25"/>
+  <text x="436" y="26" font-size="12.5" fill="#3f3f46">invoice sent</text>
+  <line x1="440" y1="38" x2="440" y2="86" stroke="#3f3f46" stroke-width="1.25"/>
+  <!-- axis -->
+  <line x1="40" y1="86" x2="600" y2="86" stroke="#3f3f46" stroke-width="1.25"/>
+  <polygon points="600,80 616,86 600,92" fill="#3f3f46"/>
+  <text x="580" y="110" font-size="11.5" fill="#6b7280">time</text>
+  <!-- blocked span, clearly below the axis, label below the span -->
+  <line x1="100" y1="116" x2="440" y2="116" stroke="#bb0dc7" stroke-width="2.5"/>
+  <line x1="100" y1="108" x2="100" y2="124" stroke="#bb0dc7" stroke-width="2.5"/>
+  <line x1="440" y1="108" x2="440" y2="124" stroke="#bb0dc7" stroke-width="2.5"/>
+  <text x="270" y="146" font-size="12.5" fill="#bb0dc7" text-anchor="middle">blocked — no invoicing possible</text>
+</svg><figcaption>The goods are gone, the revenue is earned, and nothing can be invoiced until the block clears.</figcaption></figure>`;
+const PROBS=[
+ {g:"Protect revenue",name:"Delivered goods left unbilled",
+  concept:"<p>A <b>billing block</b> is a flag on an order or delivery that prevents an invoice being created until the information is corrected or an open dispute is settled. Its purpose is protective: it stops a wrong invoice reaching the customer and turning into a credit note.<p>The cost is that the goods have already left the warehouse, so revenue is earned but uncollectable for as long as the block stands.</p>"+AXIS_BLOCK,
+  challenge:"With high order volumes and no single view of which orders carry a block, blocked orders are found late or not at all. A block set for a $40 price mismatch can hold a $10,000 invoice for weeks, because nobody owns the queue. Some orders are never invoiced at all, so goods that were delivered are never paid for. <i>[replace with the researched company's own situation, with a source]</i>",
+  causes:"A price mismatch between the customer PO and the sales order, or an unresolved dispute on a prior invoice.",
+  damage:"Revenue is earned but uninvoiced, and ages toward write-off as the block sits unworked."},
+ {g:"Improve customer satisfaction",name:"Credit blocks stalling new orders",
+  concept:"<p>A <b>credit block</b> holds an order when the customer's exposure exceeds the limit set for them. It protects the business from shipping to someone who may not pay — but the limit is a static number, so a growing customer trips it routinely while remaining perfectly creditworthy.</p>",
+  challenge:"Limits are not refreshed as accounts grow, and no one follows up on the overdue balances that pushed the exposure up. Orders wait in a state nobody is watching, and the customer hears nothing until they chase. <i>[replace with the researched company's own situation]</i>",
+  causes:"Credit limits not reviewed after account growth; no dunning follow-up on the overdue items driving exposure.",
+  damage:"The order cannot progress, so cash arrives later and working capital stays tied up in receivables."},
+ {g:"Improve customer satisfaction",name:"Confirmed dates changed after the promise",
+  concept:"<p>The <b>confirmed delivery date</b> is the promise the customer plans around. When stock is unavailable at confirmation, or ship-to and incoterm data is incomplete, the date is pushed out — and because the new date becomes the measured target, the miss disappears from the on-time number.</p>",
+  challenge:"Date changes are made in the ERP without the customer being told in the same motion, so the first they learn of it is a late delivery. <i>[replace with the researched company's own situation]</i>",
+  causes:"Stock unavailable at the moment of confirmation; incomplete ship-to or incoterm master data.",
+  damage:"The promise is missed and recovery is bought with expedited freight, at a cost the order's margin never priced in."},
+ {g:"Reduce effort",name:"The same order edited over and over",
+  concept:"<p>A <b>touchless order</b> reaches delivery with no manual change. Every manual edit — a price correction, a quantity change, a re-confirmation — is a person re-opening a case that was supposed to be finished, and each edit resets the checks that ran before it.</p>",
+  challenge:"A minority of orders absorb the majority of handling time, and because effort is not measured per order, nobody can see which ones. <i>[replace with the researched company's own situation]</i>",
+  causes:"Quotes entered by hand rather than carried from a configured price; incomplete order data at entry.",
+  damage:"Processing cost per order rises invisibly, and each re-touch is another chance to introduce the mismatch that blocks billing later."}
+];
+let pcur=0;
+function drawProbs(){
+  let html='',lastG=null;
+  PROBS.forEach((p,i)=>{ if(p.g!==lastG){html+=`<h4>${p.g}</h4>`;lastG=p.g}
+    html+=`<button data-i="${i}" aria-current="${i===pcur}">${p.name}</button>`});
+  probList.innerHTML=html;
+  const p=PROBS[pcur];
+  probDetail.innerHTML=`<h3>${p.name}</h3><p class="chainpos">Puts at risk: ${p.g}</p>
+    <div class="stage"><h5>Concept — what the mechanism is</h5>${p.concept}</div>
+    <div class="stage"><h5>Challenge — how it plays out here</h5><p>${p.challenge}</p></div>
+    <div class="facts"><div><b>Most probable root causes</b>${p.causes}</div><div><b>How the damage happens</b>${p.damage}</div></div>`;
+}
+probList.addEventListener('click',e=>{const b=e.target.closest('[data-i]'); if(b){pcur=+b.dataset.i; drawProbs();}});
+drawProbs();
+
+/* ---------- KPIs ---------- */
+const KPIS=[
+ {name:"On-time delivery rate",
+  measures:"The share of deliveries that arrived on or before the date the customer was given, counted per delivery line rather than per order — so a partially late order is not scored as fully on time.",
+  hurts:"A late delivery delays the invoice, and therefore the cash. It is also the most visible service failure a customer experiences: it shows up in the next tender, not just this order.",
+  clock:"The confirmed delivery date.",
+  trap:"Measured against the <i>confirmed</i> date, the number flatters you — a date pushed out during processing quietly becomes the new target. Measured against the customer's <i>originally requested</i> date, it is lower, and closer to what the customer believes.",
+  svg:`<figure class="fig"><svg viewBox="0 0 660 176" role="img" aria-label="On-time, late and at-risk zones around the confirmed delivery date">
+   <text x="196" y="26" font-size="12.5" fill="#3f3f46" text-anchor="middle">confirmed delivery date</text>
+   <line x1="196" y1="38" x2="196" y2="98" stroke="#3f3f46" stroke-width="1.25"/>
+   <rect x="40" y="62" width="156" height="30" fill="#e6f6ec"/><rect x="196" y="62" width="234" height="30" fill="#fdf3d7"/><rect x="430" y="62" width="170" height="30" fill="#fdeaeb"/>
+   <line x1="40" y1="98" x2="600" y2="98" stroke="#3f3f46" stroke-width="1.25"/><polygon points="600,92 616,98 600,104" fill="#3f3f46"/>
+   <text x="118" y="126" font-size="12.5" fill="#1f8a4c" text-anchor="middle">on time</text>
+   <text x="313" y="126" font-size="12.5" fill="#b45309" text-anchor="middle">late — the invoice slips with it</text>
+   <text x="515" y="126" font-size="12.5" fill="#bb0dc7" text-anchor="middle">repeat revenue</text>
+   <text x="515" y="144" font-size="12.5" fill="#bb0dc7" text-anchor="middle">at risk</text>
+  </svg><figcaption>Scored against the confirmed date, not the date the customer first asked for.</figcaption></figure>`},
+ {name:"Unbilled revenue",
+  measures:"The value of goods already delivered for which no invoice has yet been raised, aged by days since the goods issue was posted.",
+  hurts:"The company has paid to make and ship the goods but holds no receivable in return — the cost is incurred and the cash is not. Past a certain age the revenue may have to be written off entirely.",
+  clock:"Goods issue — not order creation, which is why an order-based view hides the problem.",
+  trap:"A total in currency looks manageable until it is aged. The oldest slice, not the size, is what turns into a write-off.",
+  svg:`<figure class="fig"><svg viewBox="0 0 660 176" role="img" aria-label="Billed on time, billed late, and potential write-off, aged from goods issue">
+   <text x="62" y="26" font-size="12.5" fill="#3f3f46">goods issued</text>
+   <line x1="58" y1="38" x2="58" y2="98" stroke="#3f3f46" stroke-width="1.25"/>
+   <rect x="40" y="62" width="150" height="30" fill="#e6f6ec"/><rect x="190" y="62" width="250" height="30" fill="#fdf3d7"/><rect x="440" y="62" width="160" height="30" fill="#fdeaeb"/>
+   <line x1="40" y1="98" x2="600" y2="98" stroke="#3f3f46" stroke-width="1.25"/><polygon points="600,92 616,98 600,104" fill="#3f3f46"/>
+   <text x="115" y="126" font-size="12.5" fill="#1f8a4c" text-anchor="middle">billed on time</text>
+   <text x="315" y="126" font-size="12.5" fill="#b45309" text-anchor="middle">billed late</text>
+   <text x="520" y="126" font-size="12.5" fill="#bb0dc7" text-anchor="middle">potential write-off</text>
+  </svg><figcaption>Aged from goods issue — the oldest slice, not the total, is what turns into a loss.</figcaption></figure>`},
+ {name:"Touchless order rate",
+  measures:"The share of orders that reach delivery with no manual change of any kind after entry.",
+  hurts:"Every manual touch is unplanned effort, and each one resets checks that had already passed — so a low rate predicts both cost per order and downstream billing blocks.",
+  clock:"Order creation to goods issue.",
+  trap:"Counting only changes made in the order header hides edits made on the lines, which is where most of them happen.",
+  svg:""},
+ {name:"Days Sales Outstanding",
+  measures:"The average number of days between raising an invoice and collecting the cash for it.",
+  hurts:"It is the number finance uses to judge this process. Cash collected late is cash that has to be borrowed in the meantime.",
+  clock:"Invoice date to payment clearing.",
+  trap:"DSO starts at invoicing, so it is blind to time lost <i>before</i> the invoice existed. A process with a billing-block problem can show a healthy DSO and still convert cash slowly.",
+  svg:""}
+];
+let kcur=0;
+function drawKpis(){
+  kpiList.innerHTML='<h4>Measures</h4>'+KPIS.map((k,i)=>`<button data-i="${i}" aria-current="${i===kcur}">${k.name}</button>`).join('');
+  const k=KPIS[kcur];
+  kpiDetail.innerHTML=`<h3>${k.name}</h3>
+    <div class="lbl">What it measures</div><p>${k.measures}</p>
+    <div class="lbl">Why a bad value hurts</div><p>${k.hurts}</p>
+    <div class="lbl">What starts the clock</div><p>${k.clock}</p>
+    <div class="lbl">Where it misleads</div><p>${k.trap}</p>
+    ${k.svg?`<div class="lbl">Good, late, damaging</div>${k.svg}`:''}`;
+}
+kpiList.addEventListener('click',e=>{const b=e.target.closest('[data-i]'); if(b){kcur=+b.dataset.i; drawKpis();}});
+drawKpis();
+
+/* ---------- glossary cast ---------- */
+/* the cast is glossary content too — each entry states where it came from */
+const PEOPLE_SRC={jm:'ctx',rb:'ctx',pt:'typ'};
+cast.innerHTML=Object.keys(PEOPLE).map(k=>{
+  const s=PEOPLE_SRC[k]==='ctx'
+    ? '<span class="src ctx">from your context</span>'
+    : '<span class="src typ">typical</span>';
+  return whoHTML(k).replace(/(<b>[^<]*<\/b>)/, `$1${s}`);
+}).join('');
+
+/* ---------- tabs ---------- */
+let activeTab='overview';
+document.querySelectorAll('nav.tabs button').forEach(btn=>btn.onclick=()=>{
+  activeTab=btn.dataset.tab;
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b===btn));
+  document.querySelectorAll('.tabpane').forEach(p=>p.hidden=p.id!==activeTab);
+  panelTitle.textContent=btn.textContent.trim();
+});
+
+/* ---------- personal notes: every chat answer becomes a structured process note ---------- */
+const NOTE_KEY='pe-notes-'+CURRENT_ID;
+let NOTES=[];
+try{NOTES=JSON.parse(localStorage.getItem(NOTE_KEY)||'[]')}catch(e){NOTES=[]}
+const saveNotes=()=>{try{localStorage.setItem(NOTE_KEY,JSON.stringify(NOTES))}catch(e){}};
+
+/* where in the process the note was taken — the note's anchor */
+function currentContext(){
+  if(activeTab==='process')  return {section:'Process Step-by-Step', item:STEPS[cur].name};
+  if(activeTab==='problems') return {section:'Process Challenges', item:PROBS[pcur].name};
+  if(activeTab==='kpis')     return {section:'KPIs', item:KPIS[kcur].name};
+  if(activeTab==='glossary') return {section:'Terminology', item:'Terms, systems and people'};
+  if(activeTab==='notes')    return {section:'Personal Notes', item:'General'};
+  return {section:'Overview', item:'Purpose, input and output'};
+}
+/* A note is a small piece of enablement, not a chat log: what it is, why it matters,
+   and a concrete example — the same shape the rest of this page teaches in.        */
+function addNote(question,body){
+  const c=currentContext();
+  NOTES.push({id:Date.now()+Math.round(performance.now()),
+    when:new Date().toLocaleString(),section:c.section,item:c.item,question,
+    topic:body.topic, concept:body.concept, why:body.why, example:body.example,
+    lang:CURRENT_LANG, i18n:{}});
+  saveNotes(); drawNotes(); refreshNoteCount();
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+/* notes saved by an older version stored a flat answer — render them rather than lose them */
+/* ---------- notes speak the page's language ----------
+   A note is written in whatever language the page was in when the reader asked, and
+   that text is never overwritten. Every other language is an added view of it, cached
+   on the note itself under i18n — the same bargain the page makes for its own prose,
+   where index.<lang>.html is rendered once and then read back.
+
+   langNow() reads CURRENT_LANG defensively on purpose: the first draw happens while
+   that const is still in its temporal dead zone, and a note pane must render then
+   too — as written, which is exactly the right answer before the language is known. */
+const langNow=()=>{try{return CURRENT_LANG}catch(e){return null}};
+function noteView(n){
+  const lang=langNow();
+  if(!lang || (n.lang||'en')===lang) return n;
+  const t=(n.i18n||{})[lang];
+  return t ? Object.assign({},n,t) : n;               /* not translated yet — as written */
+}
+/* Fields worth translating. `answer` belongs to notes saved by an older version. */
+const NOTE_TEXT=['question','topic','concept','why','example','answer'];
+function notesMissingLang(){
+  const lang=langNow(); if(!lang) return [];
+  return NOTES.filter(n=>(n.lang||'en')!==lang && !((n.i18n||{})[lang]));
+}
+let xlatingNotes=false;
+/* Translate what has no view in this language yet, then remember it. A note the
+   translator returns unchanged is recorded as an empty view, so it is asked once
+   and never again. */
+async function translateNotes(){
+  const lang=langNow();
+  if(xlatingNotes || !lang || !BRIDGE || !BRIDGE_SERVES) return;
+  const todo=notesMissingLang(); if(!todo.length) return;
+  xlatingNotes=true; noteXlateLine(todo.length);
+  try{
+    const r=await fetch(BRIDGE+'/translate/notes',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({lang,exploration:here().path,
+        topic:proc.value+' at '+co.textContent.trim(),
+        notes:todo.map(n=>{const o={id:String(n.id)};
+          NOTE_TEXT.forEach(f=>{ if(typeof n[f]==='string'&&n[f].trim()) o[f]=n[f] });
+          return o})})});
+    const a=await r.json();
+    const got=(a&&a.notes)||{};
+    if(!a || (a.error && a.error!=='nothing-to-translate')) return void noteXlateLine(0,a&&a.error);
+    todo.forEach(n=>{ n.i18n=n.i18n||{}; n.i18n[lang]=got[String(n.id)]||{} });
+    saveNotes(); drawNotes(); refreshNoteCount(); noteXlateLine(0);
+  }catch(e){ noteXlateLine(0,'unreachable') }
+  finally{ xlatingNotes=false }
+}
+/* One muted line above the notes, only while there is something to say. */
+function noteXlateLine(n,err){
+  const pane=document.getElementById('notes'); if(!pane) return;
+  let el=document.getElementById('noteXlate');
+  if(!n && !err){ if(el) el.remove(); return; }
+  if(!el){ el=document.createElement('p'); el.id='noteXlate'; el.className='intro';
+           pane.insertBefore(el,pane.firstElementChild&&pane.firstElementChild.nextSibling); }
+  const label=((here().languages||[]).find(l=>l.code===langNow())||{}).label||langNow();
+  el.textContent = err
+    ? 'Your notes could not be translated into '+label+' ('+err+') — they are shown as you took them.'
+    : 'Translating '+n+' of your notes into '+label+'…';
+}
+function noteFields(n){
+  return n.concept!==undefined
+    ? [['What it is',n.concept],['Why it matters',n.why],['Example',n.example]].filter(f=>f[1])
+    : [['Answer',n.answer]];
+}
+function drawNotes(){
+  if(!NOTES.length){
+    noteList.innerHTML=`<div class="noteEmpty"><b>No notes yet.</b><p style="margin:6px 0 0">
+      Ask something in the chat on the right. Each answer is filed here as a short piece of enablement —
+      <b>what it is</b>, <b>why it matters</b>, <b>an example</b> — tagged with the screen and the step, problem or
+      KPI you were looking at when you asked, so the note keeps its context.</p></div>`;
+    return;
+  }
+  noteList.innerHTML=NOTES.map(noteView).map((n,i)=>`<div class="note">
+    <div class="meta"><span>Note ${i+1}</span><span>${esc(n.section)} · ${esc(n.item)}</span>
+      <span class="sp">${esc(n.when)}</span><button class="del" data-del="${esc(n.id)}" title="Delete this note" aria-label="Delete this note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+      </button></div>
+    <h4>${esc(n.topic||n.question)}</h4>
+    ${n.topic?`<p class="asked">You asked: ${esc(n.question)}</p>`:''}
+    ${noteFields(n).map(([label,val])=>`<div class="nf"><b>${esc(label)}</b><p>${esc(val)}</p></div>`).join('')}
+  </div>`).join('');
+}
+noteList.addEventListener('click',e=>{
+  const b=e.target.closest('[data-del]'); if(!b) return;
+  NOTES=NOTES.filter(n=>String(n.id)!==b.dataset.del); saveNotes(); drawNotes(); refreshNoteCount();
+});
+drawNotes();
+
+/* ---------- chat: answers are captured as notes ---------- */
+/* ---------- chat: answered by the Claude CLI on this machine ----------
+   A file:// page cannot start a process, so it POSTs to a small local bridge
+   (scripts/chat-bridge.py, started with `pe-chat <exploration-dir>`), which runs the
+   industry-expert agent against this exploration's own files. With no bridge or no
+   CLI the chat says so plainly instead of pretending.                          */
+/* The bridge is normally started for you when the page is generated
+   (`pe-chat <exploration-dir>`, backgrounded). The page finds it across a small port
+   range, keeps checking while it is down, and recovers on its own — no reload.   */
+const PORTS=[8787,8788,8789];
+let BRIDGE=null, bridgeState='unknown', pollTimer=null;
+/* A bridge is started in one exploration but serves its whole library: it will
+   translate any sibling it can see, as long as the request names it. MINE is the
+   bridge sitting in this very directory; SERVES is the weaker, sufficient condition —
+   it can act for this exploration, whether or not it lives here. Either way the
+   language list must come from THIS page's directory, never the bridge's own. */
+let BRIDGE_MINE=false, BRIDGE_SERVES=false;
+
+/* ---- session lifetime: the bridge lives as long as this tab does -------------
+   The bridge is a local process started for this page. While the tab is open the
+   page beats; when the tab closes it says goodbye and the bridge shuts itself down,
+   taking its `claude` subprocesses with it. Nothing on disk is lost — the
+   exploration and these notes are files, and they stay. A reload also looks like a
+   goodbye, so the bridge waits a few seconds and cancels if a beat arrives.       */
+const SID=Math.random().toString(36).slice(2)+Date.now().toString(36);
+let beatTimer=null, saidBye=false;
+function post(path,keepalive){
+  if(!BRIDGE) return;
+  const body=JSON.stringify({sid:SID});
+  /* text/plain keeps it a simple request: sendBeacon cannot survive a CORS preflight */
+  try{ fetch(BRIDGE+path,{method:'POST',headers:{'Content-Type':'text/plain'},
+                          body,keepalive:!!keepalive}).catch(()=>{}) }catch(e){}
+}
+function startBeat(){ if(beatTimer) return; post('/beat'); beatTimer=setInterval(()=>post('/beat'),15000); }
+function stopBeat(){ if(beatTimer){ clearInterval(beatTimer); beatTimer=null; } }
+function sayBye(){
+  if(saidBye||!BRIDGE) return; saidBye=true; stopBeat();
+  const body=JSON.stringify({sid:SID});
+  try{
+    if(navigator.sendBeacon&&navigator.sendBeacon(BRIDGE+'/bye',
+        new Blob([body],{type:'text/plain'}))) return;
+  }catch(e){}
+  post('/bye',true);                       /* keepalive fetch, if beacon is refused */
+}
+/* pagehide is the one that fires on a real close; beforeunload is the fallback */
+addEventListener('pagehide',sayBye);
+addEventListener('beforeunload',sayBye);
+
+
+function setChatStatus(state,text,title){
+  bridgeState=state;
+  chatDot.className='dot2 '+({ready:'on',absent:'off',busy:'busy'}[state]||'');
+  chatDot.title=title||text; chatStat.textContent=text;
+}
+function sysMsg(cls,html){
+  log.insertAdjacentHTML('beforeend',`<div class="msg ${cls}">${html}</div>`);
+  log.scrollTop=log.scrollHeight; return log.lastElementChild;
+}
+/* try each port; prefer a bridge serving THIS exploration, accept any healthy one */
+async function findBridge(){
+  let fallback=null;
+  for(const port of PORTS){
+    const url='http://127.0.0.1:'+port;
+    try{
+      const c=new AbortController(); const to=setTimeout(()=>c.abort(),900);
+      const h=await (await fetch(url+'/health',{cache:'no-store',signal:c.signal})).json();
+      clearTimeout(to);
+      if(!h.ok) continue;
+      const mine=String(h.dir||'').split('/').filter(Boolean).pop()===here().path;
+      if(!h.claude) return {url,claude:false,mine,dir:h.dir,version:'',languages:h.languages,partial:h.partial};
+      if(mine) return {url,claude:true,mine:true,dir:h.dir,version:h.version,languages:h.languages,partial:h.partial};
+      /* A bridge serving ANOTHER exploration still answers chat, and it will translate
+         this one too if it can see it in its library — but its own language list
+         describes ITS directory, so take ours from the sibling entry it reports. */
+      fallback=fallback||{url,claude:true,mine:false,dir:h.dir,version:h.version,
+                          serves:(h.siblings||{})[here().path]||null};
+    }catch(e){/* port closed — try the next */}
+  }
+  return fallback;
+}
+async function checkBridge({quiet=true}={}){
+  const b=await findBridge();
+  if(b&&b.claude){
+    BRIDGE=b.url; BRIDGE_MINE=!!b.mine; BRIDGE_SERVES=!!(b.mine||b.serves); stopPolling();
+    saidBye=false; startBeat();
+    /* langs/partial describe one directory — take them for mine, or from the sibling
+       entry the bridge reports for this exploration. Never the bridge's own list. */
+    const src = b.mine ? b : (b.serves ? b.serves : null);
+    if(src){
+      if(Array.isArray(src.languages)) LIVE_LANGS=src.languages.slice();
+      PARTIAL_LANGS=(src.partial&&typeof src.partial==='object')?src.partial:{};
+      COVERAGE=(src.coverage&&typeof src.coverage==='object')?src.coverage:{};
+    }
+    if(typeof b.complete==='number') COMPLETE_AT=b.complete;
+    setChatStatus('ready','Claude '+String(b.version||'').split(' ')[0],'answering from '+b.dir);
+    if(typeof drawLangMenu==='function') drawLangMenu();
+    if(typeof translateNotes==='function') translateNotes();
+    return true;
+  }
+  if(b&&!b.claude){
+    BRIDGE=b.url; stopPolling(); saidBye=false; startBeat();
+    setChatStatus('absent','no Claude','no `claude` on PATH where the bridge is running');
+    if(!quiet) sysMsg('sys','There is <b>no Claude in this environment</b> — nothing on <code>PATH</code> named <code>claude</code> where the bridge is running.');
+    return false;
+  }
+  BRIDGE=null; BRIDGE_MINE=false; BRIDGE_SERVES=false; stopBeat();
+  setChatStatus('absent','connecting…','looking for a Claude session');
+  startPolling();
+  return false;
+}
+/* keep looking quietly — the session is usually there, or about to be */
+function startPolling(){ if(!pollTimer) pollTimer=setInterval(()=>checkBridge(),4000); }
+function stopPolling(){ if(pollTimer){ clearInterval(pollTimer); pollTimer=null; } }
+addEventListener('focus',()=>{ if(bridgeState!=='ready') checkBridge(); });
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&bridgeState!=='ready') checkBridge(); });
+checkBridge();
+
+composer.onsubmit=async e=>{
+  e.preventDefault();
+  const question=q.value.trim(); if(!question) return;
+  const c=currentContext();
+  log.insertAdjacentHTML('beforeend','<div class="msg me"></div>');
+  log.lastElementChild.textContent=question; q.value=''; log.scrollTop=log.scrollHeight;
+
+  const thinking=sysMsg('think','Asking the '+esc(ind.value)+' expert… <span id="tick"></span>');
+  const t0=Date.now();
+  const ticker=setInterval(()=>{const s=Math.round((Date.now()-t0)/1000);
+    const el=document.getElementById('tick'); if(el) el.textContent=s+'s'+(s>20?' — a considered answer takes up to a minute':'');},1000);
+  if(!BRIDGE && !await checkBridge()){          /* one live attempt before giving up */
+    thinking.remove();
+    return void sysMsg('sys',bridgeState==='absent'&&chatStat.textContent==='no Claude'
+      ? 'There is <b>no Claude in this environment</b>, so I cannot answer that.'
+      : 'I cannot reach a Claude session yet. Start one from this exploration\'s folder with <code>pe-chat .</code> — I will pick it up on my own, no reload needed.');
+  }
+  setChatStatus('busy','thinking…'); q.disabled=true;
+  try{
+    const r=await fetch(BRIDGE+'/ask',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({question,language:CURRENT_LANG,process:proc.value,industry:ind.value,company:co.textContent.trim(),
+                           section:c.section,item:c.item})});
+    const a=await r.json();
+    thinking.remove();
+    if(a.error==='no-claude'){ setChatStatus('absent','no Claude');
+      return void sysMsg('sys','There is <b>no Claude in this environment</b> — nothing on <code>PATH</code> named <code>claude</code>.'); }
+    if(a.error){ setChatStatus('ready','ready');
+      return void sysMsg('err','The expert could not answer that ('+a.error+'). Try rephrasing, or ask Claude directly.'); }
+    setChatStatus('ready','ready');
+    log.insertAdjacentHTML('beforeend',`<div class="msg ai">
+      <b class="t">${esc(a.topic||c.item)}</b>
+      <span class="f"><i>What it is</i>${esc(a.what||'')}</span>
+      <span class="f"><i>Why it matters</i>${esc(a.why||'')}</span>
+      <span class="f"><i>Example</i>${esc(a.example||'')}</span></div>`);
+    sysMsg('filed','<svg viewBox="0 0 24 24" aria-hidden="true" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2"><path d="M4 6h11l5 5v7H4z"/><path d="M8 6v5h7"/></svg> Filed in Personal Notes — '+esc(c.section)+' · '+esc(c.item));
+    addNote(question,{topic:a.topic||c.item,concept:a.what,why:a.why,example:a.example});
+  }catch(err){
+    thinking.remove(); BRIDGE=null; setChatStatus('absent','connecting…'); startPolling();
+    sysMsg('sys','Lost the connection to Claude. Restart it with <code>pe-chat .</code> — I will reconnect on my own.');
+  }finally{ clearInterval(ticker); q.disabled=false; }
+};
+
+/* ---------- quiz: 10 questions, one at a time, on its own screen ---------- */
+const QUIZ=[
+ {q:"What is the input to Order Management?",
+  o:["A customer's purchase order stating materials, quantity, ship-to and required date",
+     "A signed annual supply contract",
+     "A production plan released by the factory",
+     "An approved credit limit for the customer"],a:0,
+  why:"The process starts when a customer's PO arrives — by EDI, portal or email — and ends with a payable invoice."},
+ {q:"Which document records the goods physically being shipped?",
+  o:["Sales Order","Delivery","Customer Invoice","Shipment forecast"],a:1,
+  why:"The Delivery records quantities and when and where they ship. The Sales Order is the request; the Invoice is the bill."},
+ {q:"At which moment is revenue earned and the billing clock started?",
+  o:["When the sales order is created","When the order is confirmed to the customer",
+     "When goods issue is posted","When the invoice is sent"],a:2,
+  why:"Goods issue is the point stock leaves the warehouse. That is why unbilled revenue is aged from goods issue, not from order creation."},
+ {q:"What does a billing block actually do?",
+  o:["Stops the goods from leaving the warehouse","Prevents an invoice being created until data is corrected or a dispute is settled",
+     "Cancels the sales order","Holds the customer's payment in suspense"],a:1,
+  why:"It is protective — it stops a wrong invoice reaching the customer. The cost is that delivered goods stay uncollectable while it stands."},
+ {q:"Why is a credit block routine for a growing customer?",
+  o:["Their orders are always larger than the warehouse can ship",
+     "Credit limits are static numbers that are not refreshed as the account grows",
+     "Growing customers pay later by contract",
+     "The ERP recalculates the limit on every order"],a:1,
+  why:"Exposure rises with growth, so a perfectly creditworthy customer trips a limit nobody has reviewed."},
+ {q:"On-time delivery is most flattering when measured against which date?",
+  o:["The customer's originally requested date","The confirmed delivery date",
+     "The goods issue date","The invoice date"],a:1,
+  why:"A date pushed out during processing quietly becomes the new target, so the miss disappears. The requested date is closer to what the customer believes."},
+ {q:"Why can DSO look healthy while cash still converts slowly?",
+  o:["DSO excludes overdue invoices","DSO only starts at invoicing, so it is blind to time lost before the invoice existed",
+     "DSO is measured per customer, not per order","DSO ignores payment terms"],a:1,
+  why:"A billing-block problem delays the invoice itself, which sits entirely outside the DSO window."},
+ {q:"What does the touchless order rate tell you?",
+  o:["How many orders shipped complete","How many orders reached delivery with no manual change",
+     "How many orders were placed by EDI","How many orders were invoiced on time"],a:1,
+  why:"It is the cleanest proxy for effort — and each manual touch resets checks that had already passed."},
+ {q:"An order ships in two loads but complete and on the promised day. How does it score?",
+  o:["Late, because it was split","On time and in full — OTIF is about date and completeness, not load count",
+     "In full but not on time","It cannot be invoiced until both loads are confirmed"],a:1,
+  why:"Splitting into shipments is a logistics fact. OTIF asks only whether the promised date was met and the lines were complete."},
+ {q:"Which event belongs to Purchase to Pay rather than Order Management?",
+  o:["Send order confirmation","Record goods issue","Record invoice receipt","Create customer invoice"],a:2,
+  why:"An invoice receipt is money going out. Order Management raises invoices; it does not receive them."}
+];
+let qi=0, qAns=Array(QUIZ.length).fill(null), LAST_SCORE=null;
+const LETTERS=['A','B','C','D','E'];
+
+function steps(){
+  return `<div class="qsteps">${QUIZ.map((_,i)=>
+    `<i class="${qAns[i]!==null?'done':(i===qi?'now':'')}"></i>`).join('')}</div>`;
+}
+function drawQuiz(){
+  if(qi>=QUIZ.length){ drawScore(); return; }
+  const item=QUIZ[qi], picked=qAns[qi], answered=picked!==null;
+  qwrap.innerHTML=`
+    <div class="qhead">
+      <div><h2>Quiz</h2><p class="sub">${proc.value} · ${COMPANY()}</p></div>
+      <span class="count">${qi+1} of ${QUIZ.length}</span>
+      <button class="qclose" data-exit aria-label="Close the quiz">&times;</button>
+    </div>
+    ${steps()}
+    <div class="qbody">
+      <p class="qq">${item.q}</p>
+      <div class="qopts">${item.o.map((o,i)=>{
+        let cls=''; if(answered) cls = i===item.a?'right':(i===picked?'wrong':'');
+        return `<button data-o="${i}" class="${cls}" ${answered?'disabled':''}>
+          <span class="badge">${LETTERS[i]}</span><span>${o}</span></button>`}).join('')}</div>
+      ${answered?`<div class="qfb ${picked===item.a?'good':'bad'}">
+        <b>${picked===item.a?'Correct':'Not quite — the answer is '+LETTERS[item.a]}</b>${item.why}</div>`:''}
+    </div>
+    <div class="qfoot">
+      <span class="kbd">${answered?'Press Enter to continue':'Pick an answer — or press A–'+LETTERS[item.o.length-1]}</span>
+      ${answered?`<button class="btn push" data-next>${qi===QUIZ.length-1?'See your score':'Next question'}</button>`
+                :`<button class="btn ghost push" data-exit>Leave</button>`}
+    </div>`;
+  qwrap.focus();
+}
+function drawScore(){
+  const score=qAns.reduce((s,a,i)=>s+(a===QUIZ[i].a?1:0),0);
+  LAST_SCORE={score,total:QUIZ.length,when:new Date().toLocaleString()};
+  const pct=score/QUIZ.length, C=2*Math.PI*55;
+  const colour=pct>=.8?'var(--ok)':pct>=.5?'var(--warn)':'var(--bad)';
+  const verdict=pct>=.8?['Ready','You can hold this conversation with a customer.']
+              :pct>=.5?['Nearly there','The shape is right — re-read Problems and KPIs before you present it.']
+                      :['Go round again','Start at Overview and walk the Process Step-by-Step tab end to end.'];
+  qwrap.innerHTML=`
+    <div class="qhead">
+      <div><h2>Quiz</h2><p class="sub">${proc.value} · ${COMPANY()}</p></div>
+      <span class="count">complete</span>
+      <button class="qclose" data-exit aria-label="Close the quiz">&times;</button>
+    </div>
+    <div class="qres">
+      <div class="qring">
+        <svg width="132" height="132" viewBox="0 0 132 132" aria-hidden="true">
+          <circle cx="66" cy="66" r="55" fill="none" stroke="#e4e4e7" stroke-width="8"/>
+          <circle cx="66" cy="66" r="55" fill="none" stroke="${colour}" stroke-width="8" stroke-linecap="round"
+                  stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}"/>
+        </svg>
+        <span class="val" role="img" aria-label="${score} out of ${QUIZ.length} correct">
+          <span class="pair"><b>${score}</b><em>/${QUIZ.length}</em></span>
+          <span class="cap">correct</span>
+        </span>
+      </div>
+      <h3>${verdict[0]}</h3><p>${verdict[1]}</p>
+    </div>
+    <div class="qreview">
+      <h4>Every question, reviewed</h4>
+      ${QUIZ.map((item,i)=>{const ok=qAns[i]===item.a;return `<div class="qrow">
+        <div class="top"><span class="chip ${ok?'ok':'no'}">${ok?'correct':'missed'}</span><span class="qt">${item.q}</span></div>
+        ${ok?'':`<p class="ans">You chose ${LETTERS[qAns[i]]??'—'} · the answer is ${LETTERS[item.a]} — ${item.o[item.a]}</p>`}
+        <p>${item.why}</p></div>`}).join('')}
+    </div>
+    <div class="qfoot"><span class="kbd">Your score is included in the PDF export.</span>
+      <button class="btn ghost push" data-retry>Try again</button>
+      <button class="btn" data-exit>Back to the page</button></div>`;
+  qwrap.focus();
+}
+qwrap.addEventListener('click',e=>{
+  const o=e.target.closest('[data-o]');
+  if(o && qAns[qi]===null){ qAns[qi]=+o.dataset.o; drawQuiz(); return; }
+  if(e.target.closest('[data-next]')){ qi++; drawQuiz(); return; }
+  if(e.target.closest('[data-retry]')){ qi=0; qAns=Array(QUIZ.length).fill(null); drawQuiz(); return; }
+  if(e.target.closest('[data-exit]')) closeQuiz();
+});
+/* click the scrim to leave */
+quizScreen.addEventListener('click',e=>{ if(e.target===quizScreen) closeQuiz(); });
+/* keyboard: A–D or 1–4 to answer, Enter to advance, Esc to leave */
+document.addEventListener('keydown',e=>{
+  if(quizScreen.hidden) return;
+  if(e.key==='Escape'){ closeQuiz(); return; }
+  if(qi>=QUIZ.length) return;
+  if(qAns[qi]===null){
+    const k=e.key.toUpperCase();
+    let i=LETTERS.indexOf(k); if(i<0 && /^[1-9]$/.test(k)) i=+k-1;
+    if(i>=0 && i<QUIZ[qi].o.length){ e.preventDefault(); qAns[qi]=i; drawQuiz(); }
+  } else if(e.key==='Enter'){ e.preventDefault(); qi++; drawQuiz(); }
+});
+function openQuiz(){
+  qi=0; qAns=Array(QUIZ.length).fill(null); drawQuiz();
+  quizScreen.hidden=false; document.body.classList.add('quizopen');
+}
+function closeQuiz(){
+  quizScreen.hidden=true; document.body.classList.remove('quizopen'); startQuiz.focus();
+}
+startQuiz.addEventListener('click',openQuiz);
+
+/* ---------- the exploration library ----------------------------------------
+   output/registry.json is the project's small database; one entry per
+   Process + Industry pair. A file:// page cannot fetch it (CORS), so the
+   generator stamps this snapshot into every index*.html and restamps them
+   all whenever the registry changes.                                        */
+const REGISTRY={schema_version:1,explorations:[
+ /* The generator appends an entry ONLY after the directory and file are written,
+    so every row here is guaranteed to resolve. Never hand-add a speculative pair:
+    a select that offers a pair with no file produces ERR_FILE_NOT_FOUND.        */
+ {id:'order-management__consumer-goods-confectionery',process:'Order Management',
+  industry:'Consumer Goods — confectionery',companies:['Example Co.'],
+  path:'order-management__consumer-goods-confectionery',
+  languages:[{code:'en',label:'English',file:'index.html'}],
+  steps:6,problems:4,kpis:4,updated:'2026-08-24'}
+]};
+const here=()=>REGISTRY.explorations.find(e=>e.id===CURRENT_ID)||REGISTRY.explorations[0];
+const byId=id=>REGISTRY.explorations.find(e=>e.id===id);
+/* relative hop from this exploration's folder to another's */
+const hop=(e,file)=>`../${e.path}/${file}`;
+function fileFor(e,lang){
+  /* Switching exploration keeps the reader's language when the target has it. When it
+     does not, English is the default: every exploration is written in English first, so
+     it is the one language guaranteed to read as intended. Only a target with no English
+     at all falls back to whatever it does have. */
+  return (e.languages.find(l=>l.code===lang)
+       || e.languages.find(l=>l.code==='en')
+       || e.languages[0]).file;
+}
+function openExploration(id){
+  const e=byId(id);
+  /* never navigate to something the registry cannot vouch for */
+  if(!e || e.id===CURRENT_ID || !e.path || !e.languages || !e.languages.length) return;
+  window.location.href=hop(e,fileFor(e,CURRENT_LANG));
+}
+
+/* the three header selects ARE the picker: process → industry → company(context) */
+function fillPicker(){
+  const cur=here();
+  const processes=[...new Set(REGISTRY.explorations.map(e=>e.process))];
+  proc.innerHTML=processes.map(pr=>`<option ${pr===cur.process?'selected':''}>${pr}</option>`).join('');
+  syncIndustries(cur.industry);
+  syncCompany();
+  /* a select with a single option has nowhere to go — say so instead of teasing it */
+  const lonely=REGISTRY.explorations.length<2;
+  [proc,ind].forEach(sel=>{
+    const one=sel.options.length<2;
+    sel.disabled=one;
+    sel.title=one
+      ? (lonely?'The only exploration in this project so far — ask Claude for another Process + Industry pair'
+              :'Only one industry explored for this process so far')
+      : 'Switch exploration — one per Process + Industry pair';
+  });
+}
+function syncIndustries(preferred){
+  const inds=REGISTRY.explorations.filter(e=>e.process===proc.value).map(e=>e.industry);
+  const pick=inds.includes(preferred)?preferred:inds[0];
+  ind.innerHTML=inds.map(i=>`<option ${i===pick?'selected':''}>${i}</option>`).join('');
+}
+function syncCompany(){
+  const e=REGISTRY.explorations.find(x=>x.process===proc.value&&x.industry===ind.value);
+  co.textContent=e?e.companies.join(' · '):'—';
+}
+/* the company whose account research shaped this page's content */
+const COMPANY=()=>co.textContent.trim();
+function currentPick(){
+  return REGISTRY.explorations.find(e=>e.process===proc.value&&e.industry===ind.value);
+}
+proc.addEventListener('change',()=>{ syncIndustries(); syncCompany(); const e=currentPick(); if(e) openExploration(e.id); });
+ind.addEventListener('change',()=>{ syncCompany(); const e=currentPick(); if(e) openExploration(e.id); });
+fillPicker();
+
+/* ---------- language: one pre-generated page per language, reused not re-translated ----------
+   Each language is rendered once and saved beside this file as index.<code>.html.
+   Picking a language loads that file if it exists; the page never re-translates itself,
+   so a language already generated costs nothing to revisit.                              */
+const LANGS=[
+  {code:'en', label:'English',  file:'index.html'},
+  {code:'it', label:'Italiano', file:'index.it.html'},
+  {code:'de', label:'Deutsch',  file:'index.de.html'},
+  {code:'fr', label:'Français', file:'index.fr.html'}
+];
+const CURRENT_LANG='en';              /* the generator stamps this per file */
+const AVAILABLE=here().languages.map(l=>l.code);   /* from this exploration's registry entry */
+const LANG_KEY='pe-lang-'+CURRENT_ID;
+/* The first drawNotes() above ran before CURRENT_LANG existed. Now it is known,
+   so the notes are drawn again — in this page's language when a view exists. */
+drawNotes();
+
+/* ---------- language ----------------------------------------------------------
+   Languages already rendered load instantly from their sibling file. One that does
+   not exist yet is generated on demand through the bridge, which runs the local
+   Claude CLI, validates the result and saves it — so every language is generated
+   once and free to revisit afterwards.                                        */
+let LIVE_LANGS = null;          /* languages the bridge confirms are COMPLETE on disk */
+let COVERAGE = {};              /* code -> 0..1, how much of the page that language covers */
+let COMPLETE_AT = 0.995;        /* the bridge's own threshold for "nothing left to translate" */
+let PARTIAL_LANGS = {};         /* code -> coverage, for files that exist but are unfinished */
+const JOBS = {};                /* code -> {t0, label, cancelled} while a render is in flight.
+                                   Declared here, before drawLangMenu() first runs: a const
+                                   declared further down is in its temporal dead zone at that
+                                   point and the whole script would abort. */
+const mmss = ms => { const s=Math.round(ms/1000);
+  return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+
+/* What a running render says about itself. Elapsed time alone tells the reader nothing
+   about how much is left, so the bridge is polled for the count of strings it has got
+   through and the row leads with that. */
+function jobPct(job){
+  const p=job.prog;
+  /* Batches land whole, so there is nothing truthful to show until the first one is
+     back — until then the row says "translating…" rather than a stuck 0%. */
+  if(!p||!p.running||!p.total||!p.done) return null;
+  /* held below 100 while anything is still being written: the row is not done until
+     the bridge has answered. */
+  return Math.min(99,Math.floor(p.done/p.total*100));
+}
+function jobLabel(job){
+  if(job.cancelled) return 'stopping…';
+  const t=mmss(Date.now()-job.t0), p=job.prog, pct=jobPct(job);
+  if(p&&p.running&&(p.phase==='checking'||p.phase==='saving')) return 'finishing… '+t;
+  return (pct===null?'translating… ':pct+'% · ')+t;
+}
+/* One poller for however many renders are running; it stops when the last one ends. */
+let progTimer=null;
+function pollProgress(){
+  if(progTimer) return;
+  progTimer=setInterval(async()=>{
+    const codes=Object.keys(JOBS);
+    if(!codes.length || !BRIDGE){ clearInterval(progTimer); progTimer=null; return; }
+    for(const code of codes){
+      try{
+        const r=await fetch(BRIDGE+'/progress?lang='+encodeURIComponent(code)
+          +'&exploration='+encodeURIComponent(here().path),{cache:'no-store'});
+        const p=await r.json();
+        if(JOBS[code]) JOBS[code].prog=p;
+      }catch(e){/* a missed poll just leaves the last figure standing */}
+    }
+    if(!langMenu.hidden) drawLangMenu();
+    if(typeof tickX==='function') tickX();
+  },1200);
+}
+
+function langAvailable(code){
+  /* the language this file IS can never be "not generated" */
+  return code===CURRENT_LANG || (LIVE_LANGS || AVAILABLE).includes(code);
+}
+function drawLangMenu(){
+  const canGenerate = bridgeState === 'ready' && BRIDGE_SERVES;
+  langMenu.innerHTML = '<b>Language</b>' + LANGS.map(l=>{
+    const cur = l.code === CURRENT_LANG, ready = langAvailable(l.code);
+    const part = PARTIAL_LANGS[l.code];          /* exists but unfinished */
+    const job = JOBS[l.code];
+    if(job){
+      return `<button role="menuitem" data-lang="${l.code}" class="busy" aria-current="false">
+        <span>${l.label}</span>
+        <span class="cached">${jobLabel(job)}</span>
+        <span class="stopx" data-stop="${l.code}" title="Stop translating into ${l.label}">✕ stop</span>
+      </button>`;
+    }
+    /* "ready" is not the same as finished: a page can sit at 97% because a handful of
+       strings came back untranslated. Show what is missing and offer to close the gap,
+       translating only those strings rather than the page again. */
+    const cov = COVERAGE[l.code];
+    const short = ready && canGenerate && typeof cov==='number' && cov < COMPLETE_AT;
+    const pct = typeof cov==='number' ? Math.round(cov*100) : null;
+    const cls = [cur ? '' : ready ? '' : (canGenerate ? 'na' : 'off'), short?'short':'']
+                  .filter(Boolean).join(' ');
+    const tail = (cur ? '<span class="tickmark">✓</span>'
+               : ready ? `<span class="cached">${short?pct+'%':'ready'}</span>`
+               : part!==undefined ? `<span class="cached">${Math.round(part*100)}% — finish</span>`
+               : canGenerate ? '<span class="cached">translate</span>'
+                             : '<span class="cached">needs Claude</span>')
+               + (short ? `<span class="topup" data-topup="${l.code}"
+                    title="Translate the ${100-pct}% of ${l.label} that is still English">finish →</span>` : '');
+    return `<button role="menuitem" data-lang="${l.code}" data-file="${l.file}"
+      aria-current="${cur}" ${cls?`class="${cls}"`:''} ${(!ready&&!canGenerate)?'disabled':''}>
+      <span>${l.label}</span>${tail}</button>`;
+  }).join('')
+  + (LANGS.some(l=>!langAvailable(l.code))
+      ? '<div class="sep"></div><div class="hint">' + (canGenerate
+          ? 'Pick a language marked <b>translate</b> and it will be generated once, then saved beside this file. A language is only offered as <b>ready</b> once the whole page is translated.'
+          : bridgeState === 'ready'
+            ? 'The Claude session that is running cannot reach this exploration. Start one here — <code>pe-chat .</code>'
+            : 'Start Claude to generate another language — <code>pe-chat .</code>') + '</div>'
+      : '');
+}
+drawLangMenu();
+
+langBtn.onclick=e=>{ e.stopPropagation();
+  const open=langMenu.hidden; if(open) drawLangMenu();
+  langMenu.hidden=!open; langBtn.setAttribute('aria-expanded',String(open)); };
+document.addEventListener('click',()=>{ langMenu.hidden=true; langBtn.setAttribute('aria-expanded','false'); });
+
+langMenu.addEventListener('click',e=>{
+  const s=e.target.closest('[data-stop]');
+  if(s){ e.stopPropagation(); return void stopTranslation(s.dataset.stop); }
+  const t=e.target.closest('[data-topup]');
+  if(t){ e.stopPropagation(); const c=t.dataset.topup;
+         return void startTranslation(c, LANGS.find(l=>l.code===c).label); }
+  const b=e.target.closest('[data-lang]'); if(!b||b.disabled) return;
+  if(JOBS[b.dataset.lang]) return;              /* already running — leave it be */
+  const code=b.dataset.lang;
+  langMenu.hidden=true;
+  if(code===CURRENT_LANG) return;
+  if(langAvailable(code)){
+    try{ localStorage.setItem(LANG_KEY,code) }catch(err){}
+    return void (window.location.href = b.dataset.file);
+  }
+  startTranslation(code, LANGS.find(l=>l.code===code).label);
+});
+
+/* Generating a language runs in the background: the row shows its progress and the
+   reader keeps reading. Hovering a running row reveals a red stop.               */
+async function startTranslation(code,label){
+  if(JOBS[code]) return;
+  if(bridgeState!=='ready' && !await checkBridge()){
+    return void sysMsg('sys','I cannot reach a Claude session, so nothing can be translated yet.');
+  }
+  if(!BRIDGE_SERVES){
+    /* Translating through a bridge that cannot see this exploration used to report
+       success while the file was written next to ITS page. */
+    return void sysMsg('err','The Claude session that is running cannot reach this exploration, so it cannot write a language beside this page. Start one in this folder — <code>pe-chat .</code> — and try again.');
+  }
+  JOBS[code]={t0:Date.now(),label,cancelled:false,prog:null};
+  drawLangMenu();
+  pollProgress();
+  try{
+    const r=await fetch(BRIDGE+'/translate',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({lang:code,exploration:here().path,
+                           topic:proc.value+' at '+co.textContent.trim()})});
+    const a=await r.json();
+    const job=JOBS[code]; delete JOBS[code];
+    if(job&&job.cancelled || a.error==='cancelled'){ drawLangMenu(); return; }
+    if(a.error){
+      drawLangMenu();
+      return void sysMsg('err',({
+        'no-claude':'There is no Claude in this environment, so nothing can be translated.',
+        'already-running':label+' is already being generated.',
+        'no-source-page':'The source page could not be found next to the bridge.',
+        'translation-incomplete':'The '+label+' page is not complete enough to open yet, so it is not offered as ready. The progress was kept — pick <b>finish</b> to carry on from there. '+(a.detail||''),
+        'validation-failed':'The '+label+' page did not pass its checks, so it was rejected rather than shown broken. '+(a.detail||''),
+        'batch-failed':'A batch of strings failed while translating into '+label+'. '+(a.detail||''),
+        'timeout':'The '+label+' translation ran past its time limit and was stopped.'
+      })[a.error] || ('Translating into '+label+' failed ('+a.error+'). '+(a.detail||'')));
+    }
+    if(LIVE_LANGS && !LIVE_LANGS.includes(code)) LIVE_LANGS.push(code);
+    delete PARTIAL_LANGS[code];
+    if(typeof a.coverage==='number') COVERAGE[code]=a.coverage;
+    drawLangMenu();
+    const done = !(typeof a.coverage==='number' && a.coverage < COMPLETE_AT);
+    sysMsg('filed','<svg viewBox="0 0 24 24" aria-hidden="true" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2"><path d="M5 13l4 4L19 7"/></svg> '
+      + (done
+          ? label+' is fully translated — switch to it from the language menu.'
+          : label+' is at '+Math.round(a.coverage*100)+'%. What is left is mostly names, codes and'
+            +' terms of art that read the same in every language; pick <b>finish</b> again to retry them.')
+      + (a.passes>1?' <span class="cached">'+a.passes+' passes</span>':''));
+  }catch(err){
+    const job=JOBS[code]; delete JOBS[code]; drawLangMenu();
+    if(!(job&&job.cancelled))
+      sysMsg('sys','Lost the connection to Claude while translating into '+label+'. Restart it with <code>pe-chat .</code> and try again.');
+  }
+}
+async function stopTranslation(code){
+  const job=JOBS[code]; if(!job) return;
+  job.cancelled=true; drawLangMenu();
+  try{ await fetch(BRIDGE+'/translate/cancel',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({lang:code,exploration:here().path})}); }catch(e){}
+  sysMsg('sys','Stopped translating into '+job.label+'. Nothing was saved — pick it again whenever you want.');
+}
+/* keep the running row's clock honest while the menu is open */
+setInterval(()=>{ if(!langMenu.hidden && Object.keys(JOBS).length) drawLangMenu(); },1000);
+
+/* ---------- export ----------
+   Notes are not an appendix: each one is filed into the section it was taken from,
+   so the exported document reads as one body of process knowledge.             */
+const notesFor=(section,item)=>NOTES.filter(n=>n.section===section&&(item===undefined||n.item===item)).map(noteView);
+
+function noteBlockHTML(section,item){
+  const ns=notesFor(section,item); if(!ns.length) return '';
+  return ns.map(n=>`<div class="yournote"><b>From your notes · ${esc(n.when)}</b>
+    <p class="qn">${esc(n.topic||n.question)}</p>
+    ${n.topic?`<p><i>You asked: ${esc(n.question)}</i></p>`:''}
+    ${noteFields(n).map(([l,v])=>`<p><b style="display:inline;text-transform:none;letter-spacing:0;color:#444">${l}:</b> ${esc(v)}</p>`).join('')}
+  </div>`).join('');
+}
+function noteBlockMD(section,item){
+  const ns=notesFor(section,item); if(!ns.length) return '';
+  return ns.map(n=>`\n> **Your note — ${n.topic||n.question}** · ${n.when}\n`
+    +(n.topic?`> *You asked:* ${n.question}\n`:'')
+    +noteFields(n).map(([l,v])=>`> **${l}:** ${v}\n`).join('')).join('');
+}
+function orphanNotes(){
+  const known=new Set(['Overview','Process Step-by-Step','Process Challenges','KPIs','Terminology']);
+  return NOTES.filter(n=>!known.has(n.section)).map(noteView);
+}
+
+/* ---------- PDF: a linear print-only document ---------- */
+function buildPrintDoc(){
+  const sect=(id,title,body)=>`<section id="p-${id}"><h2>${title}</h2>${body}</section>`;
+
+  const overview=`
+    <p><b>${document.querySelector('.purpose').textContent}</b></p>
+    <h4>The three goals</h4><ol>${[...document.querySelectorAll('ol.goals li')].map(li=>`<li>${li.innerHTML}</li>`).join('')}</ol>
+    ${[...document.querySelectorAll('#overview .io')].map(io=>`<h4>${io.querySelector('b').textContent}</h4><p>${io.querySelector('p').innerHTML}</p>`).join('')}
+    <h4>Why the organisation depends on it</h4><p>${whyP.innerHTML}</p>
+    <h4>Where it sits in the end-to-end chain</h4>
+    <ul>${[...document.querySelectorAll('#overview .chain .stage')].map(d=>{
+      const role=d.querySelector('.role').textContent, name=d.querySelector('b').textContent;
+      return `<li><b>${name}</b> (${role.toLowerCase()}) — ${d.textContent.replace(role,'').replace(name,'').trim()}</li>`}).join('')}</ul>
+    <h4>The two handovers</h4>
+    <ul>${[...document.querySelectorAll('#overview .handover')].map(h=>
+      `<li>${h.querySelector('.what').textContent.replace('hands over','').trim()} — ${h.querySelector('.who2').textContent}</li>`).join('')}</ul>
+    ${[...document.querySelectorAll('#overview .bounds div')].map(d=>`<h4>${d.querySelector('b').textContent}</h4><p>${d.textContent.replace(d.querySelector('b').textContent,'').trim()}</p>`).join('')}
+    <h4>Deliberately not part of this process</h4><p>${document.querySelector('#overview .notmine').textContent.replace('Deliberately not ours:','').trim()}</p>
+    ${noteBlockHTML('Overview')}`;
+
+  const steps=`<p>The happy path runs ${STEPS.map((s,i)=>`${i+1}. ${s.name}`).join(' → ')}.</p>
+    <h4>Common deviations</h4>
+    ${DEVIATIONS.map(d=>`<div class="art"><h3>${esc(d.name)}</h3>
+      <p class="stepnav">Leaves after step ${d.from+1} (${esc(STEPS[d.from].name)}) · rejoins at step ${d.to+1} (${esc(STEPS[d.to].name)})</p>
+      <h4>What happens</h4><p>${esc(d.what)}</p>
+      <h4>What triggers it</h4><p>${esc(d.trigger)}</p>
+      <h4>How the case comes back</h4><p>${esc(d.back)}</p>
+      <h4>What it costs</h4><p>${esc(d.cost)}</p></div>`).join('')}
+    ${STEPS.map((s,i)=>{const pr=PEOPLE[s.who];return `<div class="art"><h3>${i+1}. ${esc(s.name)}</h3>
+      <p class="stepnav">Follows ${esc(s.follows)} · leads to ${esc(s.leads)} · performed by ${pr[1]}, ${pr[2]}</p>
+      <h4>What happens</h4><p>${esc(s.desc)}</p>
+      <h4>The running example — order ${EX.so.no}</h4><p>${esc(s.ex)}</p>
+      ${noteBlockHTML('Process Step-by-Step',s.name)}</div>`}).join('')}`;
+
+  const probs=PROBS.map(pb=>`<div class="art"><h3>${esc(pb.name)}</h3>
+      <p class="stepnav">Puts at risk: ${esc(pb.g)}</p>
+      <h4>Concept — the mechanism</h4>${pb.concept.replace(/<figure[\s\S]*?<\/figure>/g,'')}
+      <h4>Challenge — how it plays out</h4><p>${pb.challenge}</p>
+      <h4>Most probable root causes</h4><p>${esc(pb.causes)}</p>
+      <h4>How the damage happens</h4><p>${esc(pb.damage)}</p>
+      ${noteBlockHTML('Process Challenges',pb.name)}</div>`).join('');
+
+  const kpis=KPIS.map(k=>`<div class="art"><h3>${esc(k.name)}</h3>
+      <h4>What it measures</h4><p>${esc(k.measures)}</p>
+      <h4>Why a bad value hurts</h4><p>${esc(k.hurts)}</p>
+      <h4>What starts the clock</h4><p>${esc(k.clock)}</p>
+      <h4>Where it misleads</h4><p>${k.trap}</p>
+      ${noteBlockHTML('KPIs',k.name)}</div>`).join('');
+
+  const gloss=`<h3>Terms</h3><table><tr><th style="width:26%">Term</th><th>What it means, and why it comes up</th></tr>
+      ${[...document.querySelectorAll('#glossary dl.terms dt')].map(dt=>`<tr><td><b>${dt.innerHTML}</b></td><td>${dt.nextElementSibling.innerHTML}</td></tr>`).join('')}</table>
+    <h3>Systems</h3><ul>${[...document.querySelectorAll('#glossary ul.sys li')].map(li=>`<li>${li.innerHTML}</li>`).join('')}</ul>
+    <h3>The people involved</h3><ul>${Object.values(PEOPLE).map(pr=>`<li><b>${pr[1]}</b>, ${pr[2]} — “${pr[3]}” ${pr[4]}</li>`).join('')}</ul>
+    ${noteBlockHTML('Terminology')}`;
+
+  const orph=orphanNotes();
+  const extra=orph.length?sect('nt','7. Further notes',orph.map(n=>`<div class="yournote">
+      <b>From your notes · ${esc(n.when)}</b><p class="qn">${esc(n.question)}</p><p>${esc(n.answer)}</p></div>`).join('')):'';
+
+  const quiz=LAST_SCORE
+    ? `<p>Scored ${LAST_SCORE.score} out of ${LAST_SCORE.total} on ${LAST_SCORE.when}.</p>
+       ${QUIZ.map((item,i)=>`<div class="art"><h3>${i+1}. ${esc(item.q)}</h3>
+        <p class="stepnav">${qAns[i]===item.a?'Answered correctly':'Missed'} — correct answer: ${esc(item.o[item.a])}</p>
+        <p>${esc(item.why)}</p></div>`).join('')}`
+    : `<p>The quiz has not been taken yet. The ten questions and their answers are below.</p>
+       ${QUIZ.map((item,i)=>`<div class="art"><h3>${i+1}. ${esc(item.q)}</h3>
+        <p class="stepnav">Answer: ${esc(item.o[item.a])}</p><p>${esc(item.why)}</p></div>`).join('')}`;
+
+  printdoc.innerHTML=`
+    <div class="cover">
+      <h1>${proc.value}</h1>
+      <p>${COMPANY()} · ${ind.value}</p>
+      <p>A process primer — what it is for, how it runs, where it breaks, and how it is measured.</p>
+      <p>Generated ${new Date().toLocaleDateString()}${NOTES.length?` · includes ${NOTES.length} of your own notes, filed in place`:''}</p>
+    </div>
+    <h4>Contents</h4>
+    <ol class="toc">
+      <li>Overview — the purpose, the input and output, and where the process sits</li>
+      <li>The process, step by step — one order followed end to end</li>
+      <li>Process Challenges — the mechanisms that break it, and how the damage happens</li>
+      <li>KPIs — how it is measured, and where each measure misleads</li>
+      <li>Terminology — terms, systems and people</li>
+      <li>Quiz — the ten questions and their answers</li>
+    </ol>
+    ${NOTES.length?`<p><i>Your notes appear inside the sections they were taken from, marked “From your notes”.</i></p>`:''}
+    ${sect('ov','1. Overview',overview)}
+    ${sect('st','2. The process, step by step',steps)}
+    ${sect('pb','3. Process Challenges',probs)}
+    ${sect('kp','4. KPIs',kpis)}
+    ${sect('gl','5. Terminology',gloss)}
+    ${sect('qz','6. Quiz',quiz)}
+    ${extra}`;
+}
+
+/* ---------- Markdown: one structured file for an agent ---------- */
+/* separate an element's text from its provenance chip */
+function splitChip(el){
+  const c=el.cloneNode(true), chip=c.querySelector('.src');
+  let token=''; if(chip){ token=chip.classList.contains('ctx')?' `[source: customer material]`':' `[source: industry-typical]`'; chip.remove(); }
+  return {text:c.textContent.replace(/\s+/g,' ').trim(), token};
+}
+/* provenance chips become explicit tokens an agent can key on, not stray words */
+function stripTags(h){
+  const d=document.createElement('div'); d.innerHTML=h;
+  d.querySelectorAll('.src').forEach(s=>{
+    s.replaceWith(document.createTextNode(s.classList.contains('ctx')?' `[source: customer material]`':' `[source: industry-typical]`'));
+  });
+  return d.textContent.replace(/\s+/g,' ').trim();
+}
+function buildMarkdown(){
+  const L=[];
+  L.push('---');
+  L.push(`process: "${proc.value}"`);
+  L.push(`company: "${COMPANY()}"`);
+  L.push(`industry: "${ind.value}"`);
+  L.push(`language: "${CURRENT_LANG}"`);
+  L.push(`generated: "${new Date().toISOString()}"`);
+  L.push(`personal_notes: ${NOTES.length}`);
+  L.push(`quiz_score: ${LAST_SCORE?`${LAST_SCORE.score}/${LAST_SCORE.total}`:'null'}`);
+  L.push('doc_type: process-primer');
+  L.push('---','');
+  L.push(`# ${proc.value} — ${COMPANY()}`,'');
+  L.push(`What this process is for, how it runs, where it breaks, and how it is measured.`,'');
+  if(NOTES.length) L.push(`> Notes taken while reading are inlined as blockquotes in the section they belong to.`,'');
+
+  L.push('## 1. Overview','');
+  L.push(`**Purpose.** ${document.querySelector('.purpose').textContent}`,'');
+  L.push('**Goals.**');
+  [...document.querySelectorAll('ol.goals li')].forEach((li,i)=>L.push(`${i+1}. ${stripTags(li.innerHTML)}`));
+  L.push('');
+  [...document.querySelectorAll('#overview .io')].forEach(io=>
+    L.push(`**${io.querySelector('b').textContent}.** ${stripTags(io.querySelector('p').innerHTML)}`,''));
+  L.push(`**Why it matters.** ${stripTags(whyP.innerHTML)}`,'');
+  L.push('### Where it sits','');
+  [...document.querySelectorAll('#overview .chain .stage')].forEach(d=>{
+    const role=d.querySelector('.role').textContent, name=d.querySelector('b').textContent;
+    L.push(`- **${name}** (${role.toLowerCase()}) — ${d.textContent.replace(role,'').replace(name,'').trim()}`)});
+  L.push('');
+  L.push('**Handovers.**');
+  [...document.querySelectorAll('#overview .handover')].forEach(h=>
+    L.push(`- ${h.querySelector('.what').textContent.replace('hands over','').trim()} — ${h.querySelector('.who2').textContent}`));
+  L.push('');
+  [...document.querySelectorAll('#overview .bounds div')].forEach(d=>
+    L.push(`**${d.querySelector('b').textContent}.** ${d.textContent.replace(d.querySelector('b').textContent,'').trim()}`,''));
+  L.push(`**Not part of this process.** ${document.querySelector('#overview .notmine').textContent.replace('Deliberately not ours:','').trim()}`,'');
+  L.push(noteBlockMD('Overview'));
+
+  L.push('## 2. The process, step by step','');
+  L.push(`**Happy path.** ${STEPS.map((s,i)=>`${i+1}. ${s.name}`).join(' → ')}`,'');
+  L.push('### Common deviations','');
+  DEVIATIONS.forEach(d=>{
+    L.push(`#### ${d.name}`,'');
+    L.push(`- **Leaves after:** step ${d.from+1}, ${STEPS[d.from].name}`);
+    L.push(`- **Rejoins at:** step ${d.to+1}, ${STEPS[d.to].name}`,'');
+    L.push(`**What happens.** ${d.what}`,'');
+    L.push(`**What triggers it.** ${d.trigger}`,'');
+    L.push(`**How the case comes back.** ${d.back}`,'');
+    L.push(`**What it costs.** ${d.cost}`,'');});
+  L.push(`**Running example.** Order ${EX.so.no} — ship-to ${EX.so.shipTo}, ${EX.so.amount}, deliver by ${EX.so.date}; lines ${EX.items.map(i=>`${i.n} ×${i.q} @ ${i.p}`).join(', ')}.`,'');
+  STEPS.forEach((s,i)=>{const pr=PEOPLE[s.who];
+    L.push(`### ${i+1}. ${s.name}`,'');
+    L.push(`- **Follows:** ${s.follows}`);
+    L.push(`- **Leads to:** ${s.leads}`);
+    L.push(`- **Performed by:** ${pr[1]}, ${pr[2]}`,'');
+    L.push(`**What happens.** ${s.desc}`,'');
+    L.push(`**Example.** ${s.ex}`,'');
+    L.push(noteBlockMD('Process Step-by-Step',s.name));});
+
+  L.push('## 3. Process Challenges','');
+  PROBS.forEach(pb=>{
+    L.push(`### ${pb.name}`,'');
+    L.push(`- **Puts at risk:** ${pb.g}`,'');
+    L.push(`**Concept.** ${stripTags(pb.concept)}`,'');
+    L.push(`**Challenge.** ${stripTags(pb.challenge)}`,'');
+    L.push(`**Root causes.** ${pb.causes}`,'');
+    L.push(`**How the damage happens.** ${pb.damage}`,'');
+    L.push(noteBlockMD('Process Challenges',pb.name));});
+
+  L.push('## 4. KPIs','');
+  KPIS.forEach(k=>{
+    L.push(`### ${k.name}`,'');
+    L.push(`**Measures.** ${k.measures}`,'');
+    L.push(`**Why a bad value hurts.** ${k.hurts}`,'');
+    L.push(`**Clock starts.** ${k.clock}`,'');
+    L.push(`**Where it misleads.** ${stripTags(k.trap)}`,'');
+    L.push(noteBlockMD('KPIs',k.name));});
+
+  L.push('## 5. Terminology','');
+  [...document.querySelectorAll('#glossary dl.terms dt')].forEach(dt=>{
+    const {text,token}=splitChip(dt);
+    L.push(`- **${text}** — ${stripTags(dt.nextElementSibling.innerHTML)}${token}`)});
+  L.push('','### Systems','');
+  [...document.querySelectorAll('#glossary ul.sys li')].forEach(li=>L.push(`- ${stripTags(li.innerHTML)}`));
+  L.push('','### People','');
+  Object.values(PEOPLE).forEach(pr=>L.push(`- **${pr[1]}**, ${pr[2]} — "${pr[3]}" ${pr[4]}`));
+  L.push('',noteBlockMD('Terminology'));
+
+  L.push('## 6. Quiz','');
+  if(LAST_SCORE) L.push(`Scored ${LAST_SCORE.score}/${LAST_SCORE.total} on ${LAST_SCORE.when}.`,'');
+  QUIZ.forEach((item,i)=>{
+    L.push(`**${i+1}. ${item.q}**`);
+    item.o.forEach((o,j)=>L.push(`   ${LETTERS[j]}. ${o}${j===item.a?'  ← correct':''}`));
+    if(LAST_SCORE) L.push(`   *You answered:* ${qAns[i]!==null?LETTERS[qAns[i]]:'—'}`);
+    L.push(`   *Why:* ${item.why}`,'');});
+
+  const orph=orphanNotes();
+  if(orph.length){ L.push('## 7. Further notes','');
+    orph.forEach(n=>{L.push(`> **Your note — ${n.topic||n.question}** · ${n.when} (${n.section} · ${n.item})`);
+      if(n.topic) L.push(`> *You asked:* ${n.question}`);
+      noteFields(n).forEach(([l,v])=>L.push(`> **${l}:** ${v}`)); L.push('');}); }
+
+  return L.filter(x=>x!==undefined).join('\n').replace(/\n{3,}/g,'\n\n');
+}
+function slug(s){return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+function downloadMarkdown(){
+  const blob=new Blob([buildMarkdown()],{type:'text/markdown;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`${slug(COMPANY())}-${slug(proc.value)}-${CURRENT_LANG}.md`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+
+/* export menu */
+function refreshNoteCount(){
+  const h=exportMenu.querySelector('b');
+  if(h) h.textContent=NOTES.length
+    ? `Export — ${NOTES.length} note${NOTES.length>1?'s':''} woven in`
+    : 'Export';
+}
+exportBtn.onclick=e=>{ e.stopPropagation();
+  const open=exportMenu.hidden; exportMenu.hidden=!open; exportBtn.setAttribute('aria-expanded',String(open)); };
+document.addEventListener('click',()=>{ exportMenu.hidden=true; exportBtn.setAttribute('aria-expanded','false'); });
+exportMenu.addEventListener('click',e=>{
+  const b=e.target.closest('[data-fmt]'); if(!b) return;
+  exportMenu.hidden=true;
+  if(b.dataset.fmt==='pdf'){ buildPrintDoc(); window.print(); } else { downloadMarkdown(); }
+});
+refreshNoteCount();
+</script>
+</body>
+</html>

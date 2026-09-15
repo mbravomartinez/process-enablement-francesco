@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin.json",
+  "name": "process-enablement",
+  "displayName": "Process Enablement",
+  "version": "0.0.1",
+  "description": "Runs the process-exploration pipeline: parallel industry, account and expert research, then one self-contained HTML page that teaches how a business process runs at a specific company — with a live chat, a quiz, and PDF/Markdown export.",
+  "author": {
+    "name": "Francesco Govigli"
+  },
+  "license": "MIT",
+  "keywords": [
+    "celonis",
+    "process-mining",
+    "enablement",
+    "discovery",
+    "presales",
+    "research"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "process-enablement",
+  "version": "0.0.1+codex.20260901083840",
+  "description": "Researches how a business process runs at a specific company and builds an interactive, source-aware enablement page.",
+  "author": {
+    "name": "Francesco Govigli"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Process Enablement",
+    "shortDescription": "Build an interactive primer for a company process.",
+    "longDescription": "Runs parallel industry, company, and practitioner research, reconciles it with customer material, and creates an offline-capable process primer with visible provenance, quiz, exports, and optional local chat.",
+    "developerName": "Francesco Govigli",
+    "category": "Productivity",
+    "capabilities": [
+      "Research",
+      "Write",
+      "Interactive"
+    ],
+    "defaultPrompt": [
+      "Explore Order Management at a company.",
+      "Build a process primer before a discovery workshop.",
+      "Open my process-enablement library."
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Start the chat bridge for one exploration, so its page can ask the local Claude.
+#   pe-chat [exploration-dir] [--port N]
+set -euo pipefail
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+dir="${1:-.}"; [[ "${1:-}" == --* ]] && dir="."  || shift || true
+exec python3 "$here/scripts/chat-bridge.py" --dir "$dir" "$@"

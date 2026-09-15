@@ -1,0 +1,18 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+*.log
+*.partial
+dist/
+
+# Generated explorations belong to each local user. Keep only the empty registry
+# shipped by the plugin so setup has a valid bootstrap file.
+output/*
+!output/registry.json
+
+# Runtime and migration artefacts.
+.chat-bridge.port
+.blocks/
+.parts/
+*.bak
+backup-sync-*/

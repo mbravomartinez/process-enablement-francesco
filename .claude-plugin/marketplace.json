@@ -1,0 +1,14 @@
+{
+  "name": "govigli-plugins",
+  "owner": {
+    "name": "Francesco Govigli"
+  },
+  "plugins": [
+    {
+      "name": "process-enablement",
+      "source": "./",
+      "description": "Research a business process for a specific company and build an interactive enablement page \u2014 parallel industry, account and expert research, a live chat, a quiz, and PDF/Markdown export."
+    }
+  ],
+  "description": "Process-enablement tooling for Celonis Value Engineers \u2014 research a process for an account and generate an interactive enablement page."
+}
