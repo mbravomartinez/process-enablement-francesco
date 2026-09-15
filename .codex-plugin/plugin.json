@@ -1,15 +1,24 @@
 {
   "name": "process-enablement",
-  "version": "0.0.1+codex.20260901083840",
+  "version": "0.2.1+codex.20260915084855",
   "description": "Researches how a business process runs at a specific company and builds an interactive, source-aware enablement page.",
   "author": {
     "name": "Francesco Govigli"
   },
+  "license": "MIT",
+  "keywords": [
+    "celonis",
+    "process-mining",
+    "enablement",
+    "discovery",
+    "presales",
+    "research"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Process Enablement",
     "shortDescription": "Build an interactive primer for a company process.",
-    "longDescription": "Runs parallel industry, company, and practitioner research, reconciles it with customer material, and creates an offline-capable process primer with visible provenance, quiz, exports, and optional local chat.",
+    "longDescription": "Runs parallel industry, company, and practitioner research, reconciles it with customer material, and creates an offline-capable process primer with visible provenance, guided tour, quiz, exports, and optional local chat.",
     "developerName": "Francesco Govigli",
     "category": "Productivity",
     "capabilities": [

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# The launcher agent, by hand — for a machine without LaunchAgents, or for debugging.
+# Normally setup.sh installs this as a login agent and you never run it yourself.
+#   pe-launcher [--port 8790] [--once]
+set -euo pipefail
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+exec python3 "$here/scripts/pe-launchd.py" "$@"

@@ -138,7 +138,8 @@ learning from it.
 
 Each key metric gets a real paragraph — what it measures, how it is calculated in
 words, why a bad value hurts, which event starts the clock, and the definitional
-trap if there is one — and then a **horizontal time axis** with the zones marked —
+trap if there is one — then a **structured example** (see below), and then a
+**horizontal time axis** with the zones marked —
 `Billed On Time` (green) → `Billed Late` (amber) → `Potential Loss` (red), with
 the trigger event pinned above the axis (`Shipped`, `Requested or Confirmed
 Delivery Date`). The picture is the explanation.
@@ -159,6 +160,25 @@ and it carries no vendor pitch.
 Concept before challenge, always. Understanding the mechanism is what makes the
 challenge legible to a newcomer. Stop at the challenge — the reader now understands
 the problem, which is the whole job of this page.
+
+### 7b. Every challenge and every KPI ends in a structured example — strict
+The description explains the mechanism; the example proves the reader has understood
+it. It is **never a paragraph**. Three or four lines, each `Label: value`, the last
+line the effect:
+
+    Standard: raw tomato at €0.18/kg, released before the period
+    Actual:   invoiced at €0.21/kg on order 900045678
+    Effect:   €132.00 purchase price variance on 4,400 kg
+
+- Built from the **one running case** the page already uses — same order number,
+  material, amounts and dates — so nothing new has to be learned to read it.
+- A KPI's example shows **its own arithmetic**: standard, actual, variance, in that
+  order. The reader watches the number being computed, not described.
+- The **last line is always the effect**, in currency, days or percent.
+- Never invent a figure. Where research supplied none, name the mechanism and the
+  unit instead — an unsourced number is worse than no example.
+- The prose stays as it is. The example is added beside the description, never in
+  place of it.
 
 ## The Process-Intelligence matrix — keep the thinking, drop the tile
 The decks' densest slide. Keep what it encodes — that every problem and KPI belongs

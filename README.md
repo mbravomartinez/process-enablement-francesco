@@ -21,11 +21,24 @@ One HTML file per exploration, offline-capable, six calm screens:
 | **Process Challenges** | Grouped by the business objective they put at risk. One at a time: **Concept** (the mechanism) → **Challenge** (how it plays out here), with root causes and how the damage happens |
 | **KPIs** | One measure at a time: what it measures, why a bad value hurts, what starts the clock, and **where it misleads** — on a timeline, never a formula |
 | **Terminology** | Terms, systems and people. **Every entry tagged** `from your context` or `typical`, so you always know whose words you are about to use |
-| **Personal Notes** | Every chat answer, filed as enablement — *what it is · why it matters · an example* — anchored to the screen and step you were on |
+| **Personal Notes** | Every chat answer, filed as enablement — *a short explanation · a worked example* — anchored to the screen and step you were on |
 
 Plus: a **Quiz** (10 questions, own screen, score ring and full review) and **Export** to
 **PDF** or **Markdown**, with your notes woven into the section they belong to rather
 than appended.
+
+**First time you open an exploration, it walks you through itself.** Sixteen steps, switching
+screens as they go — what each tab holds, how to select a phrase and ask about it, how to switch
+the chat on and read the status dot, how a language is generated and kept — that step opens the
+language menu while it explains it — how the chat files notes, what the provenance chips mean,
+what the quiz does and what each export is for.
+
+The language menu carries **its own Claude refresh**, next to the word *Language*: translation
+needs a session, and this is where you find that out, so the control that starts one is here too
+rather than across the page. It advances
+only when you click *Next*, never on a timer, and the card never blocks the page it is
+explaining. It runs **once per reader** (not once per exploration), and the **Guide** button in
+the header reopens it whenever you want.
 
 ---
 
@@ -211,18 +224,115 @@ pe-chat output/order-management__consumer-goods-confectionery
 
 **The skill starts it for you** when it opens a page, so the chat is live from the first
 question. The bridge (127.0.0.1 only) runs the `industry-expert` agent against that
-exploration's own `content.md`, `research/` and `context/`, and returns *what it is · why
-it matters · an example* — rendered in the chat and filed straight into Personal Notes.
+exploration's own `content.md`, `research/` and `context/`, and returns *a short explanation
+· a worked example* — rendered in the chat and filed straight into Personal Notes.
 
 **It closes when you close the tab.** The bridge belongs to the page: while a tab is open
 it heartbeats, and on close the page beacons a goodbye and the bridge exits, taking every
 `claude` subprocess it started with it — no stray port, no orphaned process, nothing to
 clean up by hand. Close the browser outright and the missing heartbeat does the same job
-about a minute later. Your work is on disk and stays there: `content.md`, `research/`,
-`context/`, any finished translation, the registry and your Personal Notes all survive —
-the only thing discarded is a translation that was still rendering, because half a page is
-not worth keeping. Reopen the page and `pe-chat <dir>` starts a fresh bridge. If you want
-one to outlive its page, run it with `--keep-alive`.
+a couple of minutes later — the window is deliberately wider than a browser's throttling of a
+background tab, so a bridge is never reaped out from under a reader who switched tabs while
+waiting for an answer. An answer or a translation already running holds it open regardless. Your work is on disk and stays there: `content.md`, `research/`,
+`context/`, any finished translation, the registry and your Personal Notes all survive. A
+translation you had already started is the one thing that outlives the tab on purpose — the
+bridge finishes it, writes the language beside the page and *then* exits; one stopped part
+way is kept as a partial, so picking *finish* in the language menu carries on from the
+percentage it reached instead of starting over. Reopen the page and `pe-chat <dir>` starts a
+fresh bridge. If you want one to outlive its page, run it with `--keep-alive`.
+
+### Ask before Claude is up
+
+A page opens faster than a Claude session starts, and the first thing you do with a page is
+usually read it and select something. So **an ask that arrives before the session does is
+queued, not refused** — a typed question, a selected phrase, or a refinement on a note.
+It appears in the chat as what it is — your question, and a line
+saying it is waiting — with a *Drop* control if you change your mind. The moment a session
+answers, whether you clicked the refresh control by the status dot or one simply came up,
+everything waiting is asked in the order you asked it, oldest first, and each answer is
+filed under the section and step you were on when you asked — not wherever you have read to
+by then. A queued selection keeps its anchor, so the phrase still highlights when the answer
+lands.
+
+A queued refinement is added to the note it came from when it finally lands, not filed as a
+second note — and if you deleted that note while it waited, the chat says so instead.
+
+The queue is stored per exploration, so it survives the reload you would otherwise do to
+make the chat notice you: reopen the page and anything still unanswered is there, waiting.
+The same applies to an ask that was live when the session died — it goes back in the queue
+rather than disappearing with the connection.
+
+### Refine a note
+
+A note that is close but not quite has a **refine button next to its delete icon**, and
+**every block of the note has one of its own** — the explanation, *why it matters*, the
+example, and each follow-up already filed. Click the one on the block you mean and the expert
+is told exactly which part to do better, and is shown that part's current wording, so it
+improves that and leaves the rest of the note alone. You can still write what bothers you in
+the field; you just no longer have to spend it saying *the example, not the explanation*. The
+answer is added to the note as a follow-up — labelled with what you asked and which part it
+was about, kept alongside the original rather than replacing it. The button on the note header
+still means the note as a whole.
+
+### Select a phrase and ask about it
+
+Select a phrase and choose *Explain* or *Generate example* — then **say what you actually
+want cleared up**. A phrase or a whole paragraph: selecting several sentences works too, up
+to about 1500 characters, and it behaves exactly like a phrase — every word reaches the expert,
+and the passage is highlighted on the page with the same jump-to-note control, even where it
+runs across several paragraphs. Only the note's heading is shortened, since a paragraph makes an
+unusable title. The bar turns into a text field: type the part that lost you (*"why does
+it stop the invoice and not the shipment?"*), press Enter, and the expert answers that
+rather than the phrase in general. Leave it empty and you get the plain explanation.
+
+Anywhere in the content — the Overview, a step, a challenge, a KPI, the terminology — you
+can **select a phrase with the mouse** and choose *Explain* or *Generate example*. The
+answer lands in the chat and is filed as a Personal Note, and the phrase stays
+**highlighted** in yellow with a small `↗` that jumps to the note it produced.
+
+The highlights are not a separate thing you have to manage: they are simply the notes that
+came from a selection. Delete the note and the highlight goes with it. Ask about a phrase
+you have already asked about and it offers only the mode you are missing — at most an
+explanation and an example per phrase, and once you have both, the bar offers the way back
+to them instead. A note asked directly in the chat has no highlight, because there is
+nothing on the page for it to point at.
+
+On a translated page a highlight reappears only when the phrase can be located
+unambiguously from the note's translated topic; when it cannot, you get the note without
+the highlight rather than a highlight on the wrong words.
+
+### One note per concept
+
+Ask about three things and you get **three notes**, not one note about three things — each
+with its own heading, its own explanation, and its own worked example using the
+page's running case. They file into Personal Notes separately, so you can find one later
+without re-reading the other two. Ask about one thing and you get one note.
+
+### The refresh icon — you never have to open a terminal
+
+Beside the status dot is a **refresh control**. Click it and it looks for a Claude session
+right away instead of waiting out the poll; if there is none, it **starts one for this
+exploration** and reports back when the chat is live — typically under a second.
+
+It can do that because `setup.sh` installs one small login agent, `pe-launchd.py`, on
+`127.0.0.1:8790`. The page cannot start a process; the agent can, and starting bridges is
+the only thing it does. It is deliberately narrow: it takes an exploration's **folder
+name**, resolves it inside your library, and refuses anything that is not a folder there
+with a rendered page in it — so a page cannot talk it into running over anything else. It
+reuses a bridge that already covers the exploration rather than starting a second, and it
+never supervises the ones it starts, so a bridge still dies with its own tab.
+
+```
+setup.sh                        installs / repairs it (idempotent, run any time)
+setup.sh --status               is it running?
+setup.sh --no-launcher          skip it — then start bridges with pe-chat yourself
+setup.sh --uninstall-launcher   remove it
+pe-launcher                     run it in the foreground instead (non-macOS, debugging)
+```
+
+The agent is optional. Without it nothing answers on 8790, the refresh icon still
+re-probes, and it tells you the `pe-chat` command to run — an install with no launcher is
+a normal setup, not a broken one.
 
 The header dot shows the state: **green** with the CLI version when ready, *connecting…*
 while nothing answers (it re-probes ports 8787–8789 every four seconds and on window
@@ -295,8 +405,12 @@ skills/explore/
     celonis-logo.png  favicon.png
 scripts/
   chat-bridge.py                    the local Claude bridge
+  pe-launchd.py                     login agent — starts a bridge on the page's request
+  pe-sync-template.py               push the template's chrome to every exploration
+  pe-patch-refresh.py               retrofit the refresh control onto a rendered page
   bundle.sh                         build a shareable zip
 bin/pe-chat                         start the bridge for one exploration
+bin/pe-launcher                     run the launcher agent by hand
 notes/                              the reMarkable sketch this began as
 output/                             LOCAL ONLY — your explorations and library
 ```
@@ -325,12 +439,41 @@ plausible-looking page can mislead a customer:
 - **The HTML works offline** from `file://` — no CDN, no external fonts, no fetch beyond
   the local chat bridge.
 
+## Changing the page — it must reach every exploration
+
+**Any change to the page's shared chrome — the chat, the bridge probe, the refresh
+control, the status dot — is edited in `skills/explore/assets/reference-mock.html` and
+then pushed to every exploration you already have.** Never hand-edit a stored page: the
+next change would have to find them all again, and they would drift apart.
+
+```
+python3 scripts/pe-sync-template.py            # push the template's chrome to the library
+python3 scripts/pe-sync-template.py --check    # report drift, change nothing
+```
+
+`setup.sh` reports drift on every run, so this cannot quietly stop being true.
+
+What it does **not** do is re-render your old explorations from the template — that would
+destroy them. A page is ~99% template by line count, but each one also carries its own
+Overview prose, its own document-card renderers and its own CSS, all derived from research
+and your material. So a page is two layers: the **chrome**, owned by the template and
+replaced on sync, and the **exploration**, which is never touched. The tool is gated by
+`node --check` and keeps the previous versions in a stamped backup, so a bad template
+cannot take the library with it.
+
+One caveat it reports itself: a translated `index.<lang>.html` gets English chrome labels
+back until you re-translate it. Stale code is a broken control; an English label is
+cosmetic.
+
 ## Troubleshooting
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Chat says *connecting…* | no bridge running (a closed tab stops it by design) | `pe-chat <exploration-dir>` — the page reconnects on its own |
-| Chat says *no Claude* | bridge up, no CLI on `PATH` | install Claude Code, restart the bridge |
+| Chat says *connecting…* | no bridge running (a closed tab stops it by design) | click the **refresh icon** by the dot — or `pe-chat <exploration-dir>` |
+| Refresh says *no launcher agent* | the login agent is not installed | run `setup.sh` once, then click refresh again |
+| Refresh spins, then *did not answer in time* | the bridge started but stalled | read `.chat-bridge.log` in the exploration's folder |
+| A page behaves differently from a newer one | its chrome is behind the template | `python3 scripts/pe-sync-template.py` |
+| Chat says *no Claude* | bridge up, no CLI on `PATH` | install Claude Code, then `setup.sh` (the agent captures your `PATH`) |
 | Language greyed out | that language was never generated | ask Claude for it — it translates the existing content once |
 | Notes still in the old language | the bridge was down when you switched | it translates them as soon as the chat says *Claude …* — no reload needed |
 | Dropdown has one disabled option | only one exploration so far | ask for another Process + Industry pair |

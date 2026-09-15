@@ -37,6 +37,38 @@ h1{font-size:15px;font-weight:600;margin:0;letter-spacing:-.01em}
 .field{display:flex;align-items:center;gap:6px}
 .field label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 select{font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink2)}
+/* ---- the header pickers, dressed ----
+   A native <select> hands its open state to the operating system: on macOS it paints an Aqua
+   popup that can open UPWARD over the page and looks nothing like the closed control it came
+   from. The closed control is right, so the open one is built to match it — same border, same
+   radius, same type — and it always opens downward, under the button.
+   The <select> itself stays in the DOM as the source of truth: everything else reads
+   `proc.value` / `ind.value` and listens for its `change`. */
+.selwrap{position:relative;display:inline-flex}
+.selwrap select{position:absolute;width:1px;height:1px;padding:0;margin:0;opacity:0;
+ pointer-events:none;clip:rect(0 0 0 0);overflow:hidden;border:0}
+.selbtn{font:inherit;font-size:13px;display:inline-flex;align-items:center;gap:8px;
+ padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:#fff;
+ color:var(--ink2);cursor:pointer;max-width:280px}
+.selbtn:hover:not([disabled]){border-color:var(--ink2)}
+.selbtn[aria-expanded=true]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.selbtn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.selbtn[disabled]{cursor:default;color:var(--muted);background:#fafafb}
+.selbtn .sv{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.selbtn svg{width:9px;height:9px;flex:none;margin-left:auto;stroke:var(--muted);fill:none;
+ stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .12s ease}
+.selbtn[aria-expanded=true] svg{transform:rotate(180deg)}
+/* opens downward, always: left-aligned under the button, never over the header */
+.selmenu{position:absolute;top:calc(100% + 6px);left:0;z-index:65;min-width:100%;
+ max-height:min(58vh,380px);overflow-y:auto;background:#fff;border:1px solid var(--line);
+ border-radius:6px;box-shadow:0 12px 32px rgba(26,26,31,.14);padding:4px;white-space:nowrap}
+.selmenu[hidden]{display:none}
+.selmenu button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;font:inherit;
+ font-size:13.5px;background:none;border:0;border-radius:4px;padding:7px 9px;cursor:pointer;color:var(--ink2)}
+.selmenu button:hover,.selmenu button.here{background:var(--line2)}
+.selmenu button[aria-selected=true]{color:var(--accent);font-weight:600}
+.selmenu .tick{margin-left:auto;color:var(--accent);visibility:hidden}
+.selmenu button[aria-selected=true] .tick{visibility:visible}
 select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
 .spacer{margin-left:auto}
 .hdr-actions{display:flex;gap:8px;align-items:center}
@@ -68,8 +100,20 @@ select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
 .langmenu button.short:hover .topup{display:inline-block}
 .langmenu .tickmark{margin-left:auto;color:var(--accent)}
 .langmenu .cached{margin-left:auto;font-size:10.5px;color:var(--muted)}
+.langmenu .lang-hd{display:flex;align-items:center;gap:6px;padding:0 7px 0 0}
+.langmenu .lang-hd b{flex:1}
+.langmenu .lang-hd .rfsh{display:inline-flex;width:18px;height:18px;min-width:0;flex:none;
+ padding:0;margin:0;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--muted)}
+.langmenu .lang-hd .rfsh:hover{background:var(--line2);color:var(--ink2);border-color:var(--ink2)}
 .langmenu .sep{height:1px;background:var(--line);margin:5px 0}
-.langmenu .hint{padding:6px 10px 8px;font-size:11px;color:var(--muted)}
+.langmenu .hint{padding:6px 10px 8px;font-size:11px;color:var(--muted);line-height:1.5}
+/* `.langmenu b` is the menu's section label — block, uppercase, padded. Inside the hint, `b`
+   is quoting a word the reader can see in the list above ("marked translate", "offered as
+   ready"), so it has to stay inline: as a block it broke the sentence into three, each with
+   the label's own indent and capitals. */
+.langmenu .hint b{display:inline;padding:0;font-size:inherit;text-transform:none;
+ letter-spacing:0;font-weight:600;color:var(--ink2)}
+.langmenu .hint code{background:var(--line2);border-radius:3px;padding:0 4px;font-size:10.5px}
 select:disabled{background:#fafafb;color:var(--ink2);cursor:default}
 .langmenu .fmt{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:1px}
 .langmenu button.col{display:block}
@@ -194,6 +238,17 @@ ol.goals li{margin-bottom:5px}
 .stage h5{margin:0 0 5px;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600}
 .detail .stage{margin-top:20px}
 .detail .stage p{margin:0 0 9px;max-width:44em}
+/* ---- a structured example: labelled lines, values aligned ----
+   Every challenge and every KPI carries one, and it is never a paragraph: a reader checking
+   whether they have understood the mechanism wants the case laid out, not narrated. Grid so
+   the values line up under each other; the last line is always the effect. */
+.exlines{display:grid;grid-template-columns:max-content 1fr;gap:4px 12px;margin:0;
+ padding:11px 13px;background:#fafafb;border:1px solid var(--line);
+ border-left:2px solid var(--accent);border-radius:0 4px 4px 0;max-width:46em}
+.exlines b{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+ font-weight:600;padding-top:2px;white-space:nowrap}
+.exlines span{font-size:13px;color:var(--ink2)}
+@media(max-width:940px){.exlines{grid-template-columns:1fr;gap:1px 0}.exlines b{padding-top:7px}}
 .facts{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;max-width:44em}
 .facts div{margin-bottom:10px}
 .facts b{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:block;font-weight:600}
@@ -210,12 +265,27 @@ ul.sys{margin:0;padding-left:19px;max-width:46em;color:var(--ink2)}
 ul.sys li{margin-bottom:7px}
 .cast{display:grid;gap:16px;max-width:46em}
 /* notes */
-.noteEmpty{border:1px dashed var(--line);border-radius:var(--r);padding:22px;color:var(--muted);max-width:46em;background:#fafafb}
-.note{border:1px solid var(--line);border-left:2px solid var(--accent);border-radius:0 4px 4px 0;padding:13px 15px;margin-bottom:10px;max-width:46em}
+.noteEmpty{border:1px dashed var(--line);border-radius:var(--r);padding:22px;color:var(--muted);max-width:70em;background:#fafafb}
+.note{border:1px solid var(--line);border-left:2px solid var(--accent);border-radius:0 4px 4px 0;padding:13px 15px;margin-bottom:8px;max-width:70em}
+/* ---- a note is closed until asked for ----
+   A reader with thirty notes needs a list they can scan, not thirty essays. The card shows
+   its anchor line and its topic; everything else — the explanation, the example,
+   the refinements — waits behind the topic, which is the toggle. Wider than a prose column
+   on purpose: the same text in fewer lines is the point of the extra width. */
+.note h4.ntoggle{display:flex;align-items:flex-start;gap:7px;cursor:pointer;user-select:none}
+.note h4.ntoggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.note h4.ntoggle .nchev{flex:none;width:12px;height:12px;margin-top:3px;stroke:var(--muted);fill:none;
+ stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s ease}
+.note.open h4.ntoggle .nchev{transform:rotate(90deg)}
+.note h4.ntoggle:hover .nchev{stroke:var(--accent)}
+.note .nbody[hidden]{display:none}
 .note .meta{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;gap:10px;align-items:center;font-weight:600}
 .note .meta .sp{margin-left:auto;font-weight:400}
 .note h4{margin:6px 0 5px;font-size:14.5px;font-weight:600}
 .note p{margin:0;font-size:13.5px;color:var(--ink2)}
+/* An example is written as a few labelled lines — "Standard: …", "Order: …", "Effect: …" —
+   so the breaks the expert put in are content, not whitespace to collapse. */
+.note .nf p,.note .nref .rv{white-space:pre-line}
 .note .asked{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:9px}
 .note .nf{margin-bottom:9px}
 .note .nf:last-child{margin-bottom:0}
@@ -224,6 +294,92 @@ ul.sys li{margin-bottom:7px}
   border-radius:3px;display:grid;place-items:center}
 .note button.del svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .note button.del:hover{color:var(--bad);background:#fdeaeb}
+.note button.ref{border:none;background:none;color:var(--muted);cursor:pointer;padding:2px;line-height:0;
+ border-radius:3px}
+.note button.ref svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.7;
+ stroke-linecap:round;stroke-linejoin:round}
+.note button.ref:hover{color:var(--accent);background:var(--accent-soft)}
+/* Per-part refine. One control on the note header refines the note; one on each block
+   refines that block — so "explain this better" says WHICH part without the reader having to
+   describe it. Kept at a third opacity so a note still reads as prose, full strength as soon
+   as the pointer or the keyboard reaches the block it belongs to. */
+.note button.pref{border:none;background:none;color:var(--muted);cursor:pointer;padding:1px 3px;
+ line-height:0;border-radius:3px;margin-left:6px;vertical-align:-2px;opacity:.32;
+ transition:opacity .12s}
+.note button.pref svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.9;
+ stroke-linecap:round;stroke-linejoin:round}
+.note .nf:hover button.pref,.note .nref:hover button.pref,
+.note button.pref:hover,.note button.pref:focus-visible{opacity:1}
+.note button.pref:hover{color:var(--accent);background:var(--accent-soft)}
+.note button.pref:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+/* which part the open box is aimed at, said in the box itself */
+.note .refbox .ref-lbl .ref-part{color:var(--ink2);font-weight:600;text-transform:none;
+ letter-spacing:0;font-size:11px}
+.note .nref{margin-top:10px;padding:9px 11px;border-left:2px solid var(--accent-soft);
+ background:#fafbff;border-radius:0 4px 4px 0}
+.note .nref b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;
+ color:var(--muted);font-weight:600}
+.note .nref .ra{font-size:12px;color:var(--muted);font-style:italic;margin:2px 0 6px}
+.note .nref .rv{font-size:13.5px;color:var(--ink2);margin:0 0 6px}
+.note .nref .rv:last-child{margin-bottom:0}
+.note .nref .rv i{font-style:normal;font-size:10px;text-transform:uppercase;letter-spacing:.07em;
+ color:var(--muted);display:block}
+/* the same object as the selection bar's compose state, so the two read as one idea:
+   white ground, blue outline, blue labels, a leading arrow out and Ask at the end */
+.note .refbox{display:flex;align-items:stretch;gap:0;margin-top:11px;padding:2px;
+ background:var(--panel);border:1.5px solid var(--accent);border-radius:7px}
+.note .refbox[hidden]{display:none}
+.note .refbox .ref-back{display:flex;align-items:center;justify-content:center;width:24px;padding:0;
+ border:0;border-right:1px solid var(--line);border-radius:4px 0 0 4px;background:var(--panel);
+ color:var(--accent);cursor:pointer}
+.note .refbox .ref-back svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.4;
+ stroke-linecap:round;stroke-linejoin:round}
+.note .refbox .ref-lbl{display:flex;align-items:center;padding:0 10px;color:var(--accent);
+ font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;
+ border-right:1px solid var(--line)}
+.note .refbox .ref-in{flex:1;min-width:0;padding:6px 9px;border:0;border-radius:4px;
+ background:var(--panel);color:var(--ink);font-family:inherit;font-size:12.5px}
+.note .refbox .ref-in:focus{outline:0}
+.note .refbox .ref-in::placeholder{color:var(--muted)}
+.note .refbox .ref-go{padding:5px 12px;border:0;border-left:1px solid var(--line);border-radius:0 4px 4px 0;
+ background:var(--panel);color:var(--accent);font-family:inherit;font-size:11.5px;font-weight:600;
+ cursor:pointer;white-space:nowrap}
+.note .refbox .ref-back:hover,.note .refbox .ref-go:hover{background:var(--accent-soft)}
+.note .refbox .ref-go:active{background:#dce3ff}
+.note .refbox .ref-back:focus-visible,.note .refbox .ref-go:focus-visible,
+.note .refbox .ref-in:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.note .refbox button[disabled]{opacity:.6;cursor:default}
+/* ============ guided tour ============ */
+/* A coach card, deliberately NOT a modal: the tour explains the screen underneath, so
+   dimming or trapping the page would hide the thing being explained. Bottom-left, clear of
+   the 320px chat column; the step's target carries the outline instead. */
+#tour{position:fixed;left:20px;bottom:20px;z-index:70;width:330px;max-width:calc(100vw - 40px);
+ background:var(--panel);border:1px solid var(--line);border-radius:8px;
+ box-shadow:0 18px 50px rgba(26,26,31,.28);overflow:hidden}
+#tour[hidden]{display:none}
+#tour .thead{display:flex;align-items:center;gap:8px;padding:12px 14px 0}
+#tour .thead b{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+#tour .thead .tcount{margin-left:auto;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+#tour .tclose{border:none;background:none;font-size:17px;line-height:1;color:var(--muted);cursor:pointer;padding:0 1px}
+#tour .tclose:hover{color:var(--ink)}
+#tour .tsteps{display:flex;gap:3px;padding:9px 14px 0}
+#tour .tsteps i{flex:1;height:3px;border-radius:2px;background:var(--line)}
+#tour .tsteps i.done{background:var(--accent)}
+#tour .tsteps i.now{background:var(--magenta)}
+#tour .tbody{padding:12px 14px 4px}
+#tour h4{margin:0 0 5px;font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+#tour p{margin:0;font-size:13px;line-height:1.5;color:var(--ink2)}
+#tour .tfoot{display:flex;align-items:center;gap:8px;padding:12px 14px 13px}
+#tour .tfoot .tskip{margin-right:auto;border:none;background:none;font:inherit;font-size:11.5px;
+ color:var(--muted);cursor:pointer;padding:0;text-decoration:underline}
+#tour .tfoot .tskip:hover{color:var(--ink2)}
+/* The outline goes on the thing being described. 2px accent, no dimming — the reader can
+   still read the panel and still click it. */
+.tourspot{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px;
+ box-shadow:0 0 0 6px rgba(26,64,255,.09)}
+@media(max-width:940px){#tour{left:12px;right:12px;bottom:12px;width:auto}}
+@media print{#tour{display:none!important}.tourspot{outline:0;box-shadow:none}}
+
 /* ============ quiz overlay ============ */
 #quizScreen{position:fixed;inset:0;z-index:60;background:rgba(26,26,31,.5);backdrop-filter:blur(2px);
   display:flex;align-items:flex-start;justify-content:center;padding:34px 20px;overflow:auto}
@@ -291,18 +447,102 @@ figure.fig figcaption{font-size:11.5px;color:var(--muted);margin-top:10px}
   flex:none;display:flex;align-items:center;gap:7px}
 .dot2{width:7px;height:7px;border-radius:50%;background:#c4c4cc;flex:none}
 .dot2.on{background:var(--ok)}.dot2.off{background:var(--muted)}.dot2.busy{background:var(--accent)}
+/* the refresh control — check for a Claude session, or have one started */
+.rfsh{margin-left:6px;width:18px;height:18px;padding:0;flex:none;display:inline-flex;
+ align-items:center;justify-content:center;border:1px solid var(--line);border-radius:4px;
+ background:#fff;color:var(--muted);font-size:11px;line-height:1;cursor:pointer;
+ transition:color .15s,border-color .15s}
+.rfsh:hover{color:var(--ink2);border-color:var(--ink2)}
+.rfsh:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.rfsh[disabled]{cursor:default;opacity:.55}
+.rfsh.spin svg{animation:rfspin .9s linear infinite;transform-origin:50% 50%}
+@keyframes rfspin{to{transform:rotate(360deg)}}
 .stat{margin-left:auto;font-size:10.5px;font-weight:400;color:var(--muted)}
 .msg.sys{align-self:stretch;background:#fff;border:1px dashed var(--line);color:var(--muted);font-size:12px;max-width:100%}
 .msg.sys code{background:var(--line2);padding:1px 5px;border-radius:3px;font-size:11.5px}
 .msg.err{background:#fef4f4;border:1px solid #f3cbcd;color:#8f1d1d;font-size:12.5px}
 .msg.think{color:var(--muted);font-size:12.5px;background:var(--line2)}
+/* an ask that has nowhere to go yet: it sits in the log looking like what it is —
+   written down, not answered, and not lost either */
+.msg.queued{align-self:stretch;max-width:100%;background:#fff;border:1px dashed var(--accent);
+  color:var(--accent-ink);font-size:12px;display:flex;align-items:center;gap:8px}
+.msg.queued .qw{flex:1}
+.msg.queued .qn{display:inline-flex;align-items:center;justify-content:center;min-width:16px;
+  height:16px;padding:0 4px;border-radius:8px;background:var(--accent-soft);
+  color:var(--accent-ink);font-size:10.5px;font-weight:600;flex:none}
+.msg.queued button{font:inherit;font-size:11.5px;color:var(--muted);background:none;
+  border:0;padding:2px 4px;cursor:pointer;flex:none;text-decoration:underline}
+.msg.queued button:hover{color:var(--ink2)}
+.msg.queued.asking{border-style:solid;background:var(--accent-soft)}
 .msg b.t{display:block;margin-bottom:5px}
+.msg b.t .nof{float:right;font-weight:400;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
 .msg .f{display:block;margin-top:8px}
 .msg .f i{font-style:normal;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);display:block}
+.msg .f{white-space:pre-line}          /* a structured example keeps its lines here too */
 .log{flex:1;min-height:0;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .msg{padding:9px 12px;border-radius:6px;max-width:90%;font-size:13.5px}
 .msg.me{align-self:flex-end;background:var(--accent);color:#fff}
 .msg.ai{background:#f4f4f6;color:var(--ink2)}
+/* ---------- selection -> ask, and the highlight it leaves ----------
+   One highlighter colour for everything (STABILO BOSS yellow). Which kind of note a
+   highlight produced is carried by the control's tooltip, not by colour: a second colour
+   would be a code the reader has to be taught, and the page never teaches it. */
+mark.pehl{background:#fdf07a;color:inherit;padding:0 .06em;border-radius:2px;
+ box-decoration-break:clone;-webkit-box-decoration-break:clone}
+mark.pehl.q{background:#fdf07a;color:#1c1c1e;font-style:normal}
+mark.pehl.flash{animation:pehlflash 1.2s ease-out}
+@keyframes pehlflash{0%,40%{background:#ffd93d}100%{background:#fdf07a}}
+button.hlBtn{display:inline-flex;align-items:center;justify-content:center;vertical-align:baseline;
+ width:14px;height:14px;margin:0 1px 0 3px;padding:0;border:0;border-radius:3px;
+ background:#f0dd4e;color:#5a4a00;cursor:pointer;flex:none;position:relative;top:1px}
+button.hlBtn:hover{background:#e3cd2e;color:#33290a}
+button.hlBtn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button.hlBtn svg{width:10px;height:10px;display:block}
+.note.flash{animation:noteflash 1.4s ease-out}
+@keyframes noteflash{0%,45%{background:#fffbe0;border-color:#f0dd4e}100%{}}
+/* Carries the highlight's own yellow, because that is what it takes you to: the phrase
+   still marked in the page. A neutral chip made the reader guess where the button went. */
+.note .meta button.src2{display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding:1px 6px;
+ border:1px solid #e3ce3f;border-radius:3px;background:#fdf07a;color:#4a3d00;
+ font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;font-family:inherit}
+.note .meta button.src2:hover{background:#ffd93d;border-color:#c9b32c;color:#2e2600}
+.note .meta button.src2 svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2.4}
+/* Outlined in Celonis blue on white, with blue labels — the same treatment the rest of the
+   page gives a control: white ground, blue border, blue text. */
+.selbar{position:fixed;z-index:60;display:flex;align-items:stretch;gap:0;padding:2px;
+ background:var(--panel,#fff);border:1.5px solid var(--accent,#1a40ff);border-radius:7px;
+ box-shadow:0 4px 14px rgba(26,64,255,.18)}
+/* Required, not decorative: `display:flex` above beats the UA's [hidden]{display:none}, so
+   without this the element stays on screen no matter what `.hidden` says — the same reason
+   .langmenu, .tabpane and #quizScreen each carry one. */
+.selbar[hidden]{display:none}
+.selbar button{padding:5px 11px;border:0;border-radius:4px;background:var(--panel,#fff);
+ color:var(--accent,#1a40ff);font-family:inherit;font-size:11.5px;font-weight:600;
+ cursor:pointer;white-space:nowrap}
+.selbar button+button{border-left:1px solid var(--line,#e4e4e7);border-radius:0 4px 4px 0}
+.selbar button:first-child{border-radius:4px 0 0 4px}
+.selbar button:hover{background:var(--accent-soft,#eaeeff)}
+.selbar button:active{background:#dce3ff}
+.selbar button:focus-visible{outline:2px solid var(--accent,#1a40ff);outline-offset:-2px}
+.selbar .sb-has{display:flex;align-items:center;padding:0 8px 0 5px;color:var(--muted,#71717a);
+ font-size:10px;white-space:nowrap}
+/* the compose state: pick a mode, then say what you want cleared up */
+.selbar.composing{padding:2px}
+.selbar .sb-lbl{display:flex;align-items:center;padding:0 10px;color:var(--accent,#1a40ff);
+ font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;
+ border-right:1px solid var(--line,#e4e4e7)}
+.selbar .sb-in{width:270px;max-width:52vw;padding:6px 9px;border:0;border-radius:4px;
+ background:var(--panel,#fff);color:var(--ink,#1a1a1f);font-family:inherit;font-size:12.5px}
+.selbar .sb-in::placeholder{color:var(--muted,#71717a)}
+.selbar .sb-in:focus{outline:0}
+.selbar .sb-go{font-weight:600}
+.selbar .sb-back{display:flex;align-items:center;justify-content:center;width:24px;padding:0;
+ border-right:1px solid var(--line,#e4e4e7);border-radius:4px 0 0 4px}
+.selbar .sb-back svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.4;
+ stroke-linecap:round;stroke-linejoin:round}
+.msg .sb-said{display:block;margin-top:4px;font-size:12px;opacity:.85}
+@media (max-width:620px){.selbar .sb-in{width:180px}}
+@media print{button.hlBtn,.selbar{display:none}mark.pehl{background:#f4f4c0}}
 .msg.filed{align-self:flex-start;background:var(--accent-soft);color:var(--accent-ink);font-size:12px;
   border-radius:4px;padding:6px 10px;display:flex;gap:6px;align-items:center;max-width:100%}
 .msg.filed svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;flex:none}
@@ -517,7 +757,7 @@ figure.fig figcaption{font-size:11.5px;color:var(--muted);margin-top:10px}
 </div>
 
 <aside class="chat">
-  <h3>Chat — ask infos<span class="dot2" id="chatDot"></span><span class="stat" id="chatStat">checking…</span></h3>
+  <h3>Chat — ask infos<button type="button" class="rfsh" id="chatRfsh" title="" aria-label=""><svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true" focusable="false"><path d="M13.6 8a5.6 5.6 0 1 1-1.64-3.96" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M13.9 1.9v3.2h-3.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="dot2" id="chatDot"></span><span class="stat" id="chatStat">checking…</span></h3>
   <div class="log" id="log"><div class="msg ai">Ask me anything about this process — how the steps link, the process challenges, the KPIs, or the systems behind it.
       <b>Anything useful in my answer is written into your Personal Notes</b>, structured like the rest of this page and tagged with the screen and step you were on when you asked.</div></div>
   <form class="composer" id="composer"><input id="q" placeholder="e.g. why do billing blocks age?" autocomplete="off"><button>Send</button></form>
@@ -655,25 +895,42 @@ const AXIS_BLOCK=`<figure class="fig"><svg viewBox="0 0 660 168" role="img" aria
   <line x1="440" y1="108" x2="440" y2="124" stroke="#bb0dc7" stroke-width="2.5"/>
   <text x="270" y="146" font-size="12.5" fill="#bb0dc7" text-anchor="middle">blocked — no invoicing possible</text>
 </svg><figcaption>The goods are gone, the revenue is earned, and nothing can be invoiced until the block clears.</figcaption></figure>`;
+/* One example renderer for both Process Challenges and KPIs. The field is written as
+   "Label: value" lines separated by newlines; a line without a colon renders as a value with
+   no label, which is how a closing sentence gets in. Absent field renders nothing, so a page
+   generated before this rule still draws. */
+function exampleHTML(ex){
+  if(!ex) return '';
+  const rows=String(ex).split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{
+    const i=l.indexOf(':');
+    return i>0 ? `<b>${l.slice(0,i)}</b><span>${l.slice(i+1).trim()}</span>`
+               : `<b></b><span>${l}</span>`;
+  }).join('');
+  return `<div class="exlines">${rows}</div>`;
+}
 const PROBS=[
  {g:"Protect revenue",name:"Delivered goods left unbilled",
   concept:"<p>A <b>billing block</b> is a flag on an order or delivery that prevents an invoice being created until the information is corrected or an open dispute is settled. Its purpose is protective: it stops a wrong invoice reaching the customer and turning into a credit note.<p>The cost is that the goods have already left the warehouse, so revenue is earned but uncollectable for as long as the block stands.</p>"+AXIS_BLOCK,
   challenge:"With high order volumes and no single view of which orders carry a block, blocked orders are found late or not at all. A block set for a $40 price mismatch can hold a $10,000 invoice for weeks, because nobody owns the queue. Some orders are never invoiced at all, so goods that were delivered are never paid for. <i>[replace with the researched company's own situation, with a source]</i>",
+  example:"Order: 4500012, $10,000, delivered on the 3rd\nBlock: price mismatch of $40 against the customer PO\nWorked: nobody owns the queue — released on the 11th\nEffect: $10,000 of earned revenue uninvoiced for eight days, over a $40 difference",
   causes:"A price mismatch between the customer PO and the sales order, or an unresolved dispute on a prior invoice.",
   damage:"Revenue is earned but uninvoiced, and ages toward write-off as the block sits unworked."},
  {g:"Improve customer satisfaction",name:"Credit blocks stalling new orders",
   concept:"<p>A <b>credit block</b> holds an order when the customer's exposure exceeds the limit set for them. It protects the business from shipping to someone who may not pay — but the limit is a static number, so a growing customer trips it routinely while remaining perfectly creditworthy.</p>",
   challenge:"Limits are not refreshed as accounts grow, and no one follows up on the overdue balances that pushed the exposure up. Orders wait in a state nobody is watching, and the customer hears nothing until they chase. <i>[replace with the researched company's own situation]</i>",
+  example:"Customer: limit $50,000, set at onboarding two years ago\nExposure: $52,400, of which $9,800 is overdue past terms\nOrder: $6,200 held on credit block, customer not told\nEffect: the order waits four days and the customer chases first — the account is creditworthy, the limit is stale",
   causes:"Credit limits not reviewed after account growth; no dunning follow-up on the overdue items driving exposure.",
   damage:"The order cannot progress, so cash arrives later and working capital stays tied up in receivables."},
  {g:"Improve customer satisfaction",name:"Confirmed dates changed after the promise",
   concept:"<p>The <b>confirmed delivery date</b> is the promise the customer plans around. When stock is unavailable at confirmation, or ship-to and incoterm data is incomplete, the date is pushed out — and because the new date becomes the measured target, the miss disappears from the on-time number.</p>",
   challenge:"Date changes are made in the ERP without the customer being told in the same motion, so the first they learn of it is a late delivery. <i>[replace with the researched company's own situation]</i>",
+  example:"Requested: delivery on the 10th, confirmed on the 10th\nRe-confirmed: pushed to the 17th when stock ran short\nMeasured: on time against the 17th, late by seven days against the promise\nEffect: the customer plans around the 10th, hears nothing, and the on-time number still reads 100%",
   causes:"Stock unavailable at the moment of confirmation; incomplete ship-to or incoterm master data.",
   damage:"The promise is missed and recovery is bought with expedited freight, at a cost the order's margin never priced in."},
  {g:"Reduce effort",name:"The same order edited over and over",
   concept:"<p>A <b>touchless order</b> reaches delivery with no manual change. Every manual edit — a price correction, a quantity change, a re-confirmation — is a person re-opening a case that was supposed to be finished, and each edit resets the checks that ran before it.</p>",
   challenge:"A minority of orders absorb the majority of handling time, and because effort is not measured per order, nobody can see which ones. <i>[replace with the researched company's own situation]</i>",
+  example:"Order: 4500012, entered by hand from a quote\nTouches: price corrected, quantity changed, re-confirmed — 3 edits\nUntouched: 82% of orders reach delivery with none\nEffect: a minority of orders absorb most of the handling time, and each edit resets the checks that ran before it",
   causes:"Quotes entered by hand rather than carried from a configured price; incomplete order data at entry.",
   damage:"Processing cost per order rises invisibly, and each re-touch is another chance to introduce the mismatch that blocks billing later."}
 ];
@@ -687,6 +944,7 @@ function drawProbs(){
   probDetail.innerHTML=`<h3>${p.name}</h3><p class="chainpos">Puts at risk: ${p.g}</p>
     <div class="stage"><h5>Concept — what the mechanism is</h5>${p.concept}</div>
     <div class="stage"><h5>Challenge — how it plays out here</h5><p>${p.challenge}</p></div>
+    ${p.example?`<div class="stage"><h5>Example — the running case</h5>${exampleHTML(p.example)}</div>`:''}
     <div class="facts"><div><b>Most probable root causes</b>${p.causes}</div><div><b>How the damage happens</b>${p.damage}</div></div>`;
 }
 probList.addEventListener('click',e=>{const b=e.target.closest('[data-i]'); if(b){pcur=+b.dataset.i; drawProbs();}});
@@ -699,6 +957,7 @@ const KPIS=[
   hurts:"A late delivery delays the invoice, and therefore the cash. It is also the most visible service failure a customer experiences: it shows up in the next tender, not just this order.",
   clock:"The confirmed delivery date.",
   trap:"Measured against the <i>confirmed</i> date, the number flatters you — a date pushed out during processing quietly becomes the new target. Measured against the customer's <i>originally requested</i> date, it is lower, and closer to what the customer believes.",
+  example:"Lines: 1,000 delivery lines in the month\nOn time vs confirmed: 940 lines = 94.0%\nOn time vs requested: 870 lines = 87.0%\nEffect: the 70 re-confirmed lines are the gap — the customer experiences 87%, the report shows 94%",
   svg:`<figure class="fig"><svg viewBox="0 0 660 176" role="img" aria-label="On-time, late and at-risk zones around the confirmed delivery date">
    <text x="196" y="26" font-size="12.5" fill="#3f3f46" text-anchor="middle">confirmed delivery date</text>
    <line x1="196" y1="38" x2="196" y2="98" stroke="#3f3f46" stroke-width="1.25"/>
@@ -713,6 +972,7 @@ const KPIS=[
   measures:"The value of goods already delivered for which no invoice has yet been raised, aged by days since the goods issue was posted.",
   hurts:"The company has paid to make and ship the goods but holds no receivable in return — the cost is incurred and the cash is not. Past a certain age the revenue may have to be written off entirely.",
   clock:"Goods issue — not order creation, which is why an order-based view hides the problem.",
+  example:"Delivered, unbilled: $412,000 across 148 deliveries\nUnder 7 days: $338,000 — normal processing\nOver 30 days: $41,500 across 9 deliveries, all on billing block\nEffect: the total looks like a queue; the aged slice is the money at risk of write-off",
   trap:"A total in currency looks manageable until it is aged. The oldest slice, not the size, is what turns into a write-off.",
   svg:`<figure class="fig"><svg viewBox="0 0 660 176" role="img" aria-label="Billed on time, billed late, and potential write-off, aged from goods issue">
    <text x="62" y="26" font-size="12.5" fill="#3f3f46">goods issued</text>
@@ -727,12 +987,14 @@ const KPIS=[
   measures:"The share of orders that reach delivery with no manual change of any kind after entry.",
   hurts:"Every manual touch is unplanned effort, and each one resets checks that had already passed — so a low rate predicts both cost per order and downstream billing blocks.",
   clock:"Order creation to goods issue.",
+  example:"Orders: 1,000 in the month\nTouchless: 820 = 82.0% (header changes only)\nCounting line edits too: 610 = 61.0%\nEffect: 210 orders were re-opened on the lines, where price and quantity actually live",
   trap:"Counting only changes made in the order header hides edits made on the lines, which is where most of them happen.",
   svg:""},
  {name:"Days Sales Outstanding",
   measures:"The average number of days between raising an invoice and collecting the cash for it.",
   hurts:"It is the number finance uses to judge this process. Cash collected late is cash that has to be borrowed in the meantime.",
   clock:"Invoice date to payment clearing.",
+  example:"DSO: 42 days, invoice to clearing\nBefore the invoice: 8 days average from goods issue to billing\nOn blocked deliveries: 26 days from goods issue to billing\nEffect: cash is 50 days out, not 42 — DSO cannot see the eight days it never started counting",
   trap:"DSO starts at invoicing, so it is blind to time lost <i>before</i> the invoice existed. A process with a billing-block problem can show a healthy DSO and still convert cash slowly.",
   svg:""}
 ];
@@ -745,6 +1007,7 @@ function drawKpis(){
     <div class="lbl">Why a bad value hurts</div><p>${k.hurts}</p>
     <div class="lbl">What starts the clock</div><p>${k.clock}</p>
     <div class="lbl">Where it misleads</div><p>${k.trap}</p>
+    ${k.example?`<div class="lbl">Example — the running case</div>${exampleHTML(k.example)}`:''}
     ${k.svg?`<div class="lbl">Good, late, damaging</div>${k.svg}`:''}`;
 }
 kpiList.addEventListener('click',e=>{const b=e.target.closest('[data-i]'); if(b){kcur=+b.dataset.i; drawKpis();}});
@@ -775,6 +1038,59 @@ let NOTES=[];
 try{NOTES=JSON.parse(localStorage.getItem(NOTE_KEY)||'[]')}catch(e){NOTES=[]}
 const saveNotes=()=>{try{localStorage.setItem(NOTE_KEY,JSON.stringify(NOTES))}catch(e){}};
 
+/* ---------- where you were, kept across a reload ----------------------------------
+   A refresh is not a fresh start. The reader was on a step, a problem or a KPI and had
+   read some way down it; landing back on Overview costs them the click and the place.
+   So the tab, the item selected inside it and that pane's own scroll are written per
+   exploration and read back on load.
+
+   localStorage rather than the URL hash: this is one reader's place in their own copy of
+   the page, and a hash would travel with the file if they sent it to someone else.
+
+   It lives here, at the top of the notes engine, because this whole span is synced into
+   every page by pe-sync-template.py — the tabs block above it is not. The tab buttons are
+   wired with `onclick` up there, so this hooks them with an added listener instead of
+   touching that property. */
+const PLACE_KEY='pe-place-'+CURRENT_ID;
+const placePane=t=>{ const el=document.getElementById(t); return el&&el.classList.contains('tabpane')?el:null; };
+function savePlace(){
+  try{
+    const el=placePane(activeTab);
+    localStorage.setItem(PLACE_KEY,JSON.stringify({tab:activeTab,cur:cur,pcur:pcur,kcur:kcur,
+      y:el?Math.round(el.scrollTop):0}));
+  }catch(e){}
+}
+/* Restores the tab and the item; never the open deviation, which is a detail of one click
+   and reads as noise when the page comes back with it already unfolded. An index that no
+   longer exists (the page was regenerated with fewer steps) is simply ignored. */
+function restorePlace(){
+  let p=null;
+  try{ p=JSON.parse(localStorage.getItem(PLACE_KEY)||'null'); }catch(e){}
+  if(!p||typeof p.tab!=='string') return;
+  const btn=document.querySelector('nav.tabs button[data-tab="'+p.tab+'"]');
+  if(!btn) return;                                     /* a tab this page does not have */
+  const at=(arr,i)=>Array.isArray(arr)&&Number.isInteger(i)&&i>=0&&i<arr.length;
+  if(at(STEPS,p.cur)&&p.cur!==cur){ cur=p.cur; dev=null; drawStep(); }
+  if(at(PROBS,p.pcur)&&p.pcur!==pcur){ pcur=p.pcur; drawProbs(); }
+  if(at(KPIS,p.kcur)&&p.kcur!==kcur){ kcur=p.kcur; drawKpis(); }
+  if(p.tab!==activeTab) btn.click();
+  /* after layout, or the pane has no scroll height to move to yet */
+  requestAnimationFrame(()=>{ const el=placePane(p.tab); if(el&&p.y>0) el.scrollTop=p.y; });
+}
+/* A refresh fires pagehide; the click and scroll saves keep the record current for the
+   times it does not (a crash, a killed tab). */
+document.querySelector('nav.tabs')?.addEventListener('click',()=>setTimeout(savePlace,0));
+document.querySelectorAll('.tabpane').forEach(el=>{
+  el.addEventListener('click',()=>setTimeout(savePlace,0));
+  let t=null;
+  el.addEventListener('scroll',()=>{ clearTimeout(t); t=setTimeout(savePlace,250); },{passive:true});
+});
+addEventListener('pagehide',savePlace);
+addEventListener('beforeunload',savePlace);
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) savePlace(); });
+restorePlace();
+
+
 /* where in the process the note was taken — the note's anchor */
 function currentContext(){
   if(activeTab==='process')  return {section:'Process Step-by-Step', item:STEPS[cur].name};
@@ -784,17 +1100,150 @@ function currentContext(){
   if(activeTab==='notes')    return {section:'Personal Notes', item:'General'};
   return {section:'Overview', item:'Purpose, input and output'};
 }
-/* A note is a small piece of enablement, not a chat log: what it is, why it matters,
-   and a concrete example — the same shape the rest of this page teaches in.        */
-function addNote(question,body){
+/* A note is a small piece of enablement, not a chat log: the explanation of the one thing
+   that was asked, and a worked example of it. Notes filed before the shape changed also
+   carry a `why`, and it is still rendered — an old note is not made wrong by a new rule. */
+function addNote(question,body,anchor){
   const c=currentContext();
-  NOTES.push({id:Date.now()+Math.round(performance.now()),
+  const n={id:Date.now()+Math.round(performance.now()),
     when:new Date().toLocaleString(),section:c.section,item:c.item,question,
     topic:body.topic, concept:body.concept, why:body.why, example:body.example,
-    lang:CURRENT_LANG, i18n:{}});
+    lang:CURRENT_LANG, i18n:{}};
+  /* Only a note born from a selection carries an anchor. A note asked in the chat has
+     none and is a perfectly ordinary note — there is simply nothing on the page for it
+     to point back to. The highlights are drawn from whichever notes do have one. */
+  /* stored as a copy: resolving an anchor on a translated page caches the result on the
+     anchor itself, and two notes must never share one mutable object — the same phrase
+     asked twice (explain, then example) would otherwise write into one another's cache */
+  if(anchor&&anchor.quote) n.anchor=JSON.parse(JSON.stringify(anchor));
+  NOTES.push(n);
+  /* the answer you just asked for is the one thing you do want open */
+  NOTES_OPEN.add(String(n.id));
   saveNotes(); drawNotes(); refreshNoteCount();
+  if(typeof drawHighlights==='function') drawHighlights();
 }
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+/* ---- refining a note ---------------------------------------------------------------
+   An answer can be right and still leave one thing unclear. Rather than make the reader
+   re-select the phrase and ask again — losing the connection to the note they are reading —
+   the note carries its own follow-up field, next to the delete button.
+
+   The request goes down the same path as every other: the expert gets the note it is
+   refining, so it answers the follow-up in the context of what the reader has already been
+   told instead of starting over. */
+function refBox(id){ return noteList.querySelector('.refbox[data-refbox="'+id+'"]'); }
+function openRefine(id,part,key){
+  noteList.querySelectorAll('.refbox').forEach(b=>{ if(b.dataset.refbox!==String(id)) b.hidden=true; });
+  const box=refBox(id); if(!box) return;
+  box.hidden=false;
+  /* the box is one object serving every control on the card, so it carries what it is aimed
+     at and says so — a reader who clicked "Example" must not wonder what will be improved */
+  box.dataset.part=part||''; box.dataset.partkey=key||'';
+  const lbl=box.querySelector('.ref-lbl');
+  if(lbl) lbl.innerHTML='Refine'+(part?' <span class="ref-part">'+chatEsc(part)+'</span>':'');
+  const inp=box.querySelector('.ref-in');
+  if(inp){
+    inp.placeholder=part
+      ? 'What should be better about the '+part+'?'
+      : 'What should be explained better? (optional context welcome)';
+    inp.value='';
+    inp.focus();
+    inp.onkeydown=e=>{
+      if(e.key==='Enter'){ e.preventDefault(); submitRefine(id); }
+      else if(e.key==='Escape'){ e.preventDefault(); closeRefine(id); }
+      e.stopPropagation();
+    };
+  }
+}
+function closeRefine(id){ const box=refBox(id); if(box){ box.hidden=true; } }
+let refining=false;
+/* Turning an answer into a refinement on a note, in one function, because it now happens at
+   two different times: the moment the expert answers, and — for a refine asked while Claude
+   was down — whenever the queue drains, which may be after a reload. Returns the note, or
+   null if the reader deleted it in between; the caller says so rather than filing into
+   nothing. */
+function applyRefinement(noteId,got,ask,part){
+  const n=NOTES.find(x=>String(x.id)===String(noteId));
+  if(!n) return null;
+  n.refinements=(n.refinements||[]).concat([{ask,part:part||'',topic:got.topic||'',what:got.what||'',
+    why:got.why||'',example:got.example||'',when:new Date().toLocaleString(),lang:CURRENT_LANG}]);
+  NOTES_OPEN.add(String(n.id));                   /* the refinement must be visible to be read */
+  saveNotes(); drawNotes(); refreshNoteCount();
+  const card=noteList.querySelector('.note[data-id="'+n.id+'"]');
+  if(card){
+    const last=card.querySelector('.nref:last-of-type');
+    (last||card).scrollIntoView({block:'center',behavior:'smooth'});
+    card.classList.add('flash'); setTimeout(()=>card.classList.remove('flash'),1400);
+  }
+  return n;
+}
+async function submitRefine(id){
+  if(refining) return;
+  const box=refBox(id), inp=box&&box.querySelector('.ref-in');
+  const ask=inp?inp.value.trim():'';
+  const part=(box&&box.dataset.part)||'', partKey=(box&&box.dataset.partkey)||'';
+  const n=NOTES.find(x=>String(x.id)===String(id));
+  if(!n) return;
+  if(!ask){ if(inp) inp.focus(); return; }        /* nothing asked yet — do not send */
+  refining=true;
+  const go=box.querySelector('.ref-go');
+  if(go){ go.disabled=true; go.textContent='Asking…'; }
+  /* The chat is where an ask becomes visible. A refinement lands on the note card, but the
+     reader has just typed into a field and is watching for a reply — so echo what they asked
+     to refine into the chat and give it the same waiting indicator a typed question gets.
+     Without it a refine looks like nothing happened until the answer arrives. */
+  const view=noteView(n);
+  /* the exact words the reader is pointing at, so the expert improves THAT and does not
+     re-explain the parts they were happy with */
+  const focus=(()=>{
+    if(partKey.indexOf('ref:')===0){
+      const r=(n.refinements||[])[Number(partKey.slice(4))]||{};
+      return [r.ask?'they asked: '+r.ask:'',r.what,r.example].filter(Boolean).join('\n');
+    }
+    if(partKey==='concept') return view.concept||view.answer||'';
+    if(partKey==='why')     return view.why||'';
+    if(partKey==='example') return view.example||'';
+    if(partKey==='answer')  return view.answer||'';
+    return '';
+  })();
+  const refTitle=(part?part+' of ':'')+(view.topic||n.item);
+  log.insertAdjacentHTML('beforeend','<div class="msg me"></div>');
+  log.lastElementChild.innerHTML='Refining <mark class="pehl q">'+chatEsc(refTitle)+'</mark>'
+    +'<span class="sb-said">'+chatEsc(ask)+'</span>';
+  log.scrollTop=log.scrollHeight;
+  const thinking=sysMsg('think','Asking the '+ind.value+' expert… <span id="tick"></span>');
+  const t0=Date.now();
+  const ticker=setInterval(()=>{const s=Math.round((Date.now()-t0)/1000);
+    const el=document.getElementById('tick'); if(el) el.textContent=s+'s'+(s>20?' — a considered answer takes up to a minute':'');},1000);
+  const done=()=>{ refining=false; clearInterval(ticker); thinking.remove();
+                   if(go){ go.disabled=false; go.textContent='Ask'; } };
+  const payload={question:ask,language:CURRENT_LANG,process:proc.value,industry:ind.value,
+    company:co.textContent.trim(),section:n.section,item:n.item,
+    refine:{topic:view.topic||'',what:view.concept||view.answer||'',why:view.why||'',
+            example:view.example||'',question:view.question||'',part:part,focus:focus}};
+  /* a queued refine names the note it belongs to, so the answer lands on that card and not
+     as a new note — the reader asked to improve something that already exists */
+  const pend=()=>({question:ask,ctx:{section:n.section,item:n.item},anchor:null,
+                   refineId:String(n.id),refineTopic:refTitle,refinePart:part,payload});
+  try{
+    if(!BRIDGE&&!await checkBridge()){
+      done(); closeRefine(id); queueAsk(pend());
+      return void sysMsg('sys','No Claude session yet — I have kept this refinement and will ask it as soon as a session answers.');
+    }
+    setChatStatus('busy','thinking…');
+    const a=await postAsk(payload);
+    if(askFailed(a,pend())){ done(); closeRefine(id); return; }
+    const got=notesFromReply(a)[0];
+    if(!got){ done(); return void sysMsg('err','The expert returned nothing usable. Try asking it differently.'); }
+    done(); setChatStatus('ready','ready');
+    applyRefinement(n.id,got,ask,part);
+    sysMsg('filed','<svg viewBox="0 0 24 24" aria-hidden="true" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2"><path d="M4 6h11l5 5v7H4z"/><path d="M8 6v5h7"/></svg> Added to your note — '+(view.topic||n.item));
+  }catch(err){
+    done();
+    BRIDGE=null; setChatStatus('absent','connecting…'); startPolling();
+    queueAsk(pend());          /* the refinement was asked — keep it and ask again on reconnect */
+    sysMsg('sys','Lost the connection to Claude before it answered — the refinement is queued. Click the refresh control by the status dot and I will ask it again.');
+  }
+}
 /* notes saved by an older version stored a flat answer — render them rather than lose them */
 /* ---------- notes speak the page's language ----------
    A note is written in whatever language the page was in when the reader asked, and
@@ -856,31 +1305,126 @@ function noteXlateLine(n,err){
     : 'Translating '+n+' of your notes into '+label+'…';
 }
 function noteFields(n){
+  /* [label, value, key] — the key is what a per-part refine sends back, so the expert is told
+     which block of the note it is being asked to do better. */
   return n.concept!==undefined
-    ? [['What it is',n.concept],['Why it matters',n.why],['Example',n.example]].filter(f=>f[1])
-    : [['Answer',n.answer]];
+    ? [['Explanation',n.concept,'concept'],['Why it matters',n.why,'why'],
+       ['Example',n.example,'example']].filter(f=>f[1])
+    : [['Answer',n.answer,'answer']];
+}
+/* The per-block refine control. `part` is what the reader sees ("Explanation"); `key` is how
+   submitRefine finds that block's text again at send time.
+
+   It escapes with its own helper, NOT the chat's `chatEsc`. That one is a `const` declared
+   further down the file, and `drawNotes()` runs at load — so on a page that HAS notes, reaching
+   for it here threw a temporal-dead-zone ReferenceError before it was initialised, and every
+   line of top-level script after that point (the chat engine, the selection engine, the
+   exploration switcher) never ran. The page came up looking like all the reader's data was
+   gone. A region that is replaced wholesale declares its own helpers; this is why. */
+const prefEsc=t=>String(t==null?'':t).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+function prefBtn(id,part,key){
+  return `<button type="button" class="pref" data-ref="${id}" data-part="${prefEsc(part)}"
+    data-partkey="${key}" title="Ask for a better explanation of this part — ${prefEsc(part)}"
+    aria-label="Refine this part: ${prefEsc(part)}"><svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20.5 12a8.5 8.5 0 0 1-8.5 8.5 8.5 8.5 0 0 1-7.4-4.3"/>
+    <path d="M3.5 12a8.5 8.5 0 0 1 8.5-8.5 8.5 8.5 0 0 1 7.4 4.3"/>
+    <path d="M19.4 3.4l.6 4.6-4.6.6"/><path d="M4.6 20.6L4 16l4.6-.6"/></svg></button>`;
+}
+/* Which cards are open, by id. Held in memory rather than storage: the state belongs to
+   this sitting with the page, and a reload should start from the scannable list again. */
+const NOTES_OPEN=new Set();
+function noteOpen(id){ return NOTES_OPEN.has(String(id)); }
+function toggleNote(id){
+  const k=String(id);
+  NOTES_OPEN.has(k)?NOTES_OPEN.delete(k):NOTES_OPEN.add(k);
+  const card=noteList.querySelector('.note[data-id="'+k+'"]');
+  if(!card) return void drawNotes();
+  const open=NOTES_OPEN.has(k), body=card.querySelector('.nbody'), h=card.querySelector('h4.ntoggle');
+  card.classList.toggle('open',open);
+  if(body) body.hidden=!open;
+  if(h) h.setAttribute('aria-expanded',String(open));
 }
 function drawNotes(){
   if(!NOTES.length){
     noteList.innerHTML=`<div class="noteEmpty"><b>No notes yet.</b><p style="margin:6px 0 0">
       Ask something in the chat on the right. Each answer is filed here as a short piece of enablement —
-      <b>what it is</b>, <b>why it matters</b>, <b>an example</b> — tagged with the screen and the step, problem or
+      <b>a short explanation</b> and <b>a worked example</b> — tagged with the screen and the step, problem or
       KPI you were looking at when you asked, so the note keeps its context.</p></div>`;
     return;
   }
-  noteList.innerHTML=NOTES.map(noteView).map((n,i)=>`<div class="note">
-    <div class="meta"><span>Note ${i+1}</span><span>${esc(n.section)} · ${esc(n.item)}</span>
-      <span class="sp">${esc(n.when)}</span><button class="del" data-del="${esc(n.id)}" title="Delete this note" aria-label="Delete this note">
+  noteList.innerHTML=NOTES.map((raw,i)=>[noteView(raw),raw,i]).map(([n,raw,i])=>`<div class="note${noteOpen(raw.id)?' open':''}" data-id="${raw.id}">
+    <div class="meta"><span>Note ${i+1}</span><span>${n.section} · ${n.item}</span>
+      ${raw.anchor?`<button class="src2" data-src="${raw.id}" title="Show the text this came from" aria-label="Show the text this came from"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h10M10 7l5 5-5 5"/></svg>from the page</button>`:''}
+      <span class="sp">${n.when}</span>
+      <button class="ref" data-ref="${raw.id}" data-part="" data-partkey="" title="Ask for a better explanation of this note as a whole — or use the control on one part" aria-label="Refine this note as a whole">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.5 12a8.5 8.5 0 0 1-8.5 8.5 8.5 8.5 0 0 1-7.4-4.3"/>
+          <path d="M3.5 12a8.5 8.5 0 0 1 8.5-8.5 8.5 8.5 0 0 1 7.4 4.3"/>
+          <path d="M19.4 3.4l.6 4.6-4.6.6"/><path d="M4.6 20.6L4 16l4.6-.6"/>
+        </svg>
+      </button>
+      <button class="del" data-del="${n.id}" title="Delete this note" aria-label="Delete this note">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
       </button></div>
-    <h4>${esc(n.topic||n.question)}</h4>
-    ${n.topic?`<p class="asked">You asked: ${esc(n.question)}</p>`:''}
-    ${noteFields(n).map(([label,val])=>`<div class="nf"><b>${esc(label)}</b><p>${esc(val)}</p></div>`).join('')}
+    <h4 class="ntoggle" data-toggle="${raw.id}" role="button" tabindex="0"
+        aria-expanded="${noteOpen(raw.id)}" title="Show or hide this note">
+      <svg class="nchev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      <span>${n.topic||n.question}</span></h4>
+    <div class="nbody"${noteOpen(raw.id)?'':' hidden'}>
+      ${n.topic?`<p class="asked">You asked: ${n.question}</p>`:''}
+      ${noteFields(n).map(([label,val,key])=>`<div class="nf"><b>${label}${prefBtn(raw.id,label,key)}</b><p>${val}</p></div>`).join('')}
+      ${refinementsHTML(raw)}
+    </div>
+    <div class="refbox" data-refbox="${raw.id}" hidden>
+      <button type="button" class="ref-back" data-refcancel="${raw.id}" title="Close" aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l-6 6 6 6"/></svg></button>
+      <span class="ref-lbl">Refine</span>
+      <input type="text" class="ref-in" maxlength="300"
+             placeholder="What should be explained better? (optional context welcome)"
+             aria-label="What should be explained better?">
+      <button type="button" class="ref-go" data-refgo="${raw.id}">Ask</button>
+    </div>
   </div>`).join('');
 }
+/* A refinement is kept, not merged: the reader asked a follow-up about one part of the note
+   and the answer to it is its own small thing, worth finding again next to the concept it
+   belongs to. They accumulate, newest last, each labelled with what was asked.
+
+   They render as written. The note's own fields have an i18n cache and are re-rendered in
+   the page's language; a refinement is shown in the language it was asked in, because it is
+   the reader's own follow-up rather than page content. */
+function refinementsHTML(raw){
+  const list=Array.isArray(raw.refinements)?raw.refinements:[];
+  if(!list.length) return '';
+  return list.map((r,i)=>`<div class="nref">
+    <b>You also asked${r.part?' about the '+r.part:''}${prefBtn(raw.id,'your follow-up','ref:'+i)}</b><p class="ra">${r.ask||''}</p>
+    ${[['',r.what],['Why it matters',r.why],['Example',r.example]]
+       .filter(f=>f[1]).map(([l,v])=>`<p class="rv">${l?`<i>${l}</i> `:''}${v}</p>`).join('')}
+  </div>`).join('');
+}
+noteList.addEventListener('keydown',e=>{
+  const t=e.target.closest('[data-toggle]');
+  if(t&&(e.key==='Enter'||e.key===' ')){ e.preventDefault(); toggleNote(t.dataset.toggle); }
+});
 noteList.addEventListener('click',e=>{
+  const ref=e.target.closest('[data-ref]');
+  if(ref) return void openRefine(ref.dataset.ref,ref.dataset.part,ref.dataset.partkey);
+  const rgo=e.target.closest('[data-refgo]');
+  if(rgo) return void submitRefine(rgo.dataset.refgo);
+  const rx=e.target.closest('[data-refcancel]');
+  if(rx) return void closeRefine(rx.dataset.refcancel);
+  const tog=e.target.closest('[data-toggle]');
+  if(tog) return void toggleNote(tog.dataset.toggle);
+  const src=e.target.closest('[data-src]');
+  if(src){
+    const n=NOTES.find(x=>String(x.id)===src.dataset.src);
+    if(n&&n.anchor&&typeof gotoAnchor==='function') gotoAnchor(resolvedAnchor(n)||n.anchor);
+    return;
+  }
   const b=e.target.closest('[data-del]'); if(!b) return;
   NOTES=NOTES.filter(n=>String(n.id)!==b.dataset.del); saveNotes(); drawNotes(); refreshNoteCount();
+  /* the highlight goes with it, because it was only ever derived from the note */
+  if(typeof drawHighlights==='function') drawHighlights();
 });
 drawNotes();
 
@@ -931,6 +1475,24 @@ function sayBye(){
 /* pagehide is the one that fires on a real close; beforeunload is the fallback */
 addEventListener('pagehide',sayBye);
 addEventListener('beforeunload',sayBye);
+/* ...but a pagehide is not always a close. A browser also fires it when the page goes into
+   the back/forward cache, and the very same document can come back minutes later — the
+   reader followed a link and pressed Back. It came back mute: `sayBye` had stopped the
+   heartbeat and latched `saidBye`, nothing ever cleared them, and the bridge — hearing
+   nothing — retired itself and took the reader's next question with it as a lost connection.
+   `pageshow` is the other half of the pair: whatever we said goodbye for, we are here now. */
+addEventListener('pageshow',()=>{
+  saidBye=false;
+  if(BRIDGE){ startBeat(); post('/beat'); }
+  checkBridge();                      /* it may have gone while we were away — find out */
+});
+/* A hidden tab has its timers throttled to about once a minute, so the beat that should have
+   gone out while the reader was reading their mail may not have. Beat the moment they come
+   back rather than waiting for the next tick of a slowed-down timer. */
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden||!BRIDGE) return;
+  saidBye=false; startBeat(); post('/beat');
+});
 
 
 function setChatStatus(state,text,title){
@@ -938,10 +1500,150 @@ function setChatStatus(state,text,title){
   chatDot.className='dot2 '+({ready:'on',absent:'off',busy:'busy'}[state]||'');
   chatDot.title=title||text; chatStat.textContent=text;
 }
+/* the chat region is replaced wholesale by pe-sync-template.py, so it declares its
+   own helpers rather than reaching for one defined elsewhere in the page */
+const chatEsc=t=>String(t==null?'':t).replace(/[&<>]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]));
 function sysMsg(cls,html){
   log.insertAdjacentHTML('beforeend',`<div class="msg ${cls}">${html}</div>`);
   log.scrollTop=log.scrollHeight; return log.lastElementChild;
 }
+/* ---- asks made before Claude was up: queued, not refused -------------------------
+   Both ways in — a typed question and a selected phrase — need a live bridge, and a
+   reader who selects a phrase ten seconds after opening the page does not have one yet.
+   Refusing spends their intent on an error: they must remember the phrase, watch a dot,
+   find the words again and re-select them. So an ask that cannot be delivered is written
+   down instead. It stays in the log as what it is — asked, not answered — and the moment
+   a bridge answers, the queue drains oldest first, each ask filed exactly as if it had
+   been made just then.
+
+   Stored, because the reader who got no answer is the one most likely to reload. Per
+   exploration, like the notes. Each entry carries everything the replay needs: the
+   payload as it would have been posted, the section and item it was asked from, and for a
+   selection its anchor — so a queued selection still highlights the phrase it came from,
+   hours later.
+
+   What it deliberately does not do: reorder, retry forever, or ask twice. A drain stops
+   at the first ask that cannot be delivered and leaves it, and everything behind it,
+   exactly where it was.                                                              */
+const PEND_KEY='pe-pending-'+CURRENT_ID;
+let PENDING=[];
+try{PENDING=JSON.parse(localStorage.getItem(PEND_KEY)||'[]')}catch(e){PENDING=[]}
+const savePending=()=>{try{localStorage.setItem(PEND_KEY,JSON.stringify(PENDING))}catch(e){}};
+let draining=false;
+
+const pendEl=id=>document.getElementById('pend-'+id);
+/* the waiting state of one queued ask, drawn into its own bubble */
+function drawQueued(entry,asking){
+  const el=pendEl(entry.id); if(!el) return;
+  const n=PENDING.length;
+  el.className='msg queued'+(asking?' asking':'');
+  el.innerHTML=asking
+    ? '<span class="qw">Asking this now…</span>'
+    : '<span class="qw">Waiting for Claude — asked when a session answers.</span>'
+      +(n>1?'<span class="qn">'+n+'</span>':'')
+      +'<button type="button">Drop</button>';
+  const b=el.querySelector('button');
+  if(b) b.onclick=()=>dropQueued(entry.id);
+}
+/* the reader's own words, redrawn after a reload — the chat log itself is not stored, so a
+   restored ask has to say again what was asked, in the same shape it was asked in */
+function echoAsk(entry){
+  log.insertAdjacentHTML('beforeend','<div class="msg me"></div>');
+  const me=log.lastElementChild;
+  if(entry.refineId){
+    me.innerHTML='Refining <mark class="pehl q">'+chatEsc(entry.refineTopic||'a note')+'</mark>'
+      +'<span class="sb-said">'+chatEsc(entry.question)+'</span>';
+  }else if(entry.anchor&&entry.anchor.quote){
+    me.innerHTML='Asked for '+(entry.mode==='example'?'an example of':'an explanation of')
+      +' <mark class="pehl q">'+chatEsc(entry.anchor.quote)+'</mark>'
+      +(entry.detail?'<span class="sb-said">'+chatEsc(entry.detail)+'</span>':'');
+  }else{
+    me.textContent=entry.question;
+  }
+}
+function queueAsk(entry){
+  entry.id='q'+Math.random().toString(36).slice(2,9);
+  entry.ts=Date.now();
+  PENDING.push(entry); savePending();
+  log.insertAdjacentHTML('beforeend','<div class="msg queued" id="pend-'+entry.id+'"></div>');
+  drawQueued(entry,false);
+  PENDING.forEach(e=>{ if(e.id!==entry.id) drawQueued(e,false); });   /* the count moved */
+  log.scrollTop=log.scrollHeight;
+  return entry;
+}
+function dropQueued(id){
+  const el=pendEl(id); if(el) el.remove();
+  PENDING=PENDING.filter(e=>e.id!==id); savePending();
+  PENDING.forEach(e=>drawQueued(e,false));
+}
+/* Everything still waiting, drawn on load. Before any drain, so a reader who comes back to
+   a page with three unanswered asks sees three unanswered asks. */
+function restorePending(){
+  if(!PENDING.length) return;
+  sysMsg('sys',PENDING.length===1
+    ? 'One question was still waiting for Claude when you last closed this page.'
+    : PENDING.length+' questions were still waiting for Claude when you last closed this page.');
+  PENDING.forEach(entry=>{
+    echoAsk(entry);
+    log.insertAdjacentHTML('beforeend','<div class="msg queued" id="pend-'+entry.id+'"></div>');
+    drawQueued(entry,false);
+  });
+  log.scrollTop=log.scrollHeight;
+}
+/* Ask everything that has been waiting, in order. Called whenever a bridge becomes
+   reachable — which is what "activating Claude" looks like from in here, whether the
+   reader clicked the refresh control or a session simply appeared on a port. */
+async function drainPending(){
+  if(draining||!PENDING.length||!BRIDGE) return;
+  draining=true;
+  try{
+    while(PENDING.length&&BRIDGE){
+      const entry=PENDING[0];
+      drawQueued(entry,true);
+      setChatStatus('busy','thinking…');
+      let a;
+      try{
+        a=await postAsk(entry.payload);
+      }catch(err){                        /* gone again — leave this ask, and the rest, alone */
+        drawQueued(entry,false);
+        BRIDGE=null; setChatStatus('absent','connecting…'); startPolling();
+        sysMsg('sys','Lost the connection again — the question is still waiting.');
+        return;
+      }
+      if(a&&a.error==='no-claude'){       /* a bridge, but no CLI behind it: still not askable */
+        drawQueued(entry,false);
+        setChatStatus('absent','no Claude');
+        sysMsg('sys','There is <b>no Claude in this environment</b> — the question stays queued.');
+        return;
+      }
+      PENDING.shift(); savePending();
+      const el=pendEl(entry.id); if(el) el.remove();
+      PENDING.forEach(e=>drawQueued(e,false));
+      if(a&&a.error){
+        sysMsg('err','The expert could not answer that one ('+a.error+'). Ask it again in your own words.');
+        continue;
+      }
+      let notes=notesFromReply(a);
+      if(entry.anchor) notes=notes.slice(0,1);      /* one phrase, one note — as when live */
+      if(!notes.length){
+        sysMsg('err','The expert returned nothing usable for that one. Try rephrasing it.');
+        continue;
+      }
+      /* a refinement belongs to a note that already exists — unless the reader has since
+         deleted it, in which case say so instead of filing a stray note in its place */
+      if(entry.refineId){
+        const on=applyRefinement(entry.refineId,notes[0],entry.question,entry.refinePart);
+        sysMsg(on?'filed':'err',on
+          ? 'Added to your note — '+chatEsc(entry.refineTopic||on.item)
+          : 'That note was deleted while this refinement was waiting, so there was nothing to add it to.');
+        continue;
+      }
+      renderAndFile(notes,entry.ctx,entry.question,entry.anchor);
+    }
+    if(BRIDGE) setChatStatus('ready','ready');
+  }finally{ draining=false; }
+}
+
 /* try each port; prefer a bridge serving THIS exploration, accept any healthy one */
 async function findBridge(){
   let fallback=null;
@@ -976,11 +1678,14 @@ async function checkBridge({quiet=true}={}){
       if(Array.isArray(src.languages)) LIVE_LANGS=src.languages.slice();
       PARTIAL_LANGS=(src.partial&&typeof src.partial==='object')?src.partial:{};
       COVERAGE=(src.coverage&&typeof src.coverage==='object')?src.coverage:{};
+      /* a bridge just became reachable — it may already be translating something */
+      if(typeof adoptJobs==='function') adoptJobs();
     }
     if(typeof b.complete==='number') COMPLETE_AT=b.complete;
     setChatStatus('ready','Claude '+String(b.version||'').split(' ')[0],'answering from '+b.dir);
     if(typeof drawLangMenu==='function') drawLangMenu();
     if(typeof translateNotes==='function') translateNotes();
+    drainPending();          /* whatever was asked while it was down, in the order it was asked */
     return true;
   }
   if(b&&!b.claude){
@@ -997,6 +1702,140 @@ async function checkBridge({quiet=true}={}){
 /* keep looking quietly — the session is usually there, or about to be */
 function startPolling(){ if(!pollTimer) pollTimer=setInterval(()=>checkBridge(),4000); }
 function stopPolling(){ if(pollTimer){ clearInterval(pollTimer); pollTimer=null; } }
+/* ---- the refresh control: find a session, or have one started ----------------
+   The dot reports whether a bridge is answering; this control acts on it. One click
+   re-probes at once rather than waiting for the four-second poll. If nothing answers,
+   it asks the launcher agent — a small always-on daemon on 127.0.0.1:8790, installed
+   by setup.sh — to start a bridge for THIS exploration. The page cannot start a
+   process; the launcher can. It is given the exploration's folder NAME, never a path,
+   and resolves it inside the library itself, so the page has no say over what runs
+   where. With no launcher installed, say so plainly and name the one command that
+   fixes it — never spin forever pretending.                                       */
+const LAUNCHER='http://127.0.0.1:8790';
+const RFSH_T={
+ en:{tip:'Check for a Claude session — start one if none is running',
+     look:'Looking for a Claude session…',start:'Starting Claude…',
+     up:'Claude is up — ask away.',
+     none:'No Claude session is running, and no launcher agent is installed to start one. Start it yourself with <code>pe-chat %s</code>, or install the launcher by running the plugin\'s <code>setup.sh</code> once.',
+     noc:'The launcher started, but found no <code>claude</code> on <code>PATH</code>.',
+     slow:'Claude was asked to start but did not answer in time — see <code>.chat-bridge.log</code> in this exploration\'s folder.'},
+ it:{tip:'Cerca una sessione Claude — se non è attiva, la avvia',
+     look:'Cerco una sessione Claude…',start:'Avvio di Claude…',
+     up:'Claude è attivo — puoi chiedere.',
+     none:'Nessuna sessione Claude attiva e nessun agente di avvio installato. Avviala con <code>pe-chat %s</code>, oppure installa l\'agente eseguendo una volta <code>setup.sh</code> del plugin.',
+     noc:'L\'agente di avvio è partito, ma non ha trovato <code>claude</code> nel <code>PATH</code>.',
+     slow:'Claude è stato avviato ma non ha risposto in tempo — vedi <code>.chat-bridge.log</code> nella cartella di questa esplorazione.'},
+ de:{tip:'Nach einer Claude-Sitzung suchen — und sie starten, falls keine läuft',
+     look:'Suche nach einer Claude-Sitzung…',start:'Claude wird gestartet…',
+     up:'Claude läuft — fragen Sie einfach.',
+     none:'Es läuft keine Claude-Sitzung, und es ist kein Start-Agent installiert. Starten Sie sie selbst mit <code>pe-chat %s</code>, oder installieren Sie den Agenten, indem Sie <code>setup.sh</code> des Plugins einmal ausführen.',
+     noc:'Der Start-Agent lief, fand aber kein <code>claude</code> im <code>PATH</code>.',
+     slow:'Claude sollte starten, hat aber nicht rechtzeitig geantwortet — siehe <code>.chat-bridge.log</code> im Ordner dieser Erkundung.'},
+ fr:{tip:'Chercher une session Claude — la démarrer si aucune ne tourne',
+     look:'Recherche d\'une session Claude…',start:'Démarrage de Claude…',
+     up:'Claude est actif — posez votre question.',
+     none:'Aucune session Claude ne tourne, et aucun agent de démarrage n\'est installé. Lancez-la avec <code>pe-chat %s</code>, ou installez l\'agent en exécutant une fois le <code>setup.sh</code> du plugin.',
+     noc:'L\'agent de démarrage a démarré, mais n\'a trouvé aucun <code>claude</code> dans le <code>PATH</code>.',
+     slow:'Claude a reçu l\'ordre de démarrer mais n\'a pas répondu à temps — voir <code>.chat-bridge.log</code> dans le dossier de cette exploration.'},
+ es:{tip:'Buscar una sesión de Claude — iniciarla si no hay ninguna',
+     look:'Buscando una sesión de Claude…',start:'Iniciando Claude…',
+     up:'Claude está activo — ya puedes preguntar.',
+     none:'No hay ninguna sesión de Claude en marcha ni un agente de arranque instalado. Iníciala con <code>pe-chat %s</code>, o instala el agente ejecutando una vez el <code>setup.sh</code> del plugin.',
+     noc:'El agente de arranque se inició, pero no encontró <code>claude</code> en el <code>PATH</code>.',
+     slow:'Se pidió a Claude que arrancara pero no respondió a tiempo — consulta <code>.chat-bridge.log</code> en la carpeta de esta exploración.'},
+ pt:{tip:'Procurar uma sessão do Claude — iniciá-la se nenhuma estiver ativa',
+     look:'A procurar uma sessão do Claude…',start:'A iniciar o Claude…',
+     up:'O Claude está ativo — pode perguntar.',
+     none:'Não há nenhuma sessão do Claude ativa nem um agente de arranque instalado. Inicie-a com <code>pe-chat %s</code>, ou instale o agente executando uma vez o <code>setup.sh</code> do plugin.',
+     noc:'O agente de arranque iniciou, mas não encontrou <code>claude</code> no <code>PATH</code>.',
+     slow:'O Claude foi mandado arrancar mas não respondeu em tempo — veja <code>.chat-bridge.log</code> na pasta desta exploração.'},
+ nl:{tip:'Zoek een Claude-sessie — start er een als er geen loopt',
+     look:'Zoeken naar een Claude-sessie…',start:'Claude wordt gestart…',
+     up:'Claude is actief — stel je vraag.',
+     none:'Er loopt geen Claude-sessie en er is geen start-agent geïnstalleerd. Start hem zelf met <code>pe-chat %s</code>, of installeer de agent door de <code>setup.sh</code> van de plugin één keer uit te voeren.',
+     noc:'De start-agent liep, maar vond geen <code>claude</code> op het <code>PATH</code>.',
+     slow:'Claude is gevraagd te starten maar antwoordde niet op tijd — zie <code>.chat-bridge.log</code> in de map van deze verkenning.'},
+ ar:{tip:'التحقّق من وجود جلسة Claude — وبدؤها إن لم تكن تعمل',
+     look:'جارٍ البحث عن جلسة Claude…',start:'جارٍ تشغيل Claude…',
+     up:'Claude يعمل الآن — اطرح سؤالك.',
+     none:'لا توجد جلسة Claude تعمل، ولا وكيل تشغيل مُثبَّت لبدئها. ابدأها بنفسك عبر <code>pe-chat %s</code>، أو ثبِّت الوكيل بتشغيل <code>setup.sh</code> الخاص بالإضافة مرّة واحدة.',
+     noc:'عمل وكيل التشغيل، لكنه لم يجد <code>claude</code> في <code>PATH</code>.',
+     slow:'طُلب من Claude أن يبدأ لكنه لم يستجب في الوقت المحدّد — راجع <code>.chat-bridge.log</code> في مجلّد هذا الاستكشاف.'}
+};
+function rfshT(k){
+  const t=(typeof CURRENT_LANG==='string'&&RFSH_T[CURRENT_LANG])?RFSH_T[CURRENT_LANG]:RFSH_T.en;
+  return t[k]||RFSH_T.en[k];
+}
+const rfshWait=ms=>new Promise(r=>setTimeout(r,ms));
+/* Used only for the command the reader copies. The launcher is never handed a path —
+   it gets a folder name and resolves it itself — but `pe-chat` does need one, and the
+   page happens to know exactly where it is sitting. */
+const rfshDir=()=>{
+  try{ return decodeURIComponent(location.pathname).replace(/\/[^\/]*$/,'')||here().path; }
+  catch(e){ return here().path; }
+};
+
+/* Ask the launcher to start a bridge for this exploration. Returns the launcher's own
+   answer, or {error:'no-launcher'} when nothing is listening on 8790 — which is simply
+   what an install without the agent looks like, not a fault to shout about. */
+async function askLauncher(){
+  let health;
+  try{
+    const c=new AbortController(); const to=setTimeout(()=>c.abort(),1500);
+    health=await (await fetch(LAUNCHER+'/health',{cache:'no-store',signal:c.signal})).json();
+    clearTimeout(to);
+  }catch(e){ return {error:'no-launcher'}; }
+  if(!health||!health.ok) return {error:'no-launcher'};
+  if(!health.claude)      return {error:'no-claude'};
+  try{
+    const r=await fetch(LAUNCHER+'/start',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({exploration:here().path})});
+    return await r.json();
+  }catch(e){ return {error:'start-failed'}; }
+}
+
+let rfshBusy=false;
+async function refreshBridge(){
+  if(rfshBusy) return;
+  rfshBusy=true;
+  /* Two controls trigger the same work: the one beside the chat's status dot and the one in
+     the language menu, which is where a reader finds out translation needs Claude at all.
+     Both spin, because pressing either should look like something is happening. */
+  const btns=[document.getElementById('chatRfsh'),document.getElementById('langRfsh')].filter(Boolean);
+  btns.forEach(b=>{ b.classList.add('spin'); b.disabled=true; });
+  try{
+    setChatStatus('busy',rfshT('look'));
+    if(await checkBridge({quiet:false})) return;        /* one was already there */
+    setChatStatus('busy',rfshT('start'));
+    const res=await askLauncher();
+    if(res&&res.ok){
+      /* The launcher waits for the bridge's own /health before answering, so this
+         loop is short — it covers the page's probe, not the process start. */
+      for(let i=0;i<10;i++){
+        if(await checkBridge({quiet:false})){ sysMsg('filed',rfshT('up')); return; }
+        await rfshWait(600);
+      }
+      sysMsg('sys',rfshT('slow'));
+    }else if(res&&res.error==='no-claude'){
+      sysMsg('sys',rfshT('noc'));
+    }else if(res&&res.error==='unknown-exploration'){
+      sysMsg('sys',rfshT('none').replace('%s',rfshDir()));
+    }else{
+      sysMsg('sys',rfshT('none').replace('%s',rfshDir()));
+    }
+    await checkBridge();                                /* settle the dot honestly */
+  }finally{
+    rfshBusy=false;
+    btns.forEach(b=>{ b.classList.remove('spin'); b.disabled=false; });
+  }
+}
+{ const b=document.getElementById('chatRfsh');
+  if(b){ b.title=RFSH_T.en.tip; b.setAttribute('aria-label',RFSH_T.en.tip);
+         b.onclick=refreshBridge;
+         /* the label is localised once the language constant is readable */
+         setTimeout(()=>{ b.title=rfshT('tip'); b.setAttribute('aria-label',rfshT('tip')); },0); } }
+restorePending();
 addEventListener('focus',()=>{ if(bridgeState!=='ready') checkBridge(); });
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&bridgeState!=='ready') checkBridge(); });
 checkBridge();
@@ -1008,40 +1847,796 @@ composer.onsubmit=async e=>{
   log.insertAdjacentHTML('beforeend','<div class="msg me"></div>');
   log.lastElementChild.textContent=question; q.value=''; log.scrollTop=log.scrollHeight;
 
-  const thinking=sysMsg('think','Asking the '+esc(ind.value)+' expert… <span id="tick"></span>');
+  const thinking=sysMsg('think','Asking the '+ind.value+' expert… <span id="tick"></span>');
   const t0=Date.now();
   const ticker=setInterval(()=>{const s=Math.round((Date.now()-t0)/1000);
     const el=document.getElementById('tick'); if(el) el.textContent=s+'s'+(s>20?' — a considered answer takes up to a minute':'');},1000);
+  /* built once: the same ask is what gets posted now and what gets queued if it cannot be */
+  const payload={question,language:CURRENT_LANG,process:proc.value,industry:ind.value,
+                 company:co.textContent.trim(),section:c.section,item:c.item};
+  const pend=()=>({question,ctx:{section:c.section,item:c.item},anchor:null,payload});
   if(!BRIDGE && !await checkBridge()){          /* one live attempt before giving up */
-    thinking.remove();
+    clearInterval(ticker); thinking.remove(); q.disabled=false;
+    queueAsk(pend());
     return void sysMsg('sys',bridgeState==='absent'&&chatStat.textContent==='no Claude'
-      ? 'There is <b>no Claude in this environment</b>, so I cannot answer that.'
-      : 'I cannot reach a Claude session yet. Start one from this exploration\'s folder with <code>pe-chat .</code> — I will pick it up on my own, no reload needed.');
+      ? 'There is <b>no Claude in this environment</b> — I have kept the question and will ask it as soon as one is there.'
+      : 'No Claude session yet — I have kept the question. Click the refresh control by the status dot, or start one with <code>pe-chat .</code>, and I will ask it then.');
   }
   setChatStatus('busy','thinking…'); q.disabled=true;
   try{
-    const r=await fetch(BRIDGE+'/ask',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({question,language:CURRENT_LANG,process:proc.value,industry:ind.value,company:co.textContent.trim(),
-                           section:c.section,item:c.item})});
-    const a=await r.json();
+    const a=await postAsk(payload);
     thinking.remove();
-    if(a.error==='no-claude'){ setChatStatus('absent','no Claude');
-      return void sysMsg('sys','There is <b>no Claude in this environment</b> — nothing on <code>PATH</code> named <code>claude</code>.'); }
-    if(a.error){ setChatStatus('ready','ready');
-      return void sysMsg('err','The expert could not answer that ('+a.error+'). Try rephrasing, or ask Claude directly.'); }
+    if(askFailed(a,pend())) return;
     setChatStatus('ready','ready');
-    log.insertAdjacentHTML('beforeend',`<div class="msg ai">
-      <b class="t">${esc(a.topic||c.item)}</b>
-      <span class="f"><i>What it is</i>${esc(a.what||'')}</span>
-      <span class="f"><i>Why it matters</i>${esc(a.why||'')}</span>
-      <span class="f"><i>Example</i>${esc(a.example||'')}</span></div>`);
-    sysMsg('filed','<svg viewBox="0 0 24 24" aria-hidden="true" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2"><path d="M4 6h11l5 5v7H4z"/><path d="M8 6v5h7"/></svg> Filed in Personal Notes — '+esc(c.section)+' · '+esc(c.item));
-    addNote(question,{topic:a.topic||c.item,concept:a.what,why:a.why,example:a.example});
+    /* One note per concept. A reader who asks about three things has asked three
+       questions, and three short notes they can each find later beat one long note
+       they have to re-read to use. A bare object is still accepted — an older bridge
+       is a normal thing to be talking to. */
+    const notes=notesFromReply(a);
+    if(!notes.length){ return void sysMsg('err','The expert returned nothing usable. Try rephrasing.'); }
+    renderAndFile(notes,c,question,null);
   }catch(err){
     thinking.remove(); BRIDGE=null; setChatStatus('absent','connecting…'); startPolling();
-    sysMsg('sys','Lost the connection to Claude. Restart it with <code>pe-chat .</code> — I will reconnect on my own.');
+    /* the bridge went away with the question in it — keep it and ask again on reconnect */
+    queueAsk(pend());
+    sysMsg('sys','Lost the connection to Claude before it answered — the question is queued. Restart it with <code>pe-chat .</code> and I will ask it again.');
   }finally{ clearInterval(ticker); q.disabled=false; }
 };
+
+
+/* ---- one ask path, two ways in ----------------------------------------------------
+   A typed question and a selected phrase are the same request with different framing, so
+   they share the posting, the rendering and the filing. Only the payload differs: a
+   selection carries the phrase and the mode, and comes back as exactly ONE note — a
+   selected phrase is one concept by definition, so splitting it would invent concepts the
+   reader did not ask about.                                                           */
+async function postAsk(payload){
+  const r=await fetch(BRIDGE+'/ask',{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  return await r.json();
+}
+function notesFromReply(a){
+  return Array.isArray(a.notes)&&a.notes.length ? a.notes
+       : (a.topic||a.what||a.why||a.example) ? [a] : [];
+}
+function renderAndFile(notes,c,question,anchor){
+  notes.forEach((n,i)=>{
+    log.insertAdjacentHTML('beforeend',`<div class="msg ai">
+      <b class="t">${chatEsc(n.topic||c.item)}${notes.length>1?` <span class="nof">${i+1} of ${notes.length}</span>`:''}</b>
+      ${[['Explanation',n.what],['Why it matters',n.why],['Example',n.example]]
+          .filter(f=>f[1]).map(([l,v])=>`<span class="f"><i>${l}</i>${v}</span>`).join('')}</div>`);
+    addNote(question,{topic:n.topic||c.item,concept:n.what,why:n.why,example:n.example},
+            anchor&&i===0?anchor:null);
+  });
+  log.scrollTop=log.scrollHeight;
+  sysMsg('filed','<svg viewBox="0 0 24 24" aria-hidden="true" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2"><path d="M4 6h11l5 5v7H4z"/><path d="M8 6v5h7"/></svg> '
+    +(notes.length>1
+      ? `Filed ${notes.length} separate notes in Personal Notes — one per concept, under `
+      : 'Filed in Personal Notes — ')+c.section+' · '+c.item);
+  if(anchor) drawHighlights();
+}
+/* the shared failure vocabulary, so a selection fails exactly as a typed question does */
+function askFailed(a,pend){
+  if(a.error==='no-claude'){ setChatStatus('absent','no Claude');
+    if(pend){ queueAsk(pend);
+      sysMsg('sys','There is <b>no Claude in this environment</b> — nothing on <code>PATH</code> named <code>claude</code>. The question is queued until there is.');
+    }else{
+      sysMsg('sys','There is <b>no Claude in this environment</b> — nothing on <code>PATH</code> named <code>claude</code>.');
+    }
+    return true; }
+  if(a.error){ setChatStatus('ready','ready');
+    sysMsg('err','The expert could not answer that ('+a.error+'). Try rephrasing, or ask Claude directly.');
+    return true; }
+  return false;
+}
+async function askAboutSelection(mode,anchor,detail){
+  const c=currentContext();
+  const label=mode==='example'?'an example of':'an explanation of';
+  detail=(detail||'').trim();
+  /* A whole paragraph makes an unusable note heading and an unreadable chat bubble, so what
+     is *shown* is clipped. What is *sent* is never clipped: the expert gets the passage
+     entire, below, as `selection`. */
+  const shown=anchor.quote.length>160?anchor.quote.slice(0,157).replace(/\s+\S*$/,'')+'…':anchor.quote;
+  /* the reader's own words go into the question, so the note records what they actually
+     asked rather than a generic "Explain: <phrase>" */
+  const question=(mode==='example'?'Give me an example of: ':'Explain: ')+shown
+    +(detail?' — '+detail:'');
+  showTab(activeTab);
+  log.insertAdjacentHTML('beforeend','<div class="msg me"></div>');
+  log.lastElementChild.innerHTML='Asked for '+label+' <mark class="pehl q">'+chatEsc(shown)+'</mark>'
+    +(detail?'<span class="sb-said">'+chatEsc(detail)+'</span>':'');
+  log.scrollTop=log.scrollHeight;
+  const thinking=sysMsg('think','Asking the '+ind.value+' expert… <span id="tick"></span>');
+  const t0=Date.now();
+  const ticker=setInterval(()=>{const s=Math.round((Date.now()-t0)/1000);
+    const el=document.getElementById('tick'); if(el) el.textContent=s+'s'+(s>20?' — a considered answer takes up to a minute':'');},1000);
+  const payload={question,language:CURRENT_LANG,process:proc.value,industry:ind.value,
+    company:co.textContent.trim(),section:c.section,item:c.item,
+    selection:anchor.quote,mode:mode,detail:detail};
+  const pend=()=>({question,ctx:{section:c.section,item:c.item},mode:mode,detail:detail,
+                   anchor:Object.assign({},anchor,{mode}),payload});
+  if(!BRIDGE&&!await checkBridge()){
+    clearInterval(ticker); thinking.remove();
+    queueAsk(pend());
+    return void sysMsg('sys','No Claude session yet — I have kept this one. Click the refresh control by the status dot and I will ask it as soon as the session answers.');
+  }
+  setChatStatus('busy','thinking…');
+  try{
+    const a=await postAsk(payload);
+    thinking.remove();
+    if(askFailed(a,pend())) return;
+    setChatStatus('ready','ready');
+    const notes=notesFromReply(a).slice(0,1);      /* one phrase, one note */
+    if(!notes.length) return void sysMsg('err','The expert returned nothing usable. Try selecting a little more text.');
+    renderAndFile(notes,c,question,Object.assign({},anchor,{mode}));
+  }catch(err){
+    thinking.remove(); BRIDGE=null; setChatStatus('absent','connecting…'); startPolling();
+    queueAsk(pend());
+    sysMsg('sys','Lost the connection to Claude before it answered — this one is queued. Click the refresh control by the status dot and I will ask it again.');
+  }finally{ clearInterval(ticker); }
+}
+
+/* ---------- PE:chrome-split ---------- */
+
+/* ---------- select any phrase -> explain / example, and the highlight it leaves ------
+   The chat answers questions the reader types. This answers the page itself: select a
+   phrase in any content panel and ask for an explanation or a worked example. The answer
+   arrives in the chat and is filed as a Personal Note, exactly as a typed question is —
+   and the phrase that produced it stays highlighted, with a control that jumps to the
+   note.
+
+   HIGHLIGHTS ARE DERIVED, NEVER STORED.
+   A note born from a selection carries an `anchor`; a note asked in the chat has none,
+   and most notes are that kind. So the highlights on screen are simply whichever notes
+   happen to carry an anchor, re-resolved on every draw. Nothing else has to be kept in
+   step: delete a note and its highlight goes with it, because there was never a second
+   object recording it. Two notes may share one phrase (an explanation and an example),
+   so a highlight lives as long as ANY note in its group does.
+
+   Panels are rebuilt by innerHTML on every step, problem and KPI change, which would
+   destroy an inserted <mark>. Rather than hook each draw function — and every one added
+   later — a MutationObserver re-applies the highlights after the DOM settles.         */
+const HL_LABEL={explain:'Explanation',example:'Example'};
+const SEL_PANES=['overview','process','problems','kpis','glossary'];  /* content only:
+   never the SVG flow, the chat log or the quiz overlay */
+/* One limit, and 300 was never the right number for it. It used to reject a whole paragraph
+   outright — no bar at all, indistinguishable from the page ignoring the reader — and the first
+   fix for that kept marking capped at 300 and merely allowed the *ask*, so a selected paragraph
+   came back "not highlighted". Measured rather than assumed: marking a 332-character paragraph
+   marks every character of it and leaves one jump control, and a 894-character selection across
+   three paragraphs becomes three marks and still one control, stable across redraws. There was
+   no technical reason for the lower cap, so the two collapse back into one. Anything askable is
+   markable; a quote that cannot be placed confidently still highlights nothing, which is the
+   check that actually matters. HL_MAX is kept as an alias of ASK_MAX only because a stored page
+   may still reference the old name. */
+const HL_MIN=2, ASK_MAX=1500, HL_MAX=ASK_MAX;
+
+const hnorm=s=>String(s==null?'':s).replace(/\s+/g,' ').trim();
+const hkey=a=>{                      /* a short stable id, safe in a CSS selector */
+  const s=[a.tab,a.item,hnorm(a.quote).toLowerCase()].join('\u0001');
+  let h=5381; for(let i=0;i<s.length;i++) h=((h*33)^s.charCodeAt(i))>>>0;
+  return 'h'+h.toString(36);
+};
+/* whitespace in the quote matches any run of it, so a phrase that wrapped across two
+   lines in the source still resolves */
+function quoteRe(q){
+  const lit=hnorm(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/ /g,'\\s+');
+  return new RegExp(lit,'g');
+}
+function paneEl(tab){ const el=document.getElementById(tab); return el&&el.classList.contains('tabpane')?el:null; }
+
+/* every text node in a panel, with its offset in the panel's flattened text, so a quote
+   can be found across element boundaries and mapped back to real nodes */
+function textIndex(root){
+  const nodes=[]; let text='';
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){
+    if(!n.nodeValue) return NodeFilter.FILTER_REJECT;
+    const p=n.parentElement;
+    if(!p||p.closest('svg,script,style,button.hlBtn,.selbar')) return NodeFilter.FILTER_REJECT;
+    return NodeFilter.FILTER_ACCEPT;
+  }});
+  for(let n;(n=w.nextNode());){ const s=text.length; text+=n.nodeValue; nodes.push({node:n,start:s,end:text.length}); }
+  return {text,nodes};
+}
+function allHits(text,quote){
+  const re=quoteRe(quote), out=[]; let m;
+  while((m=re.exec(text))){ out.push([m.index,m.index+m[0].length]);
+    if(m.index===re.lastIndex) re.lastIndex++; }
+  return out;
+}
+/* Which occurrence did the reader mean? The prefix and suffix recorded at selection time
+   settle it when the same phrase appears more than once; the occurrence index is the last
+   resort. A quote that cannot be placed is skipped — highlighting the wrong words teaches
+   the reader something false, which is worse than highlighting nothing. */
+function findRange(idx,a){
+  const hits=allHits(idx.text,a.quote);
+  if(!hits.length) return null;
+  if(hits.length===1) return hits[0];
+  const scored=hits.map(h=>{
+    let s=0;
+    if(a.prefix){ const b=hnorm(idx.text.slice(Math.max(0,h[0]-a.prefix.length*3),h[0]));
+                  if(b.endsWith(hnorm(a.prefix))) s+=2; }
+    if(a.suffix){ const f=hnorm(idx.text.slice(h[1],h[1]+a.suffix.length*3));
+                  if(f.startsWith(hnorm(a.suffix))) s+=2; }
+    return {h,s};
+  }).sort((x,y)=>y.s-x.s);
+  if(scored[0].s>0&&(scored.length<2||scored[0].s>scored[1].s)) return scored[0].h;
+  const i=Math.min(Math.max(a.occurrence||0,0),hits.length-1);
+  return hits[i];
+}
+function markRange(idx,range,key,modes,ids,withBtn){
+  const [from,to]=range, parts=[];
+  idx.nodes.forEach(n=>{
+    const s=Math.max(from,n.start), e=Math.min(to,n.end);
+    if(s<e) parts.push({node:n.node,s:s-n.start,e:e-n.start});
+  });
+  if(!parts.length) return false;
+  const spans=parts.map(p=>{
+    let n=p.node;
+    if(p.e<n.nodeValue.length) n.splitText(p.e);
+    if(p.s>0) n=n.splitText(p.s);
+    const m=document.createElement('mark');
+    m.className='pehl'; m.dataset.hl=key;
+    n.parentNode.insertBefore(m,n); m.appendChild(n);
+    return m;
+  });
+  if(withBtn===false) return true;      /* the provisional mark while composing */
+  const label=modes.map(m=>HL_LABEL[m]).filter(Boolean).join(' + ')+' — opens your note'
+              +(ids.length>1?'s':'');
+  const b=document.createElement('button');
+  b.type='button'; b.className='hlBtn'; b.dataset.hl=key; b.dataset.notes=ids.join(',');
+  b.title=label; b.setAttribute('aria-label',label);
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+    +'<path d="M8 16 16 8M10 8h6v6" fill="none" stroke="currentColor" stroke-width="2.4" '
+    +'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const last=spans[spans.length-1];
+  last.parentNode.insertBefore(b,last.nextSibling);
+  return true;
+}
+
+/* ---- the anchor in the language actually on screen --------------------------------
+   An anchor is recorded against the words the reader selected, so on a translated page
+   it names a phrase that is not there. The note itself is translated (its i18n cache),
+   so its topic is the one phrase we can look for — but only when it is UNAMBIGUOUS in
+   that panel. Anything less confident highlights nothing at all. A match that does
+   succeed is cached on the note, so the search runs once per note per language and every
+   later draw is deterministic rather than re-guessing.                                */
+function confidentQuote(a,translated){
+  const cand=hnorm(translated&&translated.topic);
+  if(!cand||cand.length<6) return null;
+  const pane=paneEl(a.tab); if(!pane) return null;
+  const hits=allHits(textIndex(pane).text,cand);
+  if(hits.length!==1) return null;          /* absent or ambiguous — deliberately none */
+  return {quote:cand,prefix:'',suffix:'',occurrence:0,via:'translated-topic'};
+}
+function resolvedAnchor(n){
+  const a=n.anchor; if(!a||!a.quote) return null;
+  const lang=langNow()||'en', mine=n.lang||'en';
+  if(lang===mine) return a;
+  const cached=(a.byLang||{})[lang];
+  if(cached) return Object.assign({},a,cached);
+  const t=(n.i18n||{})[lang];
+  if(!t) return null;                       /* not translated yet — nothing to match on */
+  const guess=confidentQuote(a,t);
+  if(!guess) return null;
+  a.byLang=Object.assign({},a.byLang||{},{[lang]:guess});
+  saveNotes();
+  return Object.assign({},a,guess);
+}
+
+/* Declared before drawHighlights because drawHighlights has to switch it off while it
+   works — see the note on the observer below. */
+let hlObserver=null;
+function observePanes(){
+  if(!hlObserver) return;
+  /* `hidden` matters as much as childList: switching tab only toggles that attribute, so an
+     observer watching content alone never learns that a pane came back into view — and a
+     reader who reloads, or comes back from another tab, sees their note with no highlight
+     until something happens to rebuild the panel. Marking never touches `hidden`, so this
+     cannot feed back into itself. */
+  SEL_PANES.forEach(id=>{ const el=paneEl(id);
+    if(el) hlObserver.observe(el,{childList:true,subtree:true,
+                                  attributes:true,attributeFilter:['hidden']}); });
+}
+let hlBusy=false;
+function clearHighlights(){
+  document.querySelectorAll('button.hlBtn').forEach(b=>b.remove());
+  document.querySelectorAll('mark.pehl').forEach(m=>{
+    const p=m.parentNode; while(m.firstChild) p.insertBefore(m.firstChild,m);
+    p.removeChild(m); p.normalize();
+  });
+}
+function drawHighlights(){
+  if(hlBusy) return;
+  hlBusy=true;
+  /* Switched off for the duration, and its queue thrown away afterwards. This is not an
+     optimisation: marking mutates the very panes the observer watches, so an observer left
+     connected re-fires on our own work and schedules another draw, forever. The visible
+     symptom is not a slow page but a dead control — the jump button is destroyed and rebuilt
+     several times a second, so a press never survives long enough to become a click. */
+  if(hlObserver) hlObserver.disconnect();
+  try{
+    clearHighlights();
+    const here=currentContext(), groups=new Map();
+    NOTES.forEach(n=>{
+      if(!n.anchor) return;                 /* a chat-born note: nothing to highlight */
+      const a=resolvedAnchor(n); if(!a) return;
+      if(a.tab!==activeTab) return;         /* only the panel on screen */
+      if(a.item&&here.item&&a.item!==here.item) return;   /* and only its own step/KPI */
+      const k=hkey(a);
+      if(!groups.has(k)) groups.set(k,{a,modes:[],ids:[]});
+      const g=groups.get(k);
+      if(n.anchor.mode&&!g.modes.includes(n.anchor.mode)) g.modes.push(n.anchor.mode);
+      g.ids.push(n.id);
+    });
+    if(!groups.size) return;
+    const pane=paneEl(activeTab);
+    if(!pane||pane.hidden||!SEL_PANES.includes(activeTab)) return;
+    groups.forEach((g,k)=>{
+      const idx=textIndex(pane);            /* rebuilt per group: marking splits nodes */
+      const r=findRange(idx,g.a);
+      if(r) markRange(idx,r,k,g.modes,g.ids);
+    });
+  }finally{
+    hlBusy=false;
+    if(hlObserver){ hlObserver.takeRecords(); observePanes(); }   /* discard our own edits */
+  }
+}
+/* Panels are rebuilt wholesale by innerHTML, so watch them rather than hooking every draw
+   function — including the ones added later. drawHighlights disconnects this while it runs,
+   so what arrives here is only somebody else's rebuild. */
+hlObserver=new MutationObserver(()=>{
+  if(hlBusy) return;
+  clearTimeout(hlObserver._t);
+  hlObserver._t=setTimeout(drawHighlights,60);
+});
+observePanes();
+
+/* ---- navigation, both ways -------------------------------------------------------- */
+function showTab(tab){
+  const btn=document.querySelector('nav.tabs button[data-tab="'+tab+'"]');
+  if(btn) btn.click();
+}
+function gotoAnchor(a){
+  if(!a) return;
+  showTab(a.tab);
+  if(a.tab==='process'){ const i=STEPS.findIndex(s=>s.name===a.item); if(i>=0){ cur=i; dev=null; drawStep(); } }
+  if(a.tab==='problems'){ const i=PROBS.findIndex(p=>p.name===a.item); if(i>=0){ pcur=i; drawProbs(); } }
+  if(a.tab==='kpis'){ const i=KPIS.findIndex(k=>k.name===a.item); if(i>=0){ kcur=i; drawKpis(); } }
+  drawHighlights();
+  const m=document.querySelector('mark.pehl[data-hl="'+hkey(a)+'"]');
+  if(m){ m.scrollIntoView({block:'center',behavior:'smooth'}); m.classList.add('flash');
+         setTimeout(()=>m.classList.remove('flash'),1200); }
+}
+function gotoNotes(ids){
+  showTab('notes');
+  /* Arriving from a highlight in the page, the reader wants the note itself, not a closed
+     card with its topic on it — open the ones being jumped to before scrolling. */
+  if(typeof NOTES_OPEN!=='undefined'){
+    ids.forEach(id=>NOTES_OPEN.add(String(id)));
+    drawNotes();
+  }
+  const first=document.querySelector('.note[data-id="'+ids[0]+'"]');
+  if(first) first.scrollIntoView({block:'center',behavior:'smooth'});
+  ids.forEach(id=>{
+    const el=document.querySelector('.note[data-id="'+id+'"]');
+    if(el){ el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),1400); }
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button.hlBtn');
+  if(!b) return;
+  e.preventDefault();
+  gotoNotes(b.dataset.notes.split(',').filter(Boolean));
+});
+
+/* ---- the selection bar ------------------------------------------------------------ */
+const selbar=document.createElement('div');
+selbar.className='selbar'; selbar.hidden=true;
+selbar.setAttribute('role','group');
+selbar.setAttribute('aria-label','Ask about the selected text');
+document.body.appendChild(selbar);
+let selAnchorNow=null;
+
+/* the anchor for what is selected right now, or null when the selection is not something
+   we can anchor to (collapsed, outside a content panel, too long, no word in it) */
+function anchorFromSelection(){
+  const sel=window.getSelection();
+  if(!sel||sel.isCollapsed||!sel.rangeCount) return null;
+  const r=sel.getRangeAt(0);
+  const host=r.startContainer.nodeType===1?r.startContainer:r.startContainer.parentElement;
+  if(!host) return null;
+  if(host.closest('svg,.selbar,#chat,.chat,.quiz,button.hlBtn')) return null;
+  const pane=host.closest('.tabpane');
+  if(!pane||pane.id!==activeTab||!SEL_PANES.includes(pane.id)) return null;
+  const quote=hnorm(sel.toString());
+  if(quote.length<HL_MIN||quote.length>ASK_MAX||!/[\p{L}\p{N}]/u.test(quote)) return null;
+  const idx=textIndex(pane);
+  let abs=null;
+  for(const n of idx.nodes){ if(n.node===r.startContainer){ abs=n.start+r.startOffset; break; } }
+  let occurrence=0, prefix='', suffix='';
+  const hits=allHits(idx.text,quote);
+  if(abs!=null&&hits.length){
+    let best=0, d=Infinity;
+    hits.forEach((h,i)=>{ const dd=Math.abs(h[0]-abs); if(dd<d){ d=dd; best=i; } });
+    occurrence=best;
+    prefix=hnorm(idx.text.slice(Math.max(0,abs-60),abs)).split(' ').slice(-6).join(' ');
+    const end=hits[best][1];
+    suffix=hnorm(idx.text.slice(end,end+60)).split(' ').slice(0,6).join(' ');
+  }
+  const c=currentContext();
+  return {tab:pane.id,item:c.item,quote,prefix,suffix,occurrence};
+}
+/* which modes this phrase already has a note for */
+function modesFor(a){
+  const k=hkey(a), out=[];
+  NOTES.forEach(n=>{
+    if(!n.anchor||!n.anchor.mode) return;
+    const r=resolvedAnchor(n); if(!r||hkey(r)!==k) return;
+    if(!out.includes(n.anchor.mode)) out.push(n.anchor.mode);
+  });
+  return out;
+}
+/* ---- two states: choose an action, then say what you actually want -----------------
+   "Explain this" on its own makes the expert guess which part was unclear. So the bar has
+   a second state: pick a mode, then type what you want cleared up — and the request
+   carries the phrase, the mode AND those words. Typing is optional; an empty field is the
+   plain "explain this phrase" request, which is what a reader who just wants the gist
+   will send.
+
+   While composing, the selection is gone — focusing an input collapses it — so the
+   collapse-hides-the-bar rule has to stand down, and the phrase is marked provisionally
+   so the reader can still see what they are asking about. */
+let selComposing=false;
+/* Pinned once the reader has engaged with the bar. From then on the bar belongs to the
+   anchor it remembers, not to the live selection — which focusing the field destroyed and
+   going back does not restore. Without this, returning from the field to the two choices
+   would be closed instantly by the first collapse it saw. An outside click, Escape or
+   sending still dismiss it; a fresh selection elsewhere unpins it. */
+let selPinned=false;
+function hideSelbar(){
+  const wasEngaged=selComposing||selPinned;
+  selbar.hidden=true; selAnchorNow=null;
+  selComposing=false; selPinned=false;
+  selbar.classList.remove('composing');
+  if(wasEngaged&&typeof drawHighlights==='function') drawHighlights();  /* drop the provisional mark */
+}
+/* mark the phrase without a jump control: there is no note to jump to yet */
+function markProvisional(a){
+  if(!a) return;
+  const pane=paneEl(a.tab); if(!pane||pane.hidden) return;
+  const idx=textIndex(pane), r=findRange(idx,a);
+  if(r) markRange(idx,r,'tmp-'+hkey(a),[],[],false);
+}
+/* The field replaces the two choices in place. Re-placing it here would move it — the
+   selection it was measured against is already gone, and the wider bar would measure
+   differently — so the position the action bar was given is kept, and only nudged when the
+   wider bar would run off the right edge. */
+function keepPlace(){
+  const left=selbar.style.left, top=selbar.style.top;
+  return ()=>{
+    selbar.style.left=left; selbar.style.top=top;
+    const w=selbar.offsetWidth||0, x=parseFloat(left)||8;
+    if(w&&x+w>window.innerWidth-8) selbar.style.left=Math.max(8,window.innerWidth-w-8)+'px';
+  };
+}
+function enterCompose(mode){
+  const a=selAnchorNow; if(!a) return;
+  const restore=keepPlace();
+  selComposing=true; selPinned=true;
+  selbar.classList.add('composing');
+  markProvisional(a);
+  const ph=mode==='example' ? 'What should the example show? (optional)'
+                            : "What isn't clear about it? (optional)";
+  selbar.innerHTML='<button type="button" class="sb-back" data-back="'+mode+'" '
+    +'title="Back to Explain / Generate example" aria-label="Back to Explain or Generate example">'
+    +'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l-6 6 6 6"/></svg></button>'
+    +'<span class="sb-lbl">'+(mode==='example'?'Example':'Explain')+'</span>'
+    +'<input type="text" class="sb-in" maxlength="300" placeholder="'+ph+'" '
+    +'aria-label="'+ph+'">'
+    +'<button type="button" class="sb-go" data-go="'+mode+'">Ask</button>';
+  restore();
+  const inp=selbar.querySelector('.sb-in');
+  if(inp){
+    inp.focus();
+    inp.onkeydown=e=>{
+      if(e.key==='Enter'){ e.preventDefault(); submitCompose(mode); }
+      else if(e.key==='Escape'){ e.preventDefault(); leaveCompose(); }
+      e.stopPropagation();          /* the page's own shortcuts must not read this typing */
+    };
+  }
+}
+/* Back to the two choices, in the same place. The anchor and the provisional mark stay, so
+   the reader can pick the other action without re-selecting the phrase. */
+function leaveCompose(){
+  const a=selAnchorNow; if(!a) return void hideSelbar();
+  const restore=keepPlace();
+  selComposing=false;                 /* selPinned stays: the live selection is still gone */
+  selbar.classList.remove('composing');
+  drawSelbar(a);
+  restore();
+  const first=selbar.querySelector('button');
+  if(first) first.focus();
+}
+function submitCompose(mode){
+  const inp=selbar.querySelector('.sb-in');
+  const detail=inp?inp.value.trim():'';
+  const a=selAnchorNow;
+  hideSelbar();
+  if(a) askAboutSelection(mode,a,detail);
+}
+/* The bar sits above where the phrase BEGINS, its left edge on the phrase's first pixel.
+   Not where the drag finished: an earlier version followed the cursor — right edge on the
+   last pixel of the last line — which reads well only while that line ends far to the right.
+   Wrap a selection so its tail is short ("…carries\n the cost.") and the bar's own width
+   runs leftwards out of the text column entirely, landing over the sidebar and on top of a
+   line the reader is still reading. The start of a phrase, by contrast, is always at the
+   column's left edge, always over the selection's own text, and always in the same place —
+   the reader learns one spot to look at rather than one per drag. */
+function placeSelbar(){
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount) return;
+  const range=sel.getRangeAt(0), rects=range.getClientRects();
+  const first=rects.length?rects[0]:range.getBoundingClientRect();
+  const last=rects.length?rects[rects.length-1]:first;
+  /* A degenerate rect — every value zero — means the range describes nothing on screen (a
+     collapsed selection, or one inside a form field). Placing from it would put the bar in
+     the top-left corner, so leave it wherever it already is. */
+  if(!first||(!first.width&&!first.height&&!first.left&&!first.top)) return;
+  selbar.hidden=false;                       /* measure only once it can be measured */
+  const w=selbar.offsetWidth||220, h=selbar.offsetHeight||34;
+  /* the phrase's first line, whichever way the drag ran */
+  const edge=first;
+  let x=edge.left;                           /* left edge on the phrase's first pixel */
+  x=Math.min(Math.max(8,x),Math.max(8,window.innerWidth-w-8));
+  let y=edge.top-h-8;
+  /* No room above the first line — go under the LAST one instead, so the bar never covers
+     the phrase it is asking about. */
+  if(y<8) y=last.bottom+8;
+  if(y+h>window.innerHeight-8) y=Math.max(8,window.innerHeight-h-8);
+  selbar.style.left=x+'px'; selbar.style.top=y+'px';
+}
+/* Offer only what is missing. A phrase that already has both notes offers neither — it
+   offers the way back to them, which is what the reader actually wants at that point. */
+function drawSelbar(a){
+  const have=modesFor(a);
+  const want=['explain','example'].filter(m=>!have.includes(m));
+  if(!want.length){
+    selbar.innerHTML='<button type="button" data-open="1">Open your notes</button>';
+  }else{
+    selbar.innerHTML=want.map(m=>'<button type="button" data-mode="'+m+'">'
+      +(m==='explain'?'Explain':'Generate example')+'</button>').join('')
+      +(have.length?'<span class="sb-has">'+have.map(x=>HL_LABEL[x]).join(' + ')+' already filed</span>':'');
+  }
+}
+let selTimer=null;
+document.addEventListener('selectionchange',()=>{
+  const s0=window.getSelection();
+  const collapsed=!s0||s0.isCollapsed;
+  /* A collapsed selection means the bar has nothing to act on, and that is the common way
+     it should go away — so act on it at once instead of waiting out the debounce below,
+     which is only there to avoid thrashing while a drag is still in progress. An engaged
+     bar is the exception: it gave up the live selection deliberately and keeps its anchor. */
+  if(collapsed){
+    if(selComposing||selPinned) return;
+    clearTimeout(selTimer); hideSelbar(); return;
+  }
+  /* A real selection somewhere else takes the bar over — but not mid-typing, where it would
+     silently swap the phrase out from under a request the reader is still writing. */
+  if(selComposing) return;
+  clearTimeout(selTimer);
+  selTimer=setTimeout(()=>{
+    if(selComposing) return;
+    if(document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)) return hideSelbar();
+    const a=anchorFromSelection();
+    if(!a) return hideSelbar();
+    /* a real selection again: the bar goes back to following it, and the provisional mark
+       left over from a remembered anchor is dropped */
+    if(selPinned){ selPinned=false; if(typeof drawHighlights==='function') drawHighlights(); }
+    selAnchorNow=a; drawSelbar(a); placeSelbar();
+  },180);
+});
+addEventListener('scroll',()=>{
+  /* Capture phase catches scrolls from any element, the text field included: typing past
+     its width scrolls it and would otherwise re-place the bar against a selection that is
+     already gone. An engaged bar keeps the position it was given. */
+  if(selbar.hidden||selComposing||selPinned) return;
+  placeSelbar();
+},true);
+addEventListener('keydown',e=>{ if(e.key==='Escape') hideSelbar(); });
+/* Any press outside the bar dismisses it. Capture phase, so nothing downstream can swallow
+   the event first, and on THREE event names rather than one: pointerdown is not delivered
+   everywhere (an old Safari, a synthetic click, a touch that never becomes a pointer
+   event), and a dismissal that works on only some inputs reads as broken. A press on the
+   bar itself is the bar's own business — hiding here would null the anchor before the
+   button's click handler ever ran. */
+function dismissOnOutside(e){
+  if(selbar.hidden) return;
+  const t=e.target;
+  if(t&&t.nodeType===1&&t.closest&&t.closest('.selbar')) return;
+  hideSelbar();
+}
+['pointerdown','mousedown','touchstart'].forEach(ev=>
+  document.addEventListener(ev,dismissOnOutside,true));
+addEventListener('blur',()=>{ if(!selComposing&&!selPinned) hideSelbar(); });
+/* keep the selection alive when the bar is pressed — but never swallow a press meant for
+   the text field, which needs the default action to take focus */
+selbar.addEventListener('mousedown',e=>{
+  const t=e.target;
+  if(t&&t.nodeType===1&&t.closest('input,textarea')) return;
+  e.preventDefault();
+});
+selbar.addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.back){ return void leaveCompose(); }
+  if(!selAnchorNow) return;
+  if(b.dataset.open){ const a=selAnchorNow; hideSelbar(); return void gotoNotes(modeIds(a)); }
+  if(b.dataset.go){ return void submitCompose(b.dataset.go); }
+  if(b.dataset.mode){ return void enterCompose(b.dataset.mode); }   /* -> the text field */
+});
+function modeIds(a){
+  const k=hkey(a), ids=[];
+  NOTES.forEach(n=>{ if(!n.anchor) return; const r=resolvedAnchor(n);
+                     if(r&&hkey(r)===k) ids.push(n.id); });
+  return ids;
+}
+
+drawHighlights();
+
+/* ---------- PE:tour ---------- */
+/* ---------- the guided tour: what every screen is for -----------------------------------
+   A reader opening an exploration for the first time sees a tabbed document and finds maybe a
+   third of what it does — selecting a phrase to ask about it, the provenance chips, notes that
+   refine, the export that weaves those notes in. So the page walks them through itself once.
+
+   Next-driven on purpose. The tour switches tabs for the reader, but never while they are
+   reading: an auto-advancing reel is either too fast to follow or too slow to sit through, and
+   this is a page people read at their own speed.
+
+   A coach card, not a modal. The quiz dims and traps the page; the tour cannot, because the
+   screen underneath is the thing it is explaining. The step's target takes the outline, the
+   card sits out of the way bottom-left, and everything stays clickable.
+
+   Seen once per reader, not once per exploration: the tour explains the page, and the page is
+   the same in every exploration. The version in the key is what lets a rewritten tour show
+   itself again.                                                                            */
+const TOUR_KEY='pe-tour-v1';
+/* PE:tour-copy — the step copy is chrome, identical on every page, and is translated with the
+   rest of the chrome. chat-bridge.py's extract_strings() walks this span for exactly that
+   reason, so keep the strings plain and double-quoted, with no newlines inside one. */
+const TOUR=[
+ {tab:null, target:".hdr-actions", title:"A primer on one process",
+  body:"This page teaches one business process at one company — how it runs, where it breaks, and how it is measured. Nothing here prescribes a solution. Take the tour and you will know what every screen holds and what you can do on it."},
+ {tab:"overview", target:".purpose", title:"Overview — what the process is for",
+  body:"Its purpose in one line, the goals it is judged on, what goes in and what comes out, and where it sits in the wider value chain. Start here; every other screen assumes it."},
+ {tab:"process", target:"#flowline", title:"Step-by-step — the chain, then the detail",
+  body:"The chain across the top stays visible while you read. Click any step for who acts, what happens, what it does to the running example, and the documents that exist afterwards."},
+ {tab:"process", target:"#rail", title:"Deviations — the paths that are not the happy one",
+  body:"The marked entries in this list are deviations: blocks, reworks and reissues. They are taught separately from the main flow, because knowing the happy path is not knowing the process."},
+ {tab:"problems", target:"#probList", title:"Process Challenges — mechanism before story",
+  body:"Grouped by the business objective each one puts at risk. Every challenge gives the mechanism, how it plays out at this company, a worked example on the running case, and its most probable root causes."},
+ {tab:"kpis", target:"#kpiDetail", title:"KPIs — including where each one misleads",
+  body:"What it measures, why a bad value hurts, which event starts the clock, and the definitional trap. Then the arithmetic on the running case, and the picture of good, late and damaging."},
+ {tab:"glossary", target:"dl.terms", title:"Terminology — the words, systems and people",
+  body:"Every term the rest of the page uses, the systems the process runs in, and the people who act in it. If a sentence anywhere lost you, the noun is usually defined here."},
+ {tab:"glossary", target:".src", title:"Where each fact came from",
+  body:"These chips are the page being honest with you: from your context means the customer's own material said it, typical means it is industry-standard practice, and unverified means nobody has confirmed it yet."},
+ {tab:"process", target:"#sDesc", title:"Select any phrase and ask about it",
+  body:"Highlight a phrase in any content panel and a small bar offers Explain or Generate example. The answer arrives in the chat, the phrase stays marked in yellow, and the arrow on it jumps to the note it produced."},
+ {tab:null, target:".chat", title:"The chat answers from this exploration",
+  body:"Ask anything in your own words. Answers are grounded in this exploration's own content, its research and any customer material behind it — not in general knowledge — and every answer is filed as a note."},
+ {tab:null, target:"#chatRfsh", title:"Switch the chat on — the dot tells you",
+  body:"Ask infos needs a Claude session behind it. Click the circular arrow beside the dot: the page looks for one and starts one if none is running. Green dot and ready means it is live; grey means no session yet, blue means it is thinking. Nothing is ever answered without it."},
+ {tab:null, target:"#langMenu", open:"lang", title:"Read the whole page in another language",
+  body:"The globe opens this list — open now. One marked translate is generated on the spot by Claude, saved beside this file and instant thereafter; a partial one offers to finish the rest, and your notes come with it. If it says needs Claude, the refresh icon here starts a session."},
+ {tab:"notes", target:"#noteList", title:"Personal Notes — closed rows you can open",
+  body:"Each answer is a note: an explanation and a worked example. Click the topic to open it. The circular arrow asks for a better explanation of one part, and the answer is added to the note. The bin deletes the note and the yellow mark it left in the page, with no undo."},
+ {tab:null, target:"#startQuiz", title:"Quiz — ten questions, on this exploration",
+  body:"One question at a time on its own screen. Each answer is marked right or wrong straight away, with the reason, and at the end a score ring and a review of all ten. Try again resets it. Nothing is recorded anywhere — it is yours, to find out what has not landed yet."},
+ {tab:null, target:"#exportBtn", title:"Export — with your notes woven in",
+  body:"Two ways out, and both fold your notes into the section they belong to rather than appending them. PDF opens the print dialog, for a person to read. Markdown downloads one structured file, named for the company and the process, for an agent to read."},
+ {tab:null, target:"#tourBtn", title:"You will not lose your place",
+  body:"A reload returns you to the screen and the item you were on, so refreshing costs you nothing. This tour runs once by itself — and Guide, this button, reopens it whenever you want it again."}
+];
+/* PE:tour-copy-end */
+let tourAt=-1, tourFrom=null, tourSpot=null;
+const tourCard=document.createElement('div');
+tourCard.id='tour'; tourCard.hidden=true;
+tourCard.setAttribute('role','dialog');
+tourCard.setAttribute('aria-label','Guided tour');
+document.body.appendChild(tourCard);
+
+/* The Guide button is created here rather than written into the header, so a stored page picks
+   the whole feature up from the chrome sync with nothing to hand-edit. */
+const tourBtn=document.createElement('button');
+tourBtn.className='btn sm'; tourBtn.id='tourBtn'; tourBtn.type='button';
+tourBtn.textContent='Guide';
+tourBtn.title='Guided tour — what each screen is for and what you can do on it';
+tourBtn.onclick=()=>openTour(0);
+{ const host=document.querySelector('.hdr-actions'), q=document.getElementById('startQuiz');
+  if(host) host.insertBefore(tourBtn, q||host.firstChild); }
+
+function tourClearSpot(){
+  if(tourSpot){ tourSpot.classList.remove('tourspot'); tourSpot=null; }
+}
+/* A step can be about a control that only exists while it is open — the language menu is the
+   one. The tour opens it for real, by the same path the globe uses, and closes it again when
+   the reader moves on. Opening happens in the frame after the click, because the click that
+   advanced the tour is still bubbling toward the document listener that shuts every menu. */
+function tourOpenLang(open){
+  try{
+    if(!langMenu) return;
+    if(open && typeof drawLangMenu==='function') drawLangMenu();
+    langMenu.hidden=!open;
+    if(langBtn) langBtn.setAttribute('aria-expanded',String(!!open));
+  }catch(e){/* a page without the language menu — nothing to open */}
+}
+function tourDraw(){
+  const st=TOUR[tourAt], n=TOUR.length;
+  tourCard.innerHTML='<div class="thead"><b>Guided tour</b>'
+    +'<span class="tcount">'+(tourAt+1)+' / '+n+'</span>'
+    +'<button type="button" class="tclose" data-tour="x" title="Close the tour" aria-label="Close the tour">&times;</button></div>'
+    +'<div class="tsteps">'+TOUR.map((_,i)=>'<i class="'+(i<tourAt?'done':i===tourAt?'now':'')+'"></i>').join('')+'</div>'
+    +'<div class="tbody" aria-live="polite"><h4>'+chatEsc(st.title)+'</h4><p>'+chatEsc(st.body)+'</p></div>'
+    +'<div class="tfoot"><button type="button" class="tskip" data-tour="x">Skip the tour</button>'
+    +(tourAt>0?'<button type="button" class="btn sm ghost" data-tour="b">Back</button>':'')
+    +'<button type="button" class="btn sm" data-tour="n">'+(tourAt===n-1?'Done':'Next')+'</button></div>';
+  if(st.tab && st.tab!==activeTab) showTab(st.tab);
+  tourClearSpot();
+  if(st.open!=='lang') tourOpenLang(false);
+  /* after the tab switch, or the target is still hidden and cannot be scrolled to */
+  requestAnimationFrame(()=>{
+    /* Resolve inside the step's own pane first. Several selectors — `.src`, `.purpose` —
+       match in more than one tab, and the first match in document order can sit in a pane
+       that is currently hidden: the outline would then be drawn where nobody can see it. */
+    const el=st.target
+      ? (st.tab&&document.querySelector('#'+st.tab+' '+st.target)) || document.querySelector(st.target)
+      : null;
+    if(st.open==='lang') tourOpenLang(true);
+    if(!el) return;
+    tourSpot=el; el.classList.add('tourspot');
+    const pane=el.closest('.tabpane');
+    if(pane&&!pane.hidden) el.scrollIntoView({block:'center',behavior:'smooth'});
+  });
+}
+function openTour(at){
+  if(tourAt<0) tourFrom=activeTab;          /* so the tour can put the reader back */
+  tourAt=Math.max(0,Math.min(at,TOUR.length-1));
+  tourCard.hidden=false;
+  tourDraw();
+  tourCard.querySelector('[data-tour="n"]').focus();
+}
+/* Finishing and dismissing are the same promise: it does not open itself again. */
+function closeTour(){
+  tourClearSpot(); tourOpenLang(false);
+  tourCard.hidden=true; tourAt=-1;
+  try{ localStorage.setItem(TOUR_KEY,'1'); }catch(e){}
+  if(tourFrom && tourFrom!==activeTab) showTab(tourFrom);
+  tourFrom=null;
+  tourBtn.focus();
+}
+tourCard.addEventListener('click',e=>{
+  const b=e.target.closest('[data-tour]'); if(!b) return;
+  const k=b.dataset.tour;
+  if(k==='x') return void closeTour();
+  if(k==='b') return void (tourAt>0 && (tourAt--, tourDraw()));
+  if(k==='n'){
+    if(tourAt>=TOUR.length-1) return void closeTour();
+    tourAt++; tourDraw();
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(tourAt<0 || tourCard.hidden) return;
+  if(e.key==='Escape'){ e.preventDefault(); closeTour(); }
+  else if(e.key==='ArrowRight'){ e.preventDefault(); if(tourAt<TOUR.length-1){ tourAt++; tourDraw(); } else closeTour(); }
+  else if(e.key==='ArrowLeft'){ e.preventDefault(); if(tourAt>0){ tourAt--; tourDraw(); } }
+});
+/* First open, and only the first: the flag is set the moment the tour ends either way. Never
+   while printing, and never on top of the quiz. */
+{ let seen=null;
+  try{ seen=localStorage.getItem(TOUR_KEY); }catch(e){ seen='1'; }   /* no storage — do not nag */
+  if(!seen && !matchMedia('print').matches) setTimeout(()=>openTour(0),600);
+}
 
 /* ---------- quiz: 10 questions, one at a time, on its own screen ---------- */
 const QUIZ=[
@@ -1261,6 +2856,97 @@ proc.addEventListener('change',()=>{ syncIndustries(); syncCompany(); const e=cu
 ind.addEventListener('change',()=>{ syncCompany(); const e=currentPick(); if(e) openExploration(e.id); });
 fillPicker();
 
+/* ---- dress the two pickers -----------------------------------------------------------
+   The native popup is the operating system's, not the page's: on macOS it opens upward over
+   the header and is painted in Aqua, so the control looks like one thing closed and another
+   thing open. This puts a button and a list in front of it, styled like the closed control and
+   always opening downward.
+
+   The <select> stays and stays authoritative — `proc.value`, `ind.value` and the `change`
+   listeners above are untouched; picking an item writes the value and dispatches `change`, so
+   the switch happens exactly as it always did. `fillPicker()` and `syncIndustries()` keep
+   rewriting <option>s in complete ignorance of this, which is why a MutationObserver refreshes
+   the label and the list rather than those functions being taught to call back. */
+function dressSelect(sel){
+  if(!sel || sel.dataset.dressed) return;
+  sel.dataset.dressed='1';
+  /* read the label before the select moves — afterwards it is no longer its sibling */
+  const label=sel.id?document.querySelector('label[for="'+sel.id+'"]'):null;
+  const wrap=document.createElement('div'); wrap.className='selwrap';
+  sel.parentNode.insertBefore(wrap,sel); wrap.appendChild(sel);
+  sel.tabIndex=-1; sel.setAttribute('aria-hidden','true');
+
+  const btn=document.createElement('button');
+  btn.type='button'; btn.className='selbtn'; if(sel.id) btn.id=sel.id+'Btn';
+  btn.setAttribute('aria-haspopup','listbox'); btn.setAttribute('aria-expanded','false');
+  btn.innerHTML='<span class="sv"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  const menu=document.createElement('div');
+  menu.className='selmenu'; menu.setAttribute('role','listbox'); menu.hidden=true;
+  wrap.append(btn,menu);
+  /* the label pointed at the select; it points at the button now, so clicking it still opens
+     the thing the reader can see */
+  if(label){ label.htmlFor=btn.id; btn.setAttribute('aria-label',label.textContent.trim()); }
+
+  let at=-1;                                    /* the option the keyboard is on */
+  const opts=()=>[...sel.options];
+  function paint(){
+    btn.querySelector('.sv').textContent=sel.value||'—';
+    btn.disabled=sel.disabled;
+    btn.title=sel.title;
+    menu.innerHTML=opts().map((o,i)=>
+      `<button type="button" role="option" data-i="${i}" aria-selected="${o.value===sel.value}">`
+      +`<span>${chatEsc(o.textContent)}</span><span class="tick">✓</span></button>`).join('');
+  }
+  function mark(){
+    [...menu.children].forEach((b,i)=>b.classList.toggle('here',i===at));
+    const on=at>=0?menu.children[at]:null;      /* absent in some embedded webviews */
+    if(on&&on.scrollIntoView) on.scrollIntoView({block:'nearest'});
+  }
+  function open(){
+    if(sel.disabled) return;
+    closeAllSelMenus(menu);
+    paint(); menu.hidden=false; btn.setAttribute('aria-expanded','true');
+    at=opts().findIndex(o=>o.value===sel.value); mark();
+  }
+  function close(){ menu.hidden=true; btn.setAttribute('aria-expanded','false'); at=-1; }
+  function pick(i){
+    const o=opts()[i]; close(); btn.focus();
+    if(!o||o.value===sel.value) return;         /* same value — nothing to announce */
+    sel.value=o.value;
+    sel.dispatchEvent(new Event('change',{bubbles:true}));
+  }
+  btn.onclick=e=>{ e.stopPropagation(); menu.hidden?open():close(); };
+  btn.onkeydown=e=>{
+    if(e.key==='ArrowDown'||e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); }
+  };
+  menu.onclick=e=>{ e.stopPropagation();
+    const b=e.target.closest('[data-i]'); if(b) pick(+b.dataset.i); };
+  wrap.addEventListener('keydown',e=>{
+    if(menu.hidden) return;
+    const n=opts().length;
+    if(e.key==='Escape'){ e.preventDefault(); close(); btn.focus(); }
+    else if(e.key==='ArrowDown'){ e.preventDefault(); at=(at+1)%n; mark(); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); at=(at-1+n)%n; mark(); }
+    else if(e.key==='Home'){ e.preventDefault(); at=0; mark(); }
+    else if(e.key==='End'){ e.preventDefault(); at=n-1; mark(); }
+    else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(at>=0) pick(at); }
+    else if(e.key==='Tab'){ close(); }
+  });
+  sel.addEventListener('change',paint);
+  new MutationObserver(paint).observe(sel,{childList:true,attributes:true,
+    attributeFilter:['disabled','title']});
+  paint();
+}
+function closeAllSelMenus(except){
+  document.querySelectorAll('.selmenu').forEach(m=>{
+    if(m===except||m.hidden) return;
+    m.hidden=true;
+    const b=m.previousElementSibling; if(b) b.setAttribute('aria-expanded','false');
+  });
+}
+document.addEventListener('click',()=>closeAllSelMenus());
+[proc,ind].forEach(dressSelect);
+
 /* ---------- language: one pre-generated page per language, reused not re-translated ----------
    Each language is rendered once and saved beside this file as index.<code>.html.
    Picking a language loads that file if it exists; the page never re-translates itself,
@@ -1299,18 +2985,33 @@ const mmss = ms => { const s=Math.round(ms/1000);
    through and the row leads with that. */
 function jobPct(job){
   const p=job.prog;
-  /* Batches land whole, so there is nothing truthful to show until the first one is
-     back — until then the row says "translating…" rather than a stuck 0%. */
-  if(!p||!p.running||!p.total||!p.done) return null;
-  /* held below 100 while anything is still being written: the row is not done until
-     the bridge has answered. */
-  return Math.min(99,Math.floor(p.done/p.total*100));
+  if(!p||!p.running) return null;
+  /* Two different percentages used to collide here. The row that offered "80% — finish" was
+     talking about the page: 80% of it is translated. This was reporting batches finished in
+     the current pass, which starts at zero however much of the page is already done — so a
+     top-up looked like it had thrown the 80% away and begun again. It had not: the bridge
+     sends only the strings still verbatim English and applies them on top.
+
+     So report the page instead — where this run started, plus the share of what was left
+     that has come back — and never let it fall: a pass that achieves less than the
+     straight-line estimate would otherwise tick backwards. */
+  const base=typeof p.coverage==='number'?Math.max(0,Math.min(1,p.coverage)):0;
+  /* Batches land whole, so there is nothing new to show until the first one is back —
+     until then the row shows where this run started (52% for a resumed page, 0% for a new
+     one). A number that has not moved yet still says more than a word does. */
+  const share=(p.total&&p.done)?p.done/p.total:0;
+  /* held below 100 while anything is still being written: the row is not done until the
+     bridge has answered. */
+  const pct=Math.min(99,Math.floor((base+(1-base)*share)*100));
+  job.shown=Math.max(job.shown||0,pct);
+  return job.shown;
 }
 function jobLabel(job){
   if(job.cancelled) return 'stopping…';
-  const t=mmss(Date.now()-job.t0), p=job.prog, pct=jobPct(job);
-  if(p&&p.running&&(p.phase==='checking'||p.phase==='saving')) return 'finishing… '+t;
-  return (pct===null?'translating… ':pct+'% · ')+t;
+  /* The percentage leads, always: "translating…" told the reader only that they were waiting,
+     and it sat there for the minutes before the first batch landed. */
+  const t=mmss(Date.now()-job.t0), pct=jobPct(job);
+  return (pct===null?0:pct)+'% · '+t;
 }
 /* One poller for however many renders are running; it stops when the last one ends. */
 let progTimer=null;
@@ -1324,7 +3025,17 @@ function pollProgress(){
         const r=await fetch(BRIDGE+'/progress?lang='+encodeURIComponent(code)
           +'&exploration='+encodeURIComponent(here().path),{cache:'no-store'});
         const p=await r.json();
-        if(JOBS[code]) JOBS[code].prog=p;
+        const job=JOBS[code]; if(!job) continue;
+        job.prog=p;
+        /* A job this page adopted has no fetch of its own waiting on the answer, so the poller
+           is what ends it: when the bridge stops reporting it, take the row down and ask health
+           for the language's new state. A job started here is left alone — its own fetch
+           resolves with the coverage and the message. */
+        if(job.adopted && p && p.running===false){
+          delete JOBS[code];
+          if(typeof checkBridge==='function') await checkBridge();
+          drawLangMenu();
+        }
       }catch(e){/* a missed poll just leaves the last figure standing */}
     }
     if(!langMenu.hidden) drawLangMenu();
@@ -1332,13 +3043,45 @@ function pollProgress(){
   },1200);
 }
 
+/* Translations run in the bridge, not in the page: reload mid-run and JOBS is empty, so the
+   menu would offer "translate" for the language being translated right now. Ask what is running
+   for this exploration and adopt it — the row then shows its percentage and its stop, with a
+   clock that starts where the run actually started rather than at zero. */
+let adopting=false;
+async function adoptJobs(){
+  if(adopting || !BRIDGE) return;
+  adopting=true;
+  try{
+    const r=await fetch(BRIDGE+'/jobs?exploration='+encodeURIComponent(here().path),{cache:'no-store'});
+    const a=await r.json();
+    const running=(a&&a.running)||{};
+    let added=0;
+    for(const code of Object.keys(running)){
+      if(JOBS[code]) continue;                    /* already ours — leave its own clock alone */
+      const p=running[code], l=LANGS.find(x=>x.code===code);
+      JOBS[code]={t0:Date.now()-Math.round((p.elapsed||0)*1000),
+                  label:l?l.label:code, cancelled:!!p.cancelling, prog:p, adopted:true};
+      added++;
+    }
+    if(added){ if(!langMenu.hidden) drawLangMenu(); pollProgress(); }
+  }catch(e){/* no bridge, or an older one without /jobs — nothing to adopt */}
+  finally{ adopting=false; }
+}
 function langAvailable(code){
   /* the language this file IS can never be "not generated" */
   return code===CURRENT_LANG || (LIVE_LANGS || AVAILABLE).includes(code);
 }
+/* Translation needs a Claude session, and this menu is where a reader learns that — "needs
+   Claude" against every language they cannot have. So the same refresh the chat offers lives
+   here too, rather than sending them to the other side of the page to press it. */
+const LANG_RFSH='<button type="button" class="rfsh" id="langRfsh" data-langrfsh'
+  +' title="Check for a Claude session — start one if none is running, so a language can be generated"'
+  +' aria-label="Check for a Claude session"><svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true" focusable="false">'
+  +'<path d="M13.6 8a5.6 5.6 0 1 1-1.64-3.96" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'
+  +'<path d="M13.9 1.9v3.2h-3.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
 function drawLangMenu(){
   const canGenerate = bridgeState === 'ready' && BRIDGE_SERVES;
-  langMenu.innerHTML = '<b>Language</b>' + LANGS.map(l=>{
+  langMenu.innerHTML = '<div class="lang-hd"><b>Language</b>' + LANG_RFSH + '</div>' + LANGS.map(l=>{
     const cur = l.code === CURRENT_LANG, ready = langAvailable(l.code);
     const part = PARTIAL_LANGS[l.code];          /* exists but unfinished */
     const job = JOBS[l.code];
@@ -1370,34 +3113,44 @@ function drawLangMenu(){
   }).join('')
   + (LANGS.some(l=>!langAvailable(l.code))
       ? '<div class="sep"></div><div class="hint">' + (canGenerate
-          ? 'Pick a language marked <b>translate</b> and it will be generated once, then saved beside this file. A language is only offered as <b>ready</b> once the whole page is translated.'
+          ? 'Pick a language marked <b>translate</b> and it is generated once, then saved beside this file — after that it opens instantly. A whole page takes <b>5–10 minutes</b>, so leave it running; the percentage in the row is how far it has got. A language reads <b>ready</b> only when the whole page is translated. A percentage instead, such as <b>80% — finish</b>, means that language already exists but part of it came back in English: <b>finish</b> translates just those missing strings, never the page again.'
           : bridgeState === 'ready'
             ? 'The Claude session that is running cannot reach this exploration. Start one here — <code>pe-chat .</code>'
-            : 'Start Claude to generate another language — <code>pe-chat .</code>') + '</div>'
+            : 'No Claude session yet. Start one with the refresh button above, or run <code>pe-chat .</code> yourself.') + '</div>'
       : '');
 }
 drawLangMenu();
+adoptJobs();                                     /* something may already be running */
 
 langBtn.onclick=e=>{ e.stopPropagation();
-  const open=langMenu.hidden; if(open) drawLangMenu();
+  const open=langMenu.hidden; if(open){ drawLangMenu(); adoptJobs(); }
   langMenu.hidden=!open; langBtn.setAttribute('aria-expanded',String(open)); };
 document.addEventListener('click',()=>{ langMenu.hidden=true; langBtn.setAttribute('aria-expanded','false'); });
 
-langMenu.addEventListener('click',e=>{
+/* A click INSIDE this menu never closes it. Starting a translation, stopping one, pressing the
+   refresh or missing a row are all things a reader does while watching the list — closing it
+   under them hides the very progress they just asked for. Only two things close it: a click
+   outside (the document listener above) and picking a language that already exists, which
+   navigates away anyway. */
+langMenu.addEventListener('click',async e=>{
+  e.stopPropagation();
+  const r=e.target.closest('[data-langrfsh]');
+  if(r){ await refreshBridge(); return void drawLangMenu(); }
   const s=e.target.closest('[data-stop]');
-  if(s){ e.stopPropagation(); return void stopTranslation(s.dataset.stop); }
+  if(s) return void stopTranslation(s.dataset.stop);
   const t=e.target.closest('[data-topup]');
-  if(t){ e.stopPropagation(); const c=t.dataset.topup;
+  if(t){ const c=t.dataset.topup;
          return void startTranslation(c, LANGS.find(l=>l.code===c).label); }
   const b=e.target.closest('[data-lang]'); if(!b||b.disabled) return;
   if(JOBS[b.dataset.lang]) return;              /* already running — leave it be */
   const code=b.dataset.lang;
-  langMenu.hidden=true;
   if(code===CURRENT_LANG) return;
   if(langAvailable(code)){
+    langMenu.hidden=true;                       /* leaving the page — the menu goes with it */
     try{ localStorage.setItem(LANG_KEY,code) }catch(err){}
     return void (window.location.href = b.dataset.file);
   }
+  /* stays open: the row it was just clicked on is about to start reporting a percentage */
   startTranslation(code, LANGS.find(l=>l.code===code).label);
 });
 
@@ -1467,6 +3220,7 @@ setInterval(()=>{ if(!langMenu.hidden && Object.keys(JOBS).length) drawLangMenu(
 /* ---------- export ----------
    Notes are not an appendix: each one is filed into the section it was taken from,
    so the exported document reads as one body of process knowledge.             */
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const notesFor=(section,item)=>NOTES.filter(n=>n.section===section&&(item===undefined||n.item===item)).map(noteView);
 
 function noteBlockHTML(section,item){
@@ -1730,3 +3484,4 @@ refreshNoteCount();
 </script>
 </body>
 </html>
+

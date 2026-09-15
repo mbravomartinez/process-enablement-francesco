@@ -65,7 +65,14 @@ _translating = {}                 # (workdir, code) -> {"cancel": bool, "procs":
 # mid-render is cleaned up, because a half-written page is not worth keeping.
 # ---------------------------------------------------------------------------
 BEAT_EVERY = 15                   # the page's heartbeat interval, seconds
-CLIENT_TTL = 50                   # no beat for this long and the page is gone
+# A hidden tab is not a closed tab, but a browser treats its timers as if it were: Chrome
+# throttles an interval in a backgrounded page to roughly one call a minute. At the old 50s
+# the arithmetic decided the question: a reader who asked something and switched tabs while
+# waiting fell out of the window between two throttled beats, and the bridge retired itself
+# mid-answer — taking the `claude` running the answer with it. 150s clears a once-a-minute
+# beat twice over. The cost is that a genuinely dead browser is noticed later, which nothing
+# depends on: the port is freed either way, and the idle reaper is the real backstop.
+CLIENT_TTL = 150                  # no beat for this long and the page is gone
 BYE_GRACE = 8                     # a "bye" may be a reload — wait before acting
 WATCH_TICK = 2
 
@@ -76,6 +83,11 @@ _procs = set()                    # every live `claude` child, so none is orphan
 _procs_lock = threading.Lock()
 _shutting_down = threading.Event()
 _autoexit = True
+# /ask calls in flight. A translation already keeps the bridge alive past its page, for the
+# same reason an answer must: the reader asked for it, the CLI is running, and exiting now
+# throws the work away and reports it to the page as a lost connection.
+_asking = [0]
+_asking_lock = threading.Lock()
 
 
 def spawn(cmd, **kw):
@@ -125,17 +137,32 @@ def kill_children():
     return len(procs)
 
 
-def drop_partials(workdir):
-    """A translation interrupted by shutdown leaves nothing behind."""
-    removed = []
+def clear_portfile(workdir):
+    """Remove the "a bridge lives here" marker on the way out.
+
+    It is written at startup so the library can find a live bridge without probing. A
+    bridge that exits without removing it leaves a file naming a dead pid, and the next
+    reader of the library is told a bridge is up when nothing is listening."""
+    try:
+        os.remove(os.path.join(workdir, ".chat-bridge.port"))
+    except (FileNotFoundError, OSError):
+        pass
+
+
+def cancel_translations(workdir):
+    """Stop the running translations but KEEP what they earned.
+
+    This used to delete every `.partial`, on the reasoning that an interrupted render should
+    leave nothing behind. It leaves the reader worse off: `translate()` uses a partial as its
+    base and re-sends only the strings still English, so a run stopped at 32% resumes at 32%
+    when the partial survives and starts from nothing when it does not — and a reload that
+    retires the bridge is exactly how a run gets stopped."""
+    kept = []
     for state in list(_translating.values()):
         state["cancel"] = True
     for path in glob.glob(os.path.join(workdir, "index.*.html.partial")):
-        try:
-            os.unlink(path); removed.append(os.path.basename(path))
-        except Exception:
-            pass
-    return removed
+        kept.append(os.path.basename(path))
+    return kept
 
 
 def shutdown(srv, why):
@@ -144,12 +171,14 @@ def shutdown(srv, why):
         return
     _shutting_down.set()
     n = kill_children()
-    partials = drop_partials(srv.workdir)
+    partials = cancel_translations(srv.workdir)
+    clear_portfile(srv.workdir)
     print("\nbridge stopping — %s" % why, file=sys.stderr)
     if n:
         print("  stopped %d claude subprocess%s" % (n, "" if n == 1 else "es"), file=sys.stderr)
     if partials:
-        print("  discarded unfinished %s" % ", ".join(partials), file=sys.stderr)
+        print("  kept unfinished %s — pick 'finish' in the language menu to carry on"
+              % ", ".join(partials), file=sys.stderr)
     print("  kept the exploration in %s" % srv.workdir, file=sys.stderr)
     threading.Thread(target=srv.shutdown, daemon=True).start()
 
@@ -172,7 +201,14 @@ def note_bye(sid):
 
 
 def watchdog(srv):
-    """Exit once every page that was open has gone."""
+    """Exit once every page that was open has gone — unless work is still running.
+
+    A reload is indistinguishable from a close for a moment, and that moment used to be enough
+    to retire the bridge in the middle of a translation the reader had just started. Work the
+    reader asked for outlives the page that asked for it: while anything is in `_translating`
+    the bridge stays up, finishes it, and writes the language beside the page. The reloaded page
+    finds it again through /jobs."""
+    waiting = False
     while not _shutting_down.is_set():
         time.sleep(WATCH_TICK)
         now = time.monotonic()
@@ -182,7 +218,22 @@ def watchdog(srv):
                     _clients.pop(sid, None)
             live, saw = len(_clients), _saw_client
         if saw and not live:
+            busy = [code for (_wd, code) in list(_translating.keys())]
+            with _asking_lock:
+                answering = _asking[0]
+            if busy or answering:
+                if not waiting:
+                    waiting = True
+                    what = []
+                    if answering:
+                        what.append("%d question%s" % (answering, "" if answering == 1 else "s"))
+                    if busy:
+                        what.append("translating " + ", ".join(sorted(busy)))
+                    print("  page gone, but still answering %s — staying up until it lands"
+                          % " and ".join(what), file=sys.stderr)
+                continue
             return shutdown(srv, "the page was closed")
+        waiting = False
 
 
 class Cancelled(Exception):
@@ -201,6 +252,9 @@ Rules:
 - Preserve any inline HTML tags exactly as they appear (`<b>`, `<i>`, `<br>`, `<p>`, `<span …>`)
   and keep every `${{…}}` placeholder untouched and in place.
 - Preserve leading and trailing spaces, and never add or remove a line.
+- A line may contain the two characters `\n`. That is a line break inside a structured note
+  example: keep every one of them, the same number in the same places, and translate the short
+  label in front of each.
 
 Return **only** a JSON object mapping each number to its translation, nothing else:
 {{"1":"…","2":"…"}}
@@ -240,6 +294,54 @@ def class_values(html):
     for m in re.finditer(r"""class(?:Name)?\s*=\s*["']([^"'{}<>]{2,})["']""", html):
         out.add(m.group(1).strip())
     return out
+
+
+def walk_js(js, add):
+    """Feed every prose string in one JS span to `add`.
+
+    Comments must go first: an apostrophe in a comment ("the reader's own record") would
+    otherwise open a false single-quoted span and swallow every string until the next
+    apostrophe — which is how whole KPI and problem paragraphs once went missing."""
+    js = re.sub(r"/\*[\s\S]*?\*/", " ", js)
+    js = re.sub(r"(?m)^\s*//.*$", " ", js)
+    i, n = 0, len(js)
+    while i < n:
+        c = js[i]
+        if c == '"':
+            j, buf = i + 1, []
+            while j < n:
+                if js[j] == "\\":
+                    buf.append(js[j:j + 2]); j += 2; continue
+                if js[j] == '"':
+                    break
+                buf.append(js[j]); j += 1
+            add("".join(buf))
+            i = j + 1
+        elif c in "'`":
+            j = i + 1
+            while j < n:
+                if js[j] == "\\":
+                    j += 2; continue
+                if js[j] == c:
+                    break
+                j += 1
+            if c == "`":
+                # Template literals carry the interface labels ("Concept — what the
+                # mechanism is", "Most probable root causes"). Strip the ${…} holes and
+                # the tags, then take the text that is left.
+                span = re.sub(r"\$\{[^{}]*\}", "\x00", js[i + 1:j])
+                for chunk in span.split("\x00"):
+                    for piece in re.findall(r">([^<>]{2,})<", chunk):
+                        add(re.sub(r"\s+", " ", piece))
+                    plain = re.sub(r"<[^>]*>", " ", chunk)
+                    for piece in re.split(r"\s{2,}|\n", plain):
+                        piece = piece.strip().strip(":").strip()
+                        if len(piece) > 3 and " " in piece:
+                            add(piece)
+            i = j + 1
+        else:
+            i += 1
+
 
 
 def extract_strings(html):
@@ -283,58 +385,24 @@ def extract_strings(html):
                 return
         seen.add(s2); found.append(s2)
 
-    # 1. JS data blocks — walked, not regexed.
+    # 1. JS spans — walked, not regexed.
     #    A quote-pair regex drifts out of alignment the moment one escaped quote appears
     #    earlier in the region, and silently stops capturing prose after it. Walk the text
     #    instead: pair double quotes properly, and skip single-quoted and template spans
     #    wholesale (apostrophes and ${...} live there).
-    try:
-        a = html.index("const EX="); b = html.index("const REGISTRY=")
-        js = html[a:b]
-    except ValueError:
-        js = ""
-    #    Comments must go first: an apostrophe in a comment ("the reader's own record")
-    #    would otherwise open a false single-quoted span and swallow every string until
-    #    the next apostrophe — which is how whole KPI and problem paragraphs went missing.
-    js = re.sub(r"/\*[\s\S]*?\*/", " ", js)
-    js = re.sub(r"(?m)^\s*//.*$", " ", js)
-    i, n = 0, len(js)
-    while i < n:
-        c = js[i]
-        if c == '"':
-            j, buf = i + 1, []
-            while j < n:
-                if js[j] == "\\":
-                    buf.append(js[j:j + 2]); j += 2; continue
-                if js[j] == '"':
-                    break
-                buf.append(js[j]); j += 1
-            add("".join(buf))
-            i = j + 1
-        elif c in "'`":
-            j = i + 1
-            while j < n:
-                if js[j] == "\\":
-                    j += 2; continue
-                if js[j] == c:
-                    break
-                j += 1
-            if c == "`":
-                # Template literals carry the interface labels ("Concept — what the
-                # mechanism is", "Most probable root causes"). Strip the ${…} holes and
-                # the tags, then take the text that is left.
-                span = re.sub(r"\$\{[^{}]*\}", "\x00", js[i + 1:j])
-                for chunk in span.split("\x00"):
-                    for piece in re.findall(r">([^<>]{2,})<", chunk):
-                        add(re.sub(r"\s+", " ", piece))
-                    plain = re.sub(r"<[^>]*>", " ", chunk)
-                    for piece in re.split(r"\s{2,}|\n", plain):
-                        piece = piece.strip().strip(":").strip()
-                        if len(piece) > 3 and " " in piece:
-                            add(piece)
-            i = j + 1
-        else:
-            i += 1
+    #
+    #    Two spans, and the second is deliberate belt-and-braces. The data block span runs to
+    #    `const REGISTRY=`, which today sits after the chrome, so the tour copy already falls
+    #    inside it — by position, not by intent. Naming the tour span explicitly is what stops
+    #    a future reordering from silently dropping twelve steps of prose from every language.
+    #    Overlap costs nothing: `add()` de-duplicates.
+    for start, end in (("const EX=", "const REGISTRY="),
+                       ("/* PE:tour-copy", "/* PE:tour-copy-end */")):
+        try:
+            a = html.index(start); b = html.index(end, a)
+        except ValueError:
+            continue
+        walk_js(html[a:b], add)
 
     # 2. markup: text nodes and the attributes a reader sees
     body = html[html.index("<body"):html.rindex("<script>")] if "<body" in html else ""
@@ -445,8 +513,20 @@ def register_language(workdir, code, label, filename):
     return touched + restamp_registry(workdir)
 
 
-def translate_batch(exe, workdir, language, topic, lines, offset, state=None):
-    numbered = "\n".join("%d. %s" % (offset + k, s) for k, s in enumerate(lines))
+# A note's `example` is written as several short labelled lines, so a field handed to the
+# translator can contain real newlines — which would break a numbered list outright, the
+# tail of one value reading as an unnumbered line of its own. Send the breaks escaped and
+# restore them on the way back; the prompt tells the translator to keep them in place.
+def _enc_nl(s):
+    return s.replace("\\", "\\\\").replace("\n", "\\n")
+
+
+def _dec_nl(s):
+    return re.sub(r"\\(n|\\)", lambda m: "\n" if m.group(1) == "n" else "\\", s)
+
+
+def translate_batch(exe, workdir, language, topic, lines, offset, state=None, code=""):
+    numbered = "\n".join("%d. %s" % (offset + k, _enc_nl(s)) for k, s in enumerate(lines))
     prompt = BATCH_PROMPT.format(language=language, topic=topic, lines=numbered)
     proc = spawn([exe, "-p", prompt, "--output-format", "json"],
                  stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -484,12 +564,64 @@ def translate_batch(exe, workdir, language, topic, lines, offset, state=None):
         pass
     obj = extract_json(raw if isinstance(raw, str) else json.dumps(raw))
     if not isinstance(obj, dict):
-        raise RuntimeError("batch did not return a JSON object")
-    return {int(k): v for k, v in obj.items() if str(k).isdigit()}
+        # Guessing at an answer we threw away cost a whole afternoon once: write it down.
+        where = ""
+        try:
+            name = ".chat-bridge-batch-%s-%d+%d.txt" % (code or "xx", offset, len(lines))
+            with open(os.path.join(workdir, name), "w", encoding="utf-8") as fh:
+                fh.write((out or "")[:65536])
+            where = " (kept in %s)" % name
+        except Exception:
+            pass
+        raise RuntimeError("batch did not return a JSON object%s" % where)
+    return {int(k): (_dec_nl(v) if isinstance(v, str) else v)
+            for k, v in obj.items() if str(k).isdigit()}
+
+
+def translate_chunk(exe, workdir, code, topic, lines, offset, state=None, depth=0):
+    """One batch, but a bad answer is retried in halves rather than sinking the pass.
+
+    Asking for eighty strings back as one JSON object is a lot to ask, and the failure
+    mode is an answer that will not parse — truncated, or wrapped in prose. Halving the
+    question is the cheapest fix that has ever worked here, so a chunk that fails is
+    split and each half asked once more. Only a single string that still fails raises."""
+    try:
+        return translate_batch(exe, workdir, LANGS[code], topic, lines, offset, state, code)
+    except Cancelled:
+        raise
+    except Exception as e:
+        if len(lines) < 2 or depth >= 2:
+            raise
+        half = len(lines) // 2
+        log_run(code, "batch %d-%d failed — retrying in halves"
+                % (offset, offset + len(lines) - 1), detail=str(e)[:120])
+        got = {}
+        for start, part in ((offset, lines[:half]), (offset + half, lines[half:])):
+            got.update(translate_chunk(exe, workdir, code, topic, part, start, state, depth + 1))
+        return got
+
+
+def log_run(code, msg, **facts):
+    """Say what a translation did, in the log.
+
+    A run reports to the page that asked for it — and that page may be gone: a reload drops the
+    connection the answer would have travelled down. Then an error nobody received explained why
+    a language "just went back to translate". So every outcome is written here as well, where it
+    survives the reader."""
+    tail = " ".join("%s=%s" % (k, v) for k, v in facts.items() if v not in (None, ""))
+    print("  [%s %s] %s%s" % (time.strftime("%H:%M:%S"), code, msg, (" " + tail) if tail else ""),
+          file=sys.stderr, flush=True)
+
+
+def job_elapsed(state):
+    """Seconds this translation has been running — so a reloaded page's clock is honest."""
+    now = time.time()
+    return max(0.0, now - (state.get("t0") or now))
 
 
 COMPLETE = 0.995     # coverage at which a page counts as fully translated
 MAX_PASSES = 3       # top-up passes inside one request, so one click can finish a page
+EXTRA_PASSES = 2     # more passes, earned only when a batch broke — retrying is the whole point
 
 
 def substitute(doc, source, target):
@@ -516,26 +648,185 @@ def substitute(doc, source, target):
     return "".join(pieces), hits
 
 
+def fit_to_source(src, val):
+    """A translation only as the page can hold it — or nothing.
+
+    Every extracted string is a single line inside a quoted JS literal, so a translation
+    that arrives with a real line break cannot be substituted: it terminates the literal
+    and the page stops parsing ("SyntaxError: Invalid or unexpected token"). It arrives
+    that way often, because a note example carries the two characters `\n` and the model
+    answers with one real newline instead — `_dec_nl()` cannot tell the two apart.
+
+    So a newline is written back in the convention the source used, and the handful of
+    characters that would break out of the literal whatever we do are refused."""
+    if not isinstance(val, str):
+        return None
+    if "\r" in val or "\n" in val:
+        if "\\n" in src:                    # the source carries literal backslash-n escapes
+            val = re.sub(r"\r\n?|\n", lambda m: "\\n", val)
+        else:
+            val = re.sub(r"[\r\n\t]+", " ", val)
+    val = val.strip()
+    if not val:
+        return None
+    # A backtick or a `${` dropped into a template literal, or a closing script tag
+    # anywhere, breaks the page no matter how it is escaped. Leave the English.
+    if "`" in val or "${" in val and "${" not in src or "</script" in val.lower():
+        return None
+    return val
+
+
+def js_span(page):
+    """The page's own script, as text — the thing `node --check` has an opinion about."""
+    return page[page.rindex("<script>") + 8:page.rindex("</script>")]
+
+
+def js_parses(page, node=None):
+    """Does this page's script still parse? Used both to check and to repair."""
+    node = node or shutil.which("node")
+    if not node:
+        return True                          # no judge available; do not invent a verdict
+    import tempfile
+    try:
+        with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False,
+                                         encoding="utf-8") as fh:
+            fh.write(js_span(page)); path = fh.name
+    except Exception:
+        return True
+    try:
+        return subprocess.run([node, "--check", path],
+                              capture_output=True, text=True, timeout=60).returncode == 0
+    except Exception:
+        return True
+    finally:
+        try:
+            os.unlink(path)
+        except Exception:
+            pass
+
+
+def mend_js(js):
+    """Close every string literal a stray newline left open. Returns (js, mends).
+
+    A translated `\n` that came back as a real newline terminates the literal it lands in,
+    and once such a page has been written to disk every run that resumes from it inherits
+    the breakage — which is how a page sat at 52% no matter how well the next pass went.
+    Walk the script honouring quotes, comments and template literals, and write the newline
+    back as the escape it was meant to be."""
+    out, i, n, quote, mends = [], 0, len(js), None, 0
+    while i < n:
+        c = js[i]
+        if quote:
+            if c == "\\" and i + 1 < n:
+                out.append(js[i:i + 2]); i += 2; continue
+            if c == quote:
+                quote = None; out.append(c); i += 1; continue
+            if c == "\n" and quote in "\"'":
+                out.append("\\n"); mends += 1; i += 1; continue
+            out.append(c); i += 1; continue
+        if c in "\"'`":
+            quote = c; out.append(c); i += 1; continue
+        if js[i:i + 2] == "//":
+            j = js.find("\n", i); j = n if j < 0 else j
+            out.append(js[i:j]); i = j; continue
+        if js[i:i + 2] == "/*":
+            j = js.find("*/", i); j = n if j < 0 else j + 2
+            out.append(js[i:j]); i = j; continue
+        out.append(c); i += 1
+    return "".join(out), mends
+
+
+def mend_page(page):
+    """A page whose script parses again, or None. Never returns a page that is still broken."""
+    if js_parses(page):
+        return page
+    try:
+        js = js_span(page)
+    except ValueError:
+        return None
+    fixed, mends = mend_js(js)
+    if not mends:
+        return None
+    cand = page[:page.rindex("<script>") + 8] + fixed + page[page.rindex("</script>"):]
+    return cand if js_parses(cand) else None
+
+
+def write_page(path, page, code, what):
+    """Write a page only if its script parses — mending it first if that is all it needs.
+
+    Banking a broken page is worse than banking nothing: the reader sees progress kept, and
+    every run that resumes from it is rejected by the render check before it starts."""
+    good = mend_page(page)
+    if good is None:
+        log_run(code, "refused to write a page that does not parse", file=os.path.basename(path))
+        return None
+    if good is not page:
+        log_run(code, "mended a broken string literal before writing",
+                file=os.path.basename(path))
+    open(path, "w", encoding="utf-8").write(good)
+    return good
+
+
+def repair_page(base, table, code, budget=60):
+    """Find the translations that break the page, drop them, keep the rest.
+
+    A pass used to be thrown away whole when one translation of two hundred broke the
+    script — the reader saw the language go back to `NN% — finish` and nothing to show for
+    four minutes of work. The offender is found by removal (drop half, ask node again),
+    which is a handful of syntax checks rather than a re-translation."""
+    node = shutil.which("node")
+    if not node:
+        return None
+    def without(rm):
+        page, _ = apply_table(base, {k: v for k, v in table.items() if k not in rm}, code)
+        return page
+    spent = [0]
+    def clean(rm):
+        spent[0] += 1
+        return spent[0] <= budget and js_parses(without(rm), node)
+    def hunt(cand, also):
+        """Narrow `cand` (removing cand+also parses) down to the guilty keys."""
+        if len(cand) == 1 or spent[0] >= budget:
+            return list(cand)
+        h = len(cand) // 2
+        a, b = cand[:h], cand[h:]
+        if clean(set(a) | set(also)):
+            return hunt(a, also)
+        if clean(set(b) | set(also)):
+            return hunt(b, also)
+        return hunt(a, list(also) + b) + hunt(b, list(also) + a)
+    keys = sorted(table, key=len, reverse=True)
+    if not clean(set(keys)):
+        return None                          # not the translations — something else is wrong
+    bad = hunt(keys, [])
+    if not bad or spent[0] > budget:
+        return None
+    kept = {k: v for k, v in table.items() if k not in set(bad)}
+    page, replaced = apply_table(base, kept, code)
+    if not js_parses(page, node):
+        return None
+    return page, kept, replaced, bad
+
+
 def render_problems(out, code, table, replaced):
     """Everything that would make a rendered page unfit to keep."""
     problems = []
     node = shutil.which("node")
-    if node:
+    if node and not js_parses(out, node):
+        detail = ""
         try:
-            js = out[out.rindex("<script>") + 8:out.rindex("</script>")]
             import tempfile
             with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False,
                                              encoding="utf-8") as fh:
-                fh.write(js); js_path = fh.name
+                fh.write(js_span(out)); js_path = fh.name
             chk = subprocess.run([node, "--check", js_path],
                                  capture_output=True, text=True, timeout=60)
             os.unlink(js_path)
-            if chk.returncode != 0:
-                first = (chk.stderr or "").strip().split("\n")
-                detail = next((l for l in first if "Error" in l), first[0] if first else "")
-                problems.append("the translated page does not parse: %s" % detail[:200])
-        except Exception as e:
-            problems.append("could not syntax-check the page: %s" % str(e)[:120])
+            lines = (chk.stderr or "").strip().split("\n")
+            detail = next((l for l in lines if "Error" in l), lines[0] if lines else "")
+        except Exception:
+            pass
+        problems.append("the translated page does not parse: %s" % detail[:200])
     if replaced < len(table) * 0.9:
         problems.append("only %d of %d translations could be substituted" % (replaced, len(table)))
     if "</html>" not in out[-2000:]:
@@ -547,6 +838,37 @@ def render_problems(out, code, table, replaced):
         if probe in out:
             problems.append("tab label still English: %s" % probe.strip("<>"))
     return problems
+
+
+def apply_table(base, table, code):
+    """Substitute a dictionary into the page, longest string first."""
+    out, replaced = base, 0
+    for s in sorted(table, key=len, reverse=True):
+        out, hits = substitute(out, s, table[s])
+        if hits:
+            replaced += 1
+    out = re.sub(r"const CURRENT_LANG='[a-z]{2}'", "const CURRENT_LANG='%s'" % code, out)
+    return out, replaced
+
+
+def salvage(base, slices, results, code):
+    """What the batches that DID land are worth, as `{"salvage": page}` or nothing.
+
+    A pass used to be all-or-nothing: one failed batch, or a stop, and every batch that had
+    already come back was dropped on the floor — which is how a run at 48% left no trace and
+    the row went back to "translate". The batches in hand are a perfectly good partial page.
+    """
+    table = {}
+    for start, chunk in slices:
+        got = results.get(start, {})
+        for k, s in enumerate(chunk):
+            v = fit_to_source(s, got.get(start + 1 + k))
+            if v and v != s:
+                table[s] = v
+    if not table:
+        return {}
+    out, replaced = apply_table(base, table, code)
+    return {"salvage": out, "salvaged": replaced} if replaced else {}
 
 
 def translate_pass(exe, workdir, code, topic, base, strings, state, strict):
@@ -571,49 +893,51 @@ def translate_pass(exe, workdir, code, topic, base, strings, state, strict):
     # minutes; this brings it under two.
     BATCH, WORKERS = 80, 3
     slices = [(s, strings[s:s + BATCH]) for s in range(0, len(strings), BATCH)]
-    results = {}
+    results, failures, lost = {}, [], 0
     with cf.ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        futures = {pool.submit(translate_batch, exe, workdir, LANGS[code], topic,
+        futures = {pool.submit(translate_chunk, exe, workdir, code, topic,
                                chunk, start + 1, state): (start, chunk)
                    for start, chunk in slices}
         for fut in cf.as_completed(futures):
             start, chunk = futures[fut]
             try:
                 results[start] = fut.result()
-                state["done"] = state.get("done", 0) + len(chunk)
             except Cancelled:
                 for f in futures:
                     f.cancel()
-                return {"error": "cancelled"}
+                return dict({"error": "cancelled"}, **salvage(base, slices, results, code))
             except Exception as e:
-                for f in futures:
-                    f.cancel()
-                return {"error": "batch-failed",
-                        "detail": "strings %d-%d: %s" % (start + 1, start + len(chunk), e)}
+                # One batch answering badly is not a reason to throw away the rest of the
+                # page: let the others land, and leave these strings for the next pass.
+                failures.append("strings %d-%d: %s" % (start + 1, start + len(chunk), e))
+                lost += len(chunk)
+                log_run(code, "batch %d-%d gave up — its strings go to the next pass"
+                        % (start + 1, start + len(chunk)), detail=str(e)[:160])
+            state["done"] = state.get("done", 0) + len(chunk)
+    if failures and not results:
+        return dict({"error": "batch-failed", "detail": "; ".join(failures)[:300]},
+                    **salvage(base, slices, results, code))
     if state["cancel"]:
-        return {"error": "cancelled"}
+        return dict({"error": "cancelled"}, **salvage(base, slices, results, code))
     state["phase"] = "substituting"
     for start, chunk in slices:
         got = results.get(start, {})
         for k, s in enumerate(chunk):
-            v = got.get(start + 1 + k)
-            if isinstance(v, str) and v.strip() and v.strip() != s:
+            raw = got.get(start + 1 + k)
+            v = fit_to_source(s, raw)
+            if v and v != s:
                 table[s] = v
             else:
                 missing.append(s)
-                if isinstance(v, str) and v.strip() == s:
+                if v == s or (isinstance(raw, str) and raw.strip() == s):
                     identical.append(s)          # answered, and deliberately unchanged
-    if strict and len(table) < len(strings) * 0.75:
+    answered = max(1, len(strings) - lost)
+    if strict and len(table) < answered * 0.75:
         return {"error": "translation-incomplete",
                 "detail": "%d of %d strings came back translated; first missed: %s"
-                          % (len(table), len(strings), "; ".join(missing[:3]))}
-    out, replaced = base, 0
-    for s in sorted(table, key=len, reverse=True):
-        out, hits = substitute(out, s, table[s])
-        if hits:
-            replaced += 1
-    out = re.sub(r"const CURRENT_LANG='[a-z]{2}'", "const CURRENT_LANG='%s'" % code, out)
-    return out, table, missing, replaced, identical
+                          % (len(table), answered, "; ".join(missing[:3]))}
+    out, replaced = apply_table(base, table, code)
+    return out, table, missing, replaced, identical, failures
 
 
 def kept_path(workdir, code):
@@ -666,13 +990,19 @@ def translate(exe, workdir, code, topic="a business process"):
         return {"file": target, "cached": True, "coverage": 1.0}
     job = (os.path.realpath(workdir), code)
     if _translating.get(job):
+        log_run(code, "asked again while already running — left alone")
         return {"error": "already-running"}
 
-    started = translation_coverage(workdir, code)     # 0.0 when nothing is there yet
+    # What is already translated — the rendered page, or the partial an interrupted run left.
+    # Ignoring the partial made a resumed run report 0% to the page and to the log while it
+    # was in fact carrying on from 52%, so the row appeared to have thrown that away.
+    started = translation_coverage(workdir, code)
+    if started == 0.0 and not os.path.isfile(path) and os.path.isfile(partial):
+        started = translation_coverage(workdir, code, partial)
     if os.path.isfile(path) and started >= COMPLETE:
         return {"file": target, "cached": True, "coverage": started}
 
-    state = {"cancel": False, "procs": [], "phase": "reading",
+    state = {"cancel": False, "procs": [], "phase": "reading", "t0": time.time(),
              "total": 0, "done": 0, "pass": 0, "passes": MAX_PASSES,
              "coverage": started}
     _translating[job] = state
@@ -687,26 +1017,84 @@ def translate(exe, workdir, code, topic="a business process"):
         base_path = path if os.path.isfile(path) else (partial if os.path.isfile(partial) else None)
         out = open(base_path, encoding="utf-8").read() if base_path else english
         first = base_path is None
+        if not first:
+            # A page banked before this check existed can itself be broken; then every pass
+            # on top of it is rejected and the language can never finish. Mend it, or start
+            # from English rather than inheriting the fault.
+            good = mend_page(out)
+            if good is None:
+                log_run(code, "the page we resumed from does not parse — starting from English",
+                        file=os.path.basename(base_path))
+                out, first, started = english, True, 0.0
+                state["coverage"] = 0.0
+            elif good is not out:
+                out = good
+                log_run(code, "mended the page we resumed from", file=os.path.basename(base_path))
+        log_run(code, "translating", strings=len(allstr),
+                resuming_from="%d%%" % round(started * 100) if started else None,
+                base=os.path.basename(base_path) if base_path else "the English page")
 
         kept = load_kept(workdir, code)
         cov, passes, translated, replaced_total, left = started, 0, 0, 0, 0
-        while passes < MAX_PASSES:
+        limit, retried = MAX_PASSES, 0
+        while passes < limit:
             strings = allstr if (first and passes == 0) else [s for s in allstr if s in out]
             left = len(strings)
             if not strings:
                 break
             state["pass"] = passes + 1
             state["phase"] = "translating"
+            log_run(code, "pass %d starting" % (passes + 1), strings=left,
+                    at="%d%%" % round(cov * 100))
             res = translate_pass(exe, workdir, code, topic, out, strings, state,
                                  strict=(first and passes == 0))
             if isinstance(res, dict):                 # a pass failed or was cancelled
+                # The batches that landed before it broke are worth keeping: bank them as the
+                # partial so the next attempt carries on from there instead of from nothing.
+                salv = res.get("salvage")
+                if isinstance(salv, str) and salv != out:
+                    out = salv
+                    cov = coverage_between(english, out, kept)
+                    state["coverage"] = cov
+                    if cov > started:
+                        try:
+                            if write_page(partial, out, code, "partial") is None:
+                                raise RuntimeError("would not parse")
+                            res = dict(res, coverage=cov, kept_progress=True)
+                            log_run(code, "kept the part that landed", at="%d%%" % round(cov * 100),
+                                    strings=res.get("salvaged"), file=os.path.basename(partial))
+                        except Exception as e:
+                            log_run(code, "could not write the partial", error=e)
+                log_run(code, "pass %d ended: %s" % (passes + 1, res.get("error")),
+                        detail=str(res.get("detail", ""))[:160], at="%d%%" % round(cov * 100))
                 if passes == 0:
-                    return res                        # nothing earned yet — report it
+                    return res                        # nothing more earned — report it
                 break                                 # keep what earlier passes achieved
-            cand, table, missing, replaced, identical = res
+            cand, table, missing, replaced, identical, failures = res
             state["phase"] = "checking"
             problems = render_problems(cand, code, table, replaced)
+            if problems and any("does not parse" in x for x in problems):
+                # One translation in two hundred can break the script, and throwing the
+                # whole pass away for it is what the reader sees as "nothing happened".
+                # Find it, drop it, keep everything else.
+                state["phase"] = "repairing"
+                fixed = repair_page(out, table, code)
+                if fixed:
+                    cand, table, replaced, bad = fixed
+                    missing.extend(bad)
+                    log_run(code, "pass %d repaired" % (passes + 1),
+                            dropped=len(bad), example=str(bad[0])[:60] if bad else "")
+                    problems = render_problems(cand, code, table, replaced)
+                else:
+                    try:
+                        keep = os.path.join(workdir, ".chat-bridge-reject-%s.html" % code)
+                        open(keep, "w", encoding="utf-8").write(cand)
+                        problems.append("the rejected page is in %s" % os.path.basename(keep))
+                    except Exception:
+                        pass
             if problems:
+                log_run(code, "pass %d rejected by the render check" % (passes + 1),
+                        detail="; ".join(problems)[:200], at="%d%%" % round(cov * 100))
                 if passes == 0:
                     return {"error": "validation-failed", "detail": "; ".join(problems)}
                 break                                 # keep the last good page instead
@@ -716,27 +1104,55 @@ def translate(exe, workdir, code, topic="a business process"):
             kept |= set(identical)
             cov = coverage_between(english, out, kept)
             state["coverage"] = cov
+            # Bank the ground gained now, so a later stumble cannot cost it, and the run
+            # carries straight on into the next pass — a batch that broke is retried here
+            # rather than left for the reader to notice and click again.
+            if failures:
+                log_run(code, "pass %d partial — %d batch(es) failed, carrying on"
+                        % (passes, len(failures)), detail="; ".join(failures)[:160],
+                        at="%d%%" % round(cov * 100))
+                if cov > started and cov < COMPLETE:
+                    try:
+                        write_page(partial, out, code, "partial")
+                    except Exception as e:
+                        log_run(code, "could not write the partial", error=e)
+                if retried < EXTRA_PASSES and table:
+                    limit += 1
+                    retried += 1
             if cov >= COMPLETE or not table:
                 break
         if state["cancel"]:
-            return {"error": "cancelled"}
+            if cov > started and out != english:
+                try:
+                    write_page(partial, out, code, "partial")
+                    log_run(code, "stopped — kept what was done", at="%d%%" % round(cov * 100))
+                except Exception as e:
+                    log_run(code, "stopped, but could not write the partial", error=e)
+            else:
+                log_run(code, "stopped with nothing to keep")
+            return {"error": "cancelled", "coverage": cov}
 
         state["phase"] = "saving"
         if kept:
             save_kept(workdir, code, kept)
         if cov >= MIN_COVERAGE:
-            open(path, "w", encoding="utf-8").write(out)
+            if write_page(path, out, code, "page") is None:
+                return {"error": "validation-failed",
+                        "detail": "the finished page does not parse; nothing was written"}
             if os.path.isfile(partial):
                 os.remove(partial)
+            log_run(code, "finished", at="%d%%" % round(cov * 100), passes=passes, file=target)
             register_language(workdir, code, LANGS_LABEL.get(code, LANGS[code]), target)
             return {"file": target, "cached": False, "coverage": cov, "started": started,
                     "passes": passes, "strings": len(allstr), "translated": translated,
                     "substituted": replaced_total, "remaining": left, "kept": len(kept)}
         # Short of usable, but the work is not thrown away: the next attempt continues
         # from here instead of starting the whole page again.
-        open(partial, "w", encoding="utf-8").write(out)
+        write_page(partial, out, code, "partial")
         if os.path.isfile(path):
             os.remove(path)
+        log_run(code, "short of usable — progress kept", at="%d%%" % round(cov * 100),
+                passes=passes, file=os.path.basename(partial))
         return {"error": "translation-incomplete", "coverage": cov, "passes": passes,
                 "detail": "%d%% of the page is translated (was %d%%); the progress was kept — "
                           "pick the language again to carry on from there"
@@ -796,7 +1212,7 @@ def translate_notes(exe, workdir, code, topic, notes):
     BATCH, WORKERS = 80, 3
     slices = [(s, lines[s:s + BATCH]) for s in range(0, len(lines), BATCH)]
     with cf.ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        futures = {pool.submit(translate_batch, exe, workdir, LANGS[code], topic,
+        futures = {pool.submit(translate_chunk, exe, workdir, code, topic,
                                chunk, start + 1, state): (start, chunk)
                    for start, chunk in slices}
         for fut in cf.as_completed(futures):
@@ -839,13 +1255,153 @@ outranks everything, including your own knowledge. Read what you need. Reuse the
 running example already in content.md (same order number, amounts, dates). Never
 invent a figure; if none is sourced, describe the mechanism instead.
 
-Answer in under 160 words as a practitioner explaining to someone who has never run
-this process. **Write the four fields in {language}** — that is the language the reader
-has this page open in, and the answer is filed into their notes as it stands. Keep
-company, product and place names, codes and terms of art in their usual form.
+Answer as a practitioner explaining to someone who has never run this process.
+**Write every field in {language}** — that is the language the reader has this page open
+in, and the answer is filed into their notes as it stands. Keep company, product and
+place names, codes and terms of art in their usual form.
 
-Return ONLY one JSON object, no prose and no code fence:
-{{"topic":"short noun phrase","what":"…","why":"…","example":"…"}}"""
+**One note per concept.** Split the question into the distinct concepts it actually
+asks about and return one note for each — never one note covering several. A reader who
+asked about three things wants three notes they can find separately later, not one long
+note they must re-read to use. Two concepts are distinct when a reader could need one
+without the other; if the question really asks about one thing, return one note. At most 5 —
+beyond that, cover the ones the reader is standing closest to.
+
+**A note is two things: the explanation, and the example. Nothing else.**
+- `what` is the explanation — **exactly what they asked, in two or three short sentences, 55
+  words at the outside**. No history, no second concept, no restating the question, no ground
+  the reader did not ask for.
+- `example` is the worked case, as structured lines (below).
+- **There is no `why` field. Do not send one**, and do not smuggle a "why it matters"
+  paragraph into `what` as extra sentences — the reader asked to understand the thing, not to
+  be told it is important. If the consequence is genuinely part of the answer, it is the last
+  clause of a sentence, not a section.
+- The whole note runs about **90 words, never past 120**. Verbosity is the failure mode: it is
+  a note read in a hurry, not an essay.
+
+**The example is structured, not a paragraph.** Three to five short lines, separated by real
+newlines inside the JSON string, each one a label and its value, the last line stating the
+effect:
+
+    Standard: material 100234, plant 1100, lot size 5,000 kg, EUR 150 setup -> EUR 0.03/kg
+    Order:    900045678, 4,000 kg planned, 3,850 kg good output
+    Effect:   EUR 150 over 3,850 kg = EUR 0.039/kg -> EUR 0.009/kg lot size variance
+
+Label the lines in {language}. Use the running example from content.md (same order number,
+amounts, dates); no figure you cannot source — describe the mechanism instead. Never a line
+that only restates the definition, and no term inside it the note has not explained. 60 words
+for the whole example.
+
+Return ONLY this JSON object, no prose and no code fence — two content fields, no `why`:
+{{"notes":[{{"topic":"short noun phrase","what":"…","example":"…"}}]}}"""
+
+
+# A reader can now select a whole paragraph, not just a phrase — the question is often about
+# how several sentences fit together, and the page no longer refuses that. The wording above is
+# written for a phrase, so a passage gets this correction appended: same one-note contract, but
+# `topic` must be a label the expert writes rather than the passage echoed back.
+LONG_SELECTION = """
+Note: this selection is a **passage of several sentences, not a phrase**. Answer it as one
+question about the passage as a whole — what it is really saying, and the part of it the reader
+is most likely to have stumbled on — rather than glossing each sentence in turn. `topic` must be
+a short label **of your own** naming what the passage is about; the passage itself would be an
+unreadable heading in their notebook. Everything else above still holds: exactly one note.
+"""
+
+SELECTION_PROMPT = """
+
+The reader did not type this question — they **selected a phrase on the page**:
+
+    "{selection}"
+
+and asked for {want}.
+{detail}
+So: **return exactly ONE note**, about that phrase and nothing else. A selected phrase is
+one concept by definition; splitting it would invent concepts the reader never asked
+about, and each note is filed separately in their notebook. Set `topic` to the phrase
+itself, or to the smallest noun phrase that names it — it becomes the note's heading and
+the reader has to recognise it as the thing they selected.
+
+{emphasis}
+
+Explain the phrase as it is used *here*, in this process at this company — not the
+dictionary sense. If the phrase is a term of art the surrounding text already defines
+differently, follow the page."""
+
+WANT = {"explain": "an explanation of it",
+        "example": "an example that makes it concrete"}
+
+# What the reader typed into the bar, when they typed anything. This is the most specific
+# thing in the whole request: the phrase says WHAT they are looking at, the mode says which
+# kind of help they want, and this says which part actually lost them. It therefore outranks
+# both — an answer that explains the phrase correctly but not the part they asked about has
+# missed. When the field was left empty the request is simply the phrase, and nothing about
+# the prompt should imply the reader failed to say more.
+# The reader can aim a refinement at ONE block of the note — its explanation, its example,
+# or an earlier follow-up — by clicking the control on that block instead of the one on the
+# note. When they do, they have already told us what they are looking at, and the answer must
+# stay inside it: rewriting the example when they asked about the explanation is the failure
+# this exists to prevent.
+REFINE_PART = """
+They asked this about **one part of the note in particular — the {part}**. That part currently
+reads:
+
+    {focus}
+
+Improve **that part, and only that part**. Do not answer for the rest of the note: the reader
+kept the rest, and a follow-up that revisits it buries the piece they asked for.
+"""
+
+REFINE_PROMPT = """
+
+This is a **follow-up on a note the reader already has**. They read it, and one thing in it
+is still not clear. Here is the note, so you answer in the context of what they have already
+been told rather than starting over:
+
+    Topic:        {topic}
+    They asked:   {question}
+    Explanation:  {what}
+    Also said:    {why}
+    Example:      {example}
+
+What they want explained better:
+
+    "{ask}"
+{part}
+**Return exactly ONE note**, and treat it as the missing piece rather than a rewrite:
+- Do **not** restate what the note above already says. They have read it. If the honest
+  answer is that the note was already right, say what they seem to be reading differently
+  and correct that instead.
+- Answer only the thing they asked about, in **two or three short sentences** in `what`.
+  **Send no `why`.** Add an `example` only when it genuinely helps; leave it empty otherwise —
+  a padded follow-up buries the one thing they were waiting for. An example here is the same
+  structured lines, label and value, ending on the effect.
+- Where an example helps, prefer extending the note's own example (same numbers, same
+  order) over inventing a second one, so their notebook keeps one running case.
+- `topic` is a short label for the follow-up, not a repeat of the note's topic.
+
+"""
+
+
+DETAIL = """
+They also said, in their own words, what they want cleared up:
+
+    "{detail}"
+
+**Answer that.** It is more specific than either the phrase or the mode, so it decides what
+the note is about: lead with it, and leave out the parts of the phrase they did not ask
+about. If what they typed turns out to be a different question that merely starts from the
+phrase, follow their question — they can see the phrase, and they told you what they need.
+"""
+EMPHASIS = {
+    "explain": "They asked to understand it, so `what` carries the answer: what the phrase "
+               "means in this process, in two or three sentences. `example` still has to be "
+               "there, and still has to be a real situation.",
+    "example": "They asked for an example, so `example` carries the answer — the same "
+               "structured lines, label and value, ending on the effect, in the running "
+               "case from content.md. Keep `what` to ONE sentence; it is the frame, not the "
+               "answer, and a long frame buries the example.",
+}
 
 
 def claude_path():
@@ -860,13 +1416,28 @@ def claude_version(exe):
         return ""
 
 
+def unescape_too_much(text):
+    """Undo the over-escaping a careful model does: `\\\\"` where `\\"` was meant.
+
+    Seen for real (`.chat-bridge-batch-it-81.txt`, 14 September): a batch of eighty strings came
+    back with `si leggono entrambi \\\\"150 kg\\\\"` inside a value — JSON reads that as a literal
+    backslash followed by the closing quote, so the object stops parsing mid-string and eighty
+    good translations were thrown away. The prompt asks for `\\n` to be preserved, and a model
+    escaping conscientiously escapes the quotes too. Trying the un-escaped reading costs nothing:
+    it is used only when the strict one has already failed."""
+    return re.sub(r'\\{2,}"', '\\\\"', text)
+
+
 def extract_json(text):
-    """The CLI may wrap the object in prose or a fence; take the first {...} block."""
+    """The CLI may wrap the object in prose or a fence; take the first {...} block.
+
+    Two readings of every candidate: as it came, and with over-escaped quotes repaired."""
     text = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.M).strip()
-    try:
-        return json.loads(text)
-    except Exception:
-        pass
+    for candidate in (text, unescape_too_much(text)):
+        try:
+            return json.loads(candidate)
+        except Exception:
+            pass
     depth = start = 0
     for i, ch in enumerate(text):
         if ch == "{":
@@ -876,10 +1447,12 @@ def extract_json(text):
         elif ch == "}":
             depth -= 1
             if depth == 0:
-                try:
-                    return json.loads(text[start:i + 1])
-                except Exception:
-                    continue
+                block = text[start:i + 1]
+                for candidate in (block, unescape_too_much(block)):
+                    try:
+                        return json.loads(candidate)
+                    except Exception:
+                        continue
     return None
 
 
@@ -890,6 +1463,39 @@ def ask_claude(exe, workdir, payload):
         company=payload.get("company", "—"), section=payload.get("section", "—"),
         item=payload.get("item", "—"), question=payload.get("question", "").strip(),
         language=LANGS.get(lang, "English"))
+    one_note = False
+    refine = payload.get("refine")
+    if isinstance(refine, dict):
+        # A refinement is one focused answer by definition, so it takes the same one-note
+        # guarantee a selection does.
+        one_note = True
+        # A page from before per-part refining sends no `part`; the block is simply omitted
+        # and the whole-note wording stands, so an older page keeps working unchanged.
+        part = str(refine.get("part", "") or "").strip()[:60]
+        focus = str(refine.get("focus", "") or "").strip()[:1600]
+        prompt += REFINE_PROMPT.format(
+            topic=str(refine.get("topic", "") or "—")[:200],
+            question=str(refine.get("question", "") or "—")[:400],
+            what=str(refine.get("what", "") or "—")[:1200],
+            why=str(refine.get("why", "") or "—")[:1200],
+            example=str(refine.get("example", "") or "—")[:1200],
+            ask=str(payload.get("question", "") or "").strip()[:400],
+            part=REFINE_PART.format(part=part, focus=focus or "—") if part else "")
+    selection = str(payload.get("selection", "") or "").strip()
+    mode = str(payload.get("mode", "") or "").strip().lower()
+    if selection:
+        if mode not in WANT:
+            mode = "explain"
+        one_note = True
+        detail = str(payload.get("detail", "") or "").strip()
+        # 2000, not 400: the page allows a passage of up to 1500 characters, and truncating
+        # the reader's selection mid-sentence would have the expert answer about a fragment
+        # while the reader watches for an answer about the paragraph they highlighted.
+        prompt += SELECTION_PROMPT.format(
+            selection=selection[:2000], want=WANT[mode], emphasis=EMPHASIS[mode],
+            detail=DETAIL.format(detail=detail[:400]) if detail else "")
+        if len(selection) > 300:
+            prompt += LONG_SELECTION
     cmd = [exe, "-p", prompt, "--output-format", "json",
            "--allowedTools", "Read,Grep,Glob"]
     proc = spawn(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -914,7 +1520,40 @@ def ask_claude(exe, workdir, payload):
     obj = extract_json(raw if isinstance(raw, str) else json.dumps(raw))
     if not obj:
         return {"error": "unparsable", "detail": str(raw)[:600]}
-    return {k: str(obj.get(k, "")).strip() for k in ("topic", "what", "why", "example")}
+    notes = as_notes(obj)
+    if one_note and len(notes) > 1:
+        notes = notes[:1]
+    return {"notes": notes}
+
+
+NOTE_FIELDS = ("topic", "what", "why", "example")
+MAX_NOTES = 5
+
+
+def as_notes(obj):
+    """Whatever the CLI returned -> a list of four-field notes.
+
+    The contract asks for {"notes":[…]}, but a model that has just been told to answer
+    a question sometimes answers it: a bare object, or a bare list. All three are the
+    same intent, and none of them is worth failing a reader's question over. A note with
+    nothing in `what` is dropped — an empty card in the notes pane is worse than one
+    fewer note."""
+    if isinstance(obj, dict):
+        raw = obj.get("notes")
+        if not isinstance(raw, list):
+            raw = [obj]                      # a single note, returned bare
+    elif isinstance(obj, list):
+        raw = obj
+    else:
+        return []
+    out = []
+    for n in raw:
+        if not isinstance(n, dict):
+            continue
+        note = {k: str(n.get(k, "") or "").strip() for k in NOTE_FIELDS}
+        if note["what"] or note["why"] or note["example"]:
+            out.append(note)
+    return out[:MAX_NOTES]
 
 
 MIN_COVERAGE = 0.90          # below this a language is "incomplete", not "ready"
@@ -934,16 +1573,20 @@ def coverage_between(english, other, kept=()):
     return round(1.0 - untranslated / len(strings), 4)
 
 
-def translation_coverage(workdir, code):
+def translation_coverage(workdir, code, target=None):
     """How much of the page a rendered language actually translated, 0.0–1.0.
 
     Compares the strings extracted from the English page against the translated file:
     anything still appearing verbatim was not translated. Terms of art and names are
     meant to stay identical, so they are excluded from the denominator — otherwise a
-    perfect translation would score badly."""
+    perfect translation would score badly.
+
+    `target` measures a file that is not the finished page — the `.partial` an interrupted
+    run left behind, which is what makes its progress visible instead of merely resumable."""
     src = os.path.join(workdir, "index.html")
-    tgt = os.path.join(workdir, "index.html" if code == "en" else "index.%s.html" % code)
-    if code == "en":
+    tgt = target or os.path.join(workdir,
+                                 "index.html" if code == "en" else "index.%s.html" % code)
+    if code == "en" and not target:
         return 1.0
     if not (os.path.isfile(src) and os.path.isfile(tgt)):
         return 0.0
@@ -971,6 +1614,20 @@ def languages_on_disk(workdir, min_coverage=MIN_COVERAGE):
             ready.append(code)
         else:
             partial[code] = cov          # exists, but not offered as ready
+    # A run the bridge could not finish leaves index.<code>.html.partial. translate() already
+    # resumes from it; reporting it here is what lets the menu SAY so — "32% — finish" instead
+    # of "translate", which is the difference between banked work and work the reader thinks
+    # they lost.
+    for name in sorted(os.listdir(workdir)) if os.path.isdir(workdir) else []:
+        m = re.fullmatch(r"index\.([a-z]{2})\.html\.partial", name)
+        if not m:
+            continue
+        code = m.group(1)
+        if code in ready or code in partial:
+            continue                     # a finished file always outranks its leftovers
+        cov = translation_coverage(workdir, code, os.path.join(workdir, name))
+        if cov > 0:
+            partial[code] = coverage[code] = cov
     return ready, partial, coverage
 
 
@@ -1046,31 +1703,38 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
-        # The generated page is opened from file://, whose Origin is "null".
-        # Never grant browser access to arbitrary web origins: while the bridge is
-        # alive they could otherwise drive the local Claude CLI and read replies.
-        if self.headers.get("Origin") == "null":
-            self.send_header("Access-Control-Allow-Origin", "null")
-            self.send_header("Vary", "Origin")
+        self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.send_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
         self.end_headers()
         self.wfile.write(body)
 
-    def _trusted_request(self):
-        origin = self.headers.get("Origin")
-        host = (self.headers.get("Host") or "").split(":", 1)[0].lower()
-        return origin in (None, "null") and host in ("127.0.0.1", "localhost")
-
     def do_OPTIONS(self):
-        if not self._trusted_request():
-            return self._send(403, {"error": "forbidden-origin"})
         self._send(204, {})
 
     def do_GET(self):
-        if not self._trusted_request():
-            return self._send(403, {"error": "forbidden-origin"})
         route = urlparse(self.path).path.rstrip("/") or "/"
+        # Every translation running for this exploration, whoever started it. A page that
+        # reloads mid-run has an empty JOBS map and would otherwise offer "translate" for a
+        # language that is being translated right now; this is how it finds out.
+        if route == "/jobs":
+            q = parse_qs(urlparse(self.path).query)
+            where = resolve_workdir(self.server.workdir, (q.get("exploration", [""])[0]))
+            if where is None:
+                return self._send(404, {"error": "unknown-exploration"})
+            real = os.path.realpath(where)
+            running = {}
+            for (wd, code), st in list(_translating.items()):
+                if wd != real:
+                    continue
+                total, done = st.get("total", 0) or 0, st.get("done", 0) or 0
+                running[code] = {"running": True, "phase": st.get("phase", ""),
+                                 "total": total, "done": min(done, total),
+                                 "pass": st.get("pass", 0), "passes": st.get("passes", 0),
+                                 "coverage": st.get("coverage", 0),
+                                 "cancelling": bool(st.get("cancel")),
+                                 "elapsed": job_elapsed(st)}
+            return self._send(200, {"running": running})
         if route == "/progress":
             q = parse_qs(urlparse(self.path).query)
             code = (q.get("lang", [""])[0] or "").lower()
@@ -1085,7 +1749,8 @@ class Handler(BaseHTTPRequestHandler):
                                     "total": total, "done": min(done, total),
                                     "pass": st.get("pass", 0), "passes": st.get("passes", 0),
                                     "coverage": st.get("coverage", 0),
-                                    "cancelling": bool(st.get("cancel"))})
+                                    "cancelling": bool(st.get("cancel")),
+                                    "elapsed": job_elapsed(st)})
         if route != "/health":
             return self._send(404, {"error": "not-found"})
         exe = claude_path()
@@ -1114,8 +1779,6 @@ class Handler(BaseHTTPRequestHandler):
             return ""
 
     def do_POST(self):
-        if not self._trusted_request():
-            return self._send(403, {"error": "forbidden-origin"})
         route = self.path.rstrip("/")
         if route == "/beat":
             note_beat(self._sid())
@@ -1183,12 +1846,17 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(500, {"error": "bridge-failed", "detail": str(e)[:400]})
         if not str(payload.get("question", "")).strip():
             return self._send(400, {"error": "empty-question"})
+        with _asking_lock:
+            _asking[0] += 1
         try:
             self._send(200, ask_claude(exe, self.server.workdir, payload))
         except subprocess.TimeoutExpired:
             self._send(504, {"error": "timeout"})
         except Exception as e:
             self._send(500, {"error": "bridge-failed", "detail": str(e)[:400]})
+        finally:
+            with _asking_lock:
+                _asking[0] -= 1
 
 
 def reaper(workdir, port):
@@ -1208,12 +1876,14 @@ def reaper(workdir, port):
                 if gone >= 3:            # tolerate a transient rename or a rewrite
                     print("! source page gone from %s - retiring this bridge" % workdir,
                           file=sys.stderr, flush=True)
+                    clear_portfile(workdir)
                     os._exit(0)
                 continue
             gone = 0
             if time.time() - LAST_SEEN[0] > IDLE_EXIT and not _translating:
                 print("! idle for %dh - retiring this bridge" % (IDLE_EXIT // 3600),
                       file=sys.stderr, flush=True)
+                clear_portfile(workdir)
                 os._exit(0)
 
     threading.Thread(target=loop, daemon=True).start()
