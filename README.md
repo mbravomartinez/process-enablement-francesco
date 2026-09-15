@@ -1,4 +1,40 @@
-# Process Enablement — a Claude Code plugin
+# Process Enablement
+
+> Francesco's plugin, preserved here with version history and a minimal adapter for
+> Claude Code and OpenAI Codex.
+
+## In 30 seconds
+
+Give it a **business process**, a **company** and a **language**. It researches the
+process and account, then creates a self-contained interactive HTML primer with the
+process flow, common challenges, KPIs, terminology, a quiz, notes and export options.
+
+It is useful for preparing discovery workshops, learning an unfamiliar customer
+process, and onboarding Value Engineers or Solution Consultants before a meeting.
+
+### Repository scope
+
+| Ref | What it contains |
+|---|---|
+| [`v0.0.1`](https://github.com/mbravomartinez/process-enablement-francesco/releases/tag/v0.0.1) | The first version received, plus the portability and security adjustments made during its initial review |
+| [`v0.2.1`](https://github.com/mbravomartinez/process-enablement-francesco/releases/tag/v0.2.1) | Francesco's newer, more stable version, plus the minimal Codex manifest |
+| [`main`](https://github.com/mbravomartinez/process-enablement-francesco) | The current version: `v0.2.1` |
+
+See the [full comparison between v0.0.1 and v0.2.1](https://github.com/mbravomartinez/process-enablement-francesco/compare/v0.0.1...v0.2.1).
+
+### Runtime compatibility
+
+- **Claude Code:** native plugin commands such as `/process-enablement:start`.
+- **OpenAI Codex:** the same `explore` skill is available through the included
+  `.codex-plugin/plugin.json`; invoke it in natural language, for example:
+  `Use process-enablement to explore Order Management at Barilla in Spanish.`
+- **Important:** the generated page itself works in either case, but its optional
+  local interactive chat currently calls the `claude` CLI.
+
+The plugin does not include customer data, credentials or generated explorations.
+Those stay locally in `~/.process-enablement/output`.
+
+---
 
 Turn three inputs — **a process, a company, a language** — into one self-contained HTML
 page that teaches how that process actually runs, to someone who has never seen it.
@@ -50,10 +86,10 @@ the header reopens it whenever you want.
 #   → Add plugin from local directory → point at this folder
 ```
 
-Or, if a colleague sent you `process-enablement-0.0.1.zip`:
+Or, if a colleague sent you `process-enablement-0.2.1.zip`:
 
 ```bash
-unzip process-enablement-0.0.1.zip -d ~/claude-plugins/
+unzip process-enablement-0.2.1.zip -d ~/claude-plugins/
 claude plugin validate ~/claude-plugins/process-enablement    # optional sanity check
 # then /plugin → Add plugin from local directory → ~/claude-plugins/process-enablement
 ```
@@ -351,7 +387,7 @@ silently.
 registry — is local and git-ignored, and the bundler excludes it.
 
 ```bash
-./scripts/bundle.sh                 # → dist/process-enablement-0.0.1.zip
+./scripts/bundle.sh                 # → dist/process-enablement-0.2.1.zip
 ./scripts/bundle.sh --with-decks    # also ships the Enablements PDFs (+~10 MB)
 ```
 
@@ -481,4 +517,4 @@ cosmetic.
 
 ## Version
 
-0.0.1 — MIT. Plugin: `process-enablement`. Skill: `explore`. Built from a reMarkable sketch (`notes/`), which is still the design intent.
+0.2.1 — MIT. Plugin: `process-enablement`. Skill: `explore`. Built from a reMarkable sketch (`notes/`), which is still the design intent.
